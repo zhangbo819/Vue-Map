@@ -17,13 +17,13 @@ const routes = [
   },
   {
     path: '/china',
-    name: 'china',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Map/china.vue')
+    name: 'China',
+    component: () => import(/* webpackChunkName: "china" */ '../views/China')
   },
   {
     path: '/province',
     name: 'province',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Map/province.vue')
+    component: () => import(/* webpackChunkName: "province" */ '../views/China/province.vue')
   }
 ]
 
