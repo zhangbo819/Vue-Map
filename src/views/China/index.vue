@@ -1,4 +1,5 @@
 <script>
+import newData from "../../utils/500/newData.json";
 export default {
   render: function (createElement) {
     return createElement("div", {
@@ -6,8 +7,8 @@ export default {
         id: "main",
       },
       style: {
-        height: "450px",
-        width: "600px",
+        "min-height": "550px",
+        width: "100%",
         margin: "auto",
       },
     });
@@ -55,10 +56,14 @@ export default {
   },
   methods: {
     initEchart() {
+      console.log('newData', newData)
       let dataList = this.dataList;
-      for (let i = 0; i < dataList.length; i++) {
-        dataList[i].value = Math.ceil(Math.random() * 1000 - 1);
-      }
+
+      dataList.forEach((item, i) => {
+        const target = newData.find((j) => j.name.includes(item.name));
+        dataList[i].value = target ? target.count : 0;
+      });
+
       const _this = this;
       var myChart = echarts.init(document.getElementById("main"));
       var option = {
@@ -72,19 +77,24 @@ export default {
         },
         visualMap: {
           min: 0,
-          max: 1000,
+          max: newData.reduce((r, item) => {
+            if (item.count > r) {
+              r = item.count
+            }
+            return r
+          }, 0),
           left: "left",
           top: "bottom",
-          text: ["高", "低"], //取值范围的文字
+          text: ["高", "低"], // 取值范围的文字
           inRange: {
-            color: ["#e0ffff", "blue"], //取值范围的颜色
+            color: ["#e0ffff", "blue"], // 取值范围的颜色
           },
-          show: true, //图注
+          show: true, // 图注
         },
         geo: {
-          map: "china", //引入地图数据
-          roam: false, //不开启缩放和平移
-          zoom: 1, //视角缩放比例
+          map: "china", // 引入地图数据
+          roam: false, // 不开启缩放和平移
+          zoom: 1, // 视角缩放比例
           label: {
             normal: {
               show: true,
@@ -97,8 +107,8 @@ export default {
               borderColor: "rgba(0, 0, 0, 0.2)",
             },
             emphasis: {
-              //高亮的显示设置
-              areaColor: "skyblue", //鼠标选择区域颜色
+              // 高亮的显示设置
+              areaColor: "skyblue", // 鼠标选择区域颜色
               shadowOffsetX: 0,
               shadowOffsetY: 0,
               shadowBlur: 20,
