@@ -170,8 +170,8 @@ export default {
 </script>
 <style lang="scss">
 .o-echarts {
-  height: 600px;
-  width: 800px;
+  min-height: 550px;
+  width: 100%;
   margin: auto;
 }
 </style>
