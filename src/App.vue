@@ -3,11 +3,20 @@
     <!-- <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
-      <router-link to="/china">China</router-link>
     </nav> -->
-    <router-view/>
+    <router-link to="/china">China</router-link>
+    <router-view />
   </div>
 </template>
+
+<script>
+console.log("app in");
+export default {
+  mounted() {
+    console.log('app mounted', this.$route)
+  }
+}
+</script>
 
 <style lang="scss">
 #app {

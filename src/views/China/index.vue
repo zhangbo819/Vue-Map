@@ -1,5 +1,6 @@
 <script>
 import newData from "../../utils/500/newData.json";
+console.log('china')
 export default {
   render: function (createElement) {
     return createElement("div", {
@@ -141,6 +142,7 @@ export default {
     },
   },
   mounted() {
+    console.log('china mounted')
     this.initEchart();
   },
 };
