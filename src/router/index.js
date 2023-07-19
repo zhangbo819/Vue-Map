@@ -24,13 +24,13 @@ const routes = [
   {
     path: '/province',
     name: 'province',
-    component: () => import(/* webpackChunkName: "province" */ '../views/China/province.vue')
+    component: () => import(/* webpackChunkName: "china" */ '../views/China/province.vue')
   }
 ]
 
 const router = new VueRouter({
   mode: 'history',
-  // base: process.env.BASE_URL,
+  base: process.env.BASE_URL,
   routes
 })
 

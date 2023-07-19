@@ -3,6 +3,7 @@ require('./check-versions')()
 
 process.env.NODE_ENV = 'production'
 // process.env.NODE_ENV = 'testing'
+process.env.BASE_URL = '/Vue-Map/'
 
 const ora = require('ora')
 const rm = require('rimraf')
