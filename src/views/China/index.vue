@@ -1,19 +1,59 @@
+<template>
+  <div>
+    <div class="yearList">
+      <p
+        v-for="year in yearList"
+        :key="year"
+        :class="{ active: year === currentYear }"
+        @click="() => (currentYear = year)"
+      >
+        {{ year }}
+      </p>
+    </div>
+    <div id="main" style="min-height: 550px; width: 100%; margin: auto;" />
+
+    <p v-if="currentProvince">
+      {{ currentProvince }} &nbsp;
+      <span @click="nav" style="text-decoration-line: underline;">详情</span>
+    </p>
+
+    <!-- {{ currentProvinceData }} -->
+
+    <div v-if="currentProvince && currentProvinceData">
+      <p>{{ currentProvinceData.name }} {{ currentProvinceData.count }}</p>
+      <div
+        v-for="province in currentProvinceData.children"
+        :key="province.name"
+      >
+        <p>{{ province.name }} {{ province.count }}</p>
+        <div v-for="city in province.children" :key="city.name">
+          <span>{{ city.name }} {{ city.count }}</span>
+          <span>{{ city.address }}</span>
+          <span>{{ city.revenue }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script>
-import newData from "../../utils/500/newData.json";
-console.log('china')
+import { getYearData } from "./util";
+// import new2022Data from "../../utils/500/new2022Data.json";
+// console.log('china')
+
 export default {
-  render: function (createElement) {
-    return createElement("div", {
-      attrs: {
-        id: "main",
-      },
-      style: {
-        "min-height": "550px",
-        width: "100%",
-        margin: "auto",
-      },
-    });
-  },
+  // render: function(createElement) {
+  //   return createElement("div", {
+  //     attrs: {
+  //       id: "main"
+  //     },
+  //     style: {
+  //       "min-height": "550px",
+  //       width: "100%",
+  //       margin: "auto"
+  //     }
+  //   });
+  // },
   data() {
     return {
       dataList: [
@@ -51,17 +91,40 @@ export default {
         { ename: "hainan", name: "海南" },
         { name: "台湾" },
         { ename: "xianggang", name: "香港" },
-        { ename: "aomen", name: "澳门" },
+        { ename: "aomen", name: "澳门" }
       ],
+      yearList: [2022, 2023],
+      currentYear: new Date().getFullYear(),
+      currentProvince: ""
     };
+  },
+  computed: {
+    currentData() {
+      return getYearData(this.currentYear);
+    },
+    currentProvinceData() {
+      return this.currentData.find(i => i.name.includes(this.currentProvince));
+    }
+  },
+  watch: {
+    currentData: {
+      handler() {
+        this.initEchart();
+      }
+    }
+  },
+  mounted() {
+    console.log("china mounted");
+    this.initEchart();
   },
   methods: {
     initEchart() {
-      console.log('newData', newData)
+      const { currentData } = this;
+      console.log("currentData", currentData);
       let dataList = this.dataList;
 
       dataList.forEach((item, i) => {
-        const target = newData.find((j) => j.name.includes(item.name));
+        const target = currentData.find(j => j.name.includes(item.name));
         dataList[i].value = target ? target.count : 0;
       });
 
@@ -70,27 +133,27 @@ export default {
       var option = {
         tooltip: {
           //数据格式化
-          formatter: function (params, callback) {
+          formatter(params, cb) {
             return (
               params.seriesName + "<br />" + params.name + "：" + params.value
             );
-          },
+          }
         },
         visualMap: {
           min: 0,
-          max: newData.reduce((r, item) => {
+          max: currentData.reduce((r, item) => {
             if (item.count > r) {
-              r = item.count
+              r = item.count;
             }
-            return r
+            return r;
           }, 0),
           left: "left",
           top: "bottom",
           text: ["高", "低"], // 取值范围的文字
           inRange: {
-            color: ["#e0ffff", "blue"], // 取值范围的颜色
+            color: ["#e0ffff", "blue"] // 取值范围的颜色
           },
-          show: true, // 图注
+          show: true // 图注
         },
         geo: {
           map: "china", // 引入地图数据
@@ -100,12 +163,12 @@ export default {
             normal: {
               show: true,
               fontSize: "10",
-              color: "rgba(0,0,0,0.7)",
-            },
+              color: "rgba(0,0,0,0.7)"
+            }
           },
           itemStyle: {
             normal: {
-              borderColor: "rgba(0, 0, 0, 0.2)",
+              borderColor: "rgba(0, 0, 0, 0.2)"
             },
             emphasis: {
               // 高亮的显示设置
@@ -114,9 +177,9 @@ export default {
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: "rgba(0, 0, 0, 0.5)",
-            },
-          },
+              shadowColor: "rgba(0, 0, 0, 0.5)"
+            }
+          }
         },
         // 鼠标悬浮提示框
         series: [
@@ -124,26 +187,52 @@ export default {
             name: "省份",
             type: "map",
             geoIndex: 0,
-            data: this.dataList,
-          },
-        ],
+            data: this.dataList
+          }
+        ]
       };
       myChart.setOption(option);
-      myChart.on("click", function (params) {
+      myChart.on("click", params => {
         if (!params.data.ename) {
           alert("暂无" + params.name + "地图数据");
           return;
         }
-        _this.$router.push({
-          path: "/province",
-          query: { provinceName: params.data.ename, province: params.name },
-        });
+
+        this.currentProvince = params.data.name;
+        console.log("currentProvince", this.currentProvince);
+        this.navInfo = {
+          provinceName: params.data.ename,
+          province: params.name,
+          year: this.currentYear
+        };
       });
     },
-  },
-  mounted() {
-    console.log('china mounted')
-    this.initEchart();
-  },
+    nav() {
+      this.$router.push({
+        path: "/province",
+        query: this.navInfo
+      });
+    }
+  }
 };
 </script>
+
+<style lang="scss" scoped>
+.yearList {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  p {
+    cursor: pointer;
+
+    &.active {
+      text-decoration-line: underline;
+      color: #f008;
+    }
+
+    & + p {
+      margin-left: 16px;
+    }
+  }
+}
+</style>
