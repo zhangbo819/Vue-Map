@@ -2,7 +2,7 @@
   <div v-if="provinceData">
     <p>{{ provinceData.name }} {{ provinceData.count }}</p>
     <div v-for="province in provinceData.children" :key="province.name">
-      <p>{{ province.name }} {{ province.count }}</p>
+      <p>{{ province.name || '未知' }} {{ province.count }}</p>
       <div v-for="city in province.children" :key="city.name">
         <span>第{{ city.index }}名 {{ city.name }} {{ city.count }}</span>
         <span v-if="isDetails">{{ city.address }}</span>
