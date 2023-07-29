@@ -1,22 +1,35 @@
 <template>
   <div>
-    <div @click="goBack()">返回</div>
-    <div>{{ `${$route.query.province}总 ${provinceData.count} 个` }}</div>
+    <header>
+      <div @click="goBack()">返回</div>
+      <div class="all" @click="handleAll">
+        {{ `${$route.query.province} 总 ${provinceData.count} 个` }}
+      </div>
+    </header>
+
     <div :id="id" class="o-echarts"></div>
-    <div v-for="(item, index) in showList" :key="item.name || index">
+
+    <CityList :provinceData="showList" isDetails />
+
+    <!-- <div v-for="(item, index) in showList" :key="item.name || index">
       <span>{{ index + 1 }}. {{ item.name }} 排名 {{ item.index }}</span>
       <p>营收{{ item.revenue }} 万元 总部地址 {{ item.address }}</p>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+import CityList from "@/components/CityList.vue";
 import { getYearData } from "./util";
+
 export default {
   name: "province",
+  components: {
+    CityList
+  },
   data() {
     return {
-      id: "echarts_" + new Date().getTime() + Math.floor(Math.random() * 1000),
+      id: "echarts_" + new Date().getTime(),
       echartObj: null,
       option: {
         title: {
@@ -111,7 +124,7 @@ export default {
         provinceJSON: {},
         provinceName: ""
       },
-      showList: []
+      showList: null
     };
   },
   computed: {
@@ -132,6 +145,7 @@ export default {
   },
   mounted() {
     this.renderMap();
+    this.handleAll();
   },
   beforeMount() {
     window.removeEventListener("resize", this.resize);
@@ -149,22 +163,24 @@ export default {
         .children.map(i => ({ name: i.name, value: i.count }));
       this.echartObj = echarts.init(document.getElementById(this.id));
       echarts.registerMap(province, this.provinceJSON);
-      console.log("this.option", this.option);
+      // console.log("this.option", this.option);
       this.echartObj.setOption(this.option);
       window.addEventListener("resize", this.resize);
 
       this.echartObj.on("click", params => {
-        // console.log('params', params.data.name)
-        console.log("", this.provinceData);
-        const target = this.provinceData.children.find(item =>
-          item.name.includes(params.data.name)
-        );
+        console.log("params", params.name);
+        // console.log("", this.provinceData);
+        const target = this.provinceData.children.filter((i) => i.name.includes(params.name))
+        console.log("target", target);
         if (target) {
-          this.showList = target.children;
+          this.showList = {
+            count: this.provinceData.count,
+            name: this.provinceData.name,
+            children: target
+          };
         } else {
           this.showList = [];
         }
-        console.log("target", target);
       });
     },
     goBack() {
@@ -174,6 +190,10 @@ export default {
       if (this.echartObj && this.echartObj.resize) {
         this.echartObj.resize();
       }
+    },
+    handleAll() {
+      console.log("this.provinceData", this.provinceData);
+      this.showList = this.provinceData;
     }
   }
 };
@@ -183,5 +203,11 @@ export default {
   min-height: 550px;
   width: 100%;
   margin: auto;
+}
+</style>
+<style lang="scss" scoped>
+.all {
+  text-decoration-line: underline;
+  cursor: pointer;
 }
 </style>

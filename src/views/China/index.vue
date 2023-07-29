@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="yearList">
+    <header class="yearList">
       <p
         v-for="year in yearList"
         :key="year"
@@ -9,7 +9,8 @@
       >
         {{ year }}
       </p>
-    </div>
+    </header>
+
     <div id="main" style="min-height: 550px; width: 100%; margin: auto;" />
 
     <p v-if="currentProvince">
@@ -19,29 +20,20 @@
 
     <!-- {{ currentProvinceData }} -->
 
-    <div v-if="currentProvince && currentProvinceData">
-      <p>{{ currentProvinceData.name }} {{ currentProvinceData.count }}</p>
-      <div
-        v-for="province in currentProvinceData.children"
-        :key="province.name"
-      >
-        <p>{{ province.name }} {{ province.count }}</p>
-        <div v-for="city in province.children" :key="city.name">
-          <span>{{ city.name }} {{ city.count }}</span>
-          <span>{{ city.address }}</span>
-          <span>{{ city.revenue }}</span>
-        </div>
-      </div>
-    </div>
+    <CityList :provinceData="currentProvinceData" :isDetails="false" />
   </div>
 </template>
 
 <script>
+import CityList from "../../components/CityList.vue";
 import { getYearData } from "./util";
 // import new2022Data from "../../utils/500/new2022Data.json";
 // console.log('china')
 
 export default {
+  components: {
+    CityList
+  },
   // render: function(createElement) {
   //   return createElement("div", {
   //     attrs: {
