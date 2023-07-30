@@ -7,11 +7,16 @@
         :class="{ active: year === currentYear }"
         @click="() => (currentYear = year)"
       >
-        {{ year }}
+        {{ year === 2023 ? year + "(未完)" : year }}
       </p>
     </header>
 
+    <!-- 公司柱状图 -->
+    <CompanyChart :data="currentData" />
+    
+    <!-- china 地图 -->
     <div id="main" style="min-height: 550px; width: 100%; margin: auto;" />
+
 
     <p v-if="currentProvince">
       {{ currentProvince }} &nbsp;
@@ -26,13 +31,15 @@
 
 <script>
 import CityList from "../../components/CityList.vue";
+import CompanyChart from "./CompanyChart.vue";
 import { getYearData } from "./util";
 // import new2022Data from "../../utils/500/new2022Data.json";
 // console.log('china')
 
 export default {
   components: {
-    CityList
+    CityList,
+    CompanyChart
   },
   // render: function(createElement) {
   //   return createElement("div", {
@@ -85,7 +92,7 @@ export default {
         { ename: "xianggang", name: "香港" },
         { ename: "aomen", name: "澳门" }
       ],
-      yearList: [2022, 2023],
+      yearList: [2021, 2022, 2023],
       currentYear: new Date().getFullYear(),
       currentProvince: ""
     };
@@ -107,7 +114,11 @@ export default {
   },
   mounted() {
     console.log("china mounted");
+    window.addEventListener("resize", this.resize);
     this.initEchart();
+  },
+  beforeMount() {
+    window.removeEventListener("resize", this.resize);
   },
   methods: {
     initEchart() {
@@ -120,9 +131,9 @@ export default {
         dataList[i].value = target ? target.count : 0;
       });
 
-      const _this = this;
-      var myChart = echarts.init(document.getElementById("main"));
-      var option = {
+      const myChart = echarts.init(document.getElementById("main"));
+      this.myChart = myChart;
+      const option = {
         tooltip: {
           //数据格式化
           formatter(params, cb) {
@@ -198,6 +209,11 @@ export default {
           year: this.currentYear
         };
       });
+    },
+    resize() {
+      if (this.myChart && this.myChart.resize) {
+        this.myChart.resize();
+      }
     },
     nav() {
       this.$router.push({

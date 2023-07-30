@@ -144,6 +144,7 @@ export default {
     }
   },
   mounted() {
+    window.addEventListener("resize", this.resize);
     this.renderMap();
     this.handleAll();
   },
@@ -165,7 +166,6 @@ export default {
       echarts.registerMap(province, this.provinceJSON);
       // console.log("this.option", this.option);
       this.echartObj.setOption(this.option);
-      window.addEventListener("resize", this.resize);
 
       this.echartObj.on("click", params => {
         console.log("params", params.name);
