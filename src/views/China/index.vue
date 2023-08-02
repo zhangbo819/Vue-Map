@@ -6,11 +6,11 @@
     <CompanyChart :data="currentData" />
 
     <!-- china 地图 -->
-    <div id="main" style="min-height: 550px; width: 100%; margin: auto;" />
+    <div id="main" style="min-height: 550px; width: 100%; margin: auto" />
 
     <p v-if="currentProvince">
       {{ currentProvince }} &nbsp;
-      <span @click="nav" style="text-decoration-line: underline;">详情</span>
+      <span @click="nav" style="text-decoration-line: underline">详情</span>
     </p>
 
     <!-- {{ currentProvinceData }} -->
@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import CityList from "../../components/CityList.vue";
-import YearHeader from "../../components/YearHeader.vue";
+import CityList from "@/components/CityList.vue";
+import YearHeader from "@/components/YearHeader.vue";
 import CompanyChart from "./CompanyChart.vue";
 import { getYearData } from "./util";
 // import new2022Data from "../../utils/500/new2022Data.json";
@@ -31,7 +31,7 @@ export default {
   components: {
     CityList,
     CompanyChart,
-    YearHeader
+    YearHeader,
   },
   // render: function(createElement) {
   //   return createElement("div", {
@@ -82,10 +82,10 @@ export default {
         { ename: "hainan", name: "海南" },
         { name: "台湾" },
         { ename: "xianggang", name: "香港" },
-        { ename: "aomen", name: "澳门" }
+        { ename: "aomen", name: "澳门" },
       ],
       currentYear: new Date().getFullYear(),
-      currentProvince: ""
+      currentProvince: "",
     };
   },
   computed: {
@@ -93,15 +93,17 @@ export default {
       return getYearData(this.currentYear);
     },
     currentProvinceData() {
-      return this.currentData.find(i => i.name.includes(this.currentProvince));
-    }
+      return this.currentData.find((i) =>
+        i.name.includes(this.currentProvince)
+      );
+    },
   },
   watch: {
     currentData: {
       handler() {
         this.initEchart();
-      }
-    }
+      },
+    },
   },
   mounted() {
     console.log("china mounted");
@@ -118,7 +120,7 @@ export default {
       let dataList = this.dataList;
 
       dataList.forEach((item, i) => {
-        const target = currentData.find(j => j.name.includes(item.name));
+        const target = currentData.find((j) => j.name.includes(item.name));
         dataList[i].value = target ? target.count : 0;
       });
 
@@ -131,7 +133,7 @@ export default {
             return (
               params.seriesName + "<br />" + params.name + "：" + params.value
             );
-          }
+          },
         },
         visualMap: {
           min: 0,
@@ -145,9 +147,9 @@ export default {
           top: "bottom",
           text: ["高", "低"], // 取值范围的文字
           inRange: {
-            color: ["#e0ffff", "blue"] // 取值范围的颜色
+            color: ["#e0ffff", "blue"], // 取值范围的颜色
           },
-          show: true // 图注
+          show: true, // 图注
         },
         geo: {
           map: "china", // 引入地图数据
@@ -157,12 +159,12 @@ export default {
             normal: {
               show: true,
               fontSize: "10",
-              color: "rgba(0,0,0,0.7)"
-            }
+              color: "rgba(0,0,0,0.7)",
+            },
           },
           itemStyle: {
             normal: {
-              borderColor: "rgba(0, 0, 0, 0.2)"
+              borderColor: "rgba(0, 0, 0, 0.2)",
             },
             emphasis: {
               // 高亮的显示设置
@@ -171,9 +173,9 @@ export default {
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: "rgba(0, 0, 0, 0.5)"
-            }
-          }
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
+          },
         },
         // 鼠标悬浮提示框
         series: [
@@ -181,12 +183,12 @@ export default {
             name: "省份",
             type: "map",
             geoIndex: 0,
-            data: this.dataList
-          }
-        ]
+            data: this.dataList,
+          },
+        ],
       };
       myChart.setOption(option);
-      myChart.on("click", params => {
+      myChart.on("click", (params) => {
         if (!params.data.ename) {
           alert("暂无" + params.name + "地图数据");
           return;
@@ -197,7 +199,7 @@ export default {
         this.navInfo = {
           provinceName: params.data.ename,
           province: params.name,
-          year: this.currentYear
+          year: this.currentYear,
         };
       });
     },
@@ -209,10 +211,10 @@ export default {
     nav() {
       this.$router.push({
         path: "/province",
-        query: this.navInfo
+        query: this.navInfo,
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
