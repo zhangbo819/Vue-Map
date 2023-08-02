@@ -6,7 +6,8 @@
       :class="{ active: year === currentYear }"
       @click="handerYear(year)"
     >
-      {{ year === new Date().getFullYear() ? year + "(未完)" : year }}
+      <!-- {{ year === new Date().getFullYear() ? year + "(未完)" : year }} -->
+      {{ year }}
     </p>
   </header>
 </template>
