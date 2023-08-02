@@ -1,22 +1,12 @@
 <template>
   <div>
-    <header class="yearList">
-      <p
-        v-for="year in yearList"
-        :key="year"
-        :class="{ active: year === currentYear }"
-        @click="() => (currentYear = year)"
-      >
-        {{ year === 2023 ? year + "(未完)" : year }}
-      </p>
-    </header>
+    <YearHeader v-model="currentYear" :yearList="[2021, 2022, 2023]" />
 
     <!-- 公司柱状图 -->
     <CompanyChart :data="currentData" />
-    
+
     <!-- china 地图 -->
     <div id="main" style="min-height: 550px; width: 100%; margin: auto;" />
-
 
     <p v-if="currentProvince">
       {{ currentProvince }} &nbsp;
@@ -31,6 +21,7 @@
 
 <script>
 import CityList from "../../components/CityList.vue";
+import YearHeader from "../../components/YearHeader.vue";
 import CompanyChart from "./CompanyChart.vue";
 import { getYearData } from "./util";
 // import new2022Data from "../../utils/500/new2022Data.json";
@@ -39,7 +30,8 @@ import { getYearData } from "./util";
 export default {
   components: {
     CityList,
-    CompanyChart
+    CompanyChart,
+    YearHeader
   },
   // render: function(createElement) {
   //   return createElement("div", {
@@ -92,7 +84,6 @@ export default {
         { ename: "xianggang", name: "香港" },
         { ename: "aomen", name: "澳门" }
       ],
-      yearList: [2021, 2022, 2023],
       currentYear: new Date().getFullYear(),
       currentProvince: ""
     };

@@ -5,3 +5,11 @@ export function getYearData(year) {
   }
   return map[year];
 }
+
+const worldMap = {};
+export function getWorldYearData(year) {
+  if (!worldMap[year]) {
+    worldMap[year] = require(`../../utils/world/${year}Data.json`);
+  }
+  return worldMap[year];
+}
