@@ -166,14 +166,13 @@ export default {
         .sort((a, b) => b.count - a.count);
     }
   },
-
   watch: {
     currentYear() {
       this.form.compare = "0";
     },
     // 对比功能
     "form.compare"(val) {
-      //   const compare_keys = ["index"];
+      const compare_keys = ["index"];
       if (val === "1") {
         const previousYear = this.currentYear - 1;
         const previousData = getWorldYearData(previousYear);
@@ -195,33 +194,25 @@ export default {
           }
         });
         // console.log("this.currentData", this.currentData);
-        this.configs = {
-          simple_industry: getLayout([
-            "compare_index",
-            "simpleName",
-            "industry"
-          ]),
-          simple_country: getLayout(["compare_index", "country", "simpleName"]),
-          industry: getLayout([
-            "compare_index",
-            "name",
-            "industry",
-            "revenue",
-            "profit"
-          ])
-        };
+        for (let key in this.configs) {
+          compare_keys.forEach(compare_key => {
+            const target = this.configs[key].find(i => i.key === compare_key);
+            if (target) {
+              target.key = "compare_" + compare_key;
+            }
+          });
+        }
       } else {
-        this.configs = {
-          simple_industry: getLayout(["index", "simpleName", "industry"]),
-          simple_country: getLayout(["index", "country", "simpleName"]),
-          industry: getLayout([
-            "index",
-            "name",
-            "industry",
-            "revenue",
-            "profit"
-          ])
-        };
+        for (let key in this.configs) {
+          compare_keys.forEach(compare_key => {
+            const target = this.configs[key].find(
+              i => i.key === "compare_" + compare_key
+            );
+            if (target) {
+              target.key = compare_key;
+            }
+          });
+        }
       }
     }
   },
