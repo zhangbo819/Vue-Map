@@ -1,33 +1,43 @@
 <template>
   <div>
-    <YearHeader v-model="currentYear" :yearList="[2022, 2023]" />
+    <YearHeader v-model="currentYear" :yearList="supportList" />
 
     <div class="radios">
-      <RadioGroup v-model="typeBig" direction="horizontal">
+      <RadioGroup v-model="form.type" direction="horizontal">
         <Radio name="3">按排名</Radio>
         <Radio name="1">按国家</Radio>
         <Radio name="2">按行业</Radio>
       </RadioGroup>
 
       <RadioGroup
-        v-model="typeIsAll"
+        v-if="supportList.includes(currentYear - 1)"
+        v-model="form.compare"
+        direction="horizontal"
+        style="margin-top: 12px"
+      >
+        <Radio name="0">正常</Radio>
+        <Radio name="1">与去年对比</Radio>
+      </RadioGroup>
+
+      <RadioGroup
+        v-model="form.isAll"
         direction="horizontal"
         style="margin-top: 12px"
       >
         <Radio name="2">精简版</Radio>
-        <Radio name="1">完全版</Radio>
+        <Radio name="1">完整版</Radio>
       </RadioGroup>
       <p><i>单位: 百万美元</i></p>
     </div>
 
     <!-- 按国家 -->
-    <template v-if="typeBig === '1'">
+    <template v-if="form.type === '1'">
       <div v-for="item in countryData" :key="item.name">
         <h3>{{ `${item.name} (${item.count}个)` }}</h3>
         <MyTable
           class="simpleTable"
           :config="
-            typeIsAll === '1' ? configs.industry : configs.simple_industry
+            form.isAll === '1' ? configs.industry : configs.simple_industry
           "
           :data="item.children"
         />
@@ -35,13 +45,13 @@
     </template>
 
     <!-- 按行业 -->
-    <template v-else-if="typeBig === '2'">
+    <template v-else-if="form.type === '2'">
       <div v-for="item in industryData" :key="item.name">
         <h3>{{ `${item.name} (${item.count}个)` }}</h3>
         <MyTable
           class="simpleTable"
           :config="
-            typeIsAll === '1' ? configs.industry : configs.simple_country
+            form.isAll === '1' ? configs.industry : configs.simple_country
           "
           :data="item.children"
         />
@@ -50,9 +60,9 @@
 
     <!-- 按排名 -->
     <MyTable
-      v-else-if="typeBig === '3'"
+      v-else-if="form.type === '3'"
       class="simpleTable"
-      :config="typeIsAll === '1' ? configs.industry : configs.simple_country"
+      :config="form.isAll === '1' ? configs.industry : configs.simple_country"
       :data="currentData"
     />
   </div>
@@ -65,19 +75,19 @@ import YearHeader from "@/components/YearHeader.vue";
 import MyTable from "@/components/MyTable.vue";
 import { getWorldYearData } from "../China/util";
 
-// getWorldYearData
 const layout = [
   { title: "排名", key: "index" },
+  { title: "排名", key: "compare_index" },
   { title: "简称", key: "simpleName" },
   { title: "名称", key: "name" },
   { title: "行业", key: "industry" },
   { title: "国家", key: "country" },
   { title: "营收", key: "revenue" },
-  { title: "净利润", key: "profit" },
+  { title: "净利润", key: "profit" }
 ];
 function getLayout(targets = []) {
-  return targets.map((title) => {
-    return layout.find((i) => i.title === title);
+  return targets.map(key => {
+    return layout.find(i => i.key === key);
   });
 }
 
@@ -86,22 +96,26 @@ export default {
   components: { YearHeader, RadioGroup, Radio, VanList, MyTable },
   data() {
     // console.log("this.$route.query", this.$route.query);
-    const { typeBig = "1", typeIsAll = "2" } = this.$route.query;
+    const { type = "1", isAll = "2" } = this.$route.query;
     return {
-      currentYear: 2023,
-      typeBig,
-      typeIsAll,
-      configs: {
-        simple_industry: getLayout(["排名", "简称", "行业"]),
-        simple_country: getLayout(["排名", "国家", "简称"]),
-        industry: getLayout(["排名", "名称", "行业", "营收", "净利润"]),
+      currentYear: new Date().getFullYear(),
+      supportList: [2022, 2023],
+      form: {
+        type,
+        isAll,
+        compare: "0"
       },
+      configs: {
+        simple_industry: getLayout(["index", "simpleName", "industry"]),
+        simple_country: getLayout(["index", "country", "simpleName"]),
+        industry: getLayout(["index", "name", "industry", "revenue", "profit"])
+      }
     };
   },
   computed: {
     currentData() {
       return (
-        getWorldYearData(this.currentYear).map((i) => {
+        getWorldYearData(this.currentYear).map(i => {
           i.simpleName = i.name.replace(
             /有限公司|股份有限公司|有限责任公司|公司$/,
             ""
@@ -114,7 +128,7 @@ export default {
     countryData() {
       const data = this.currentData
         .reduce((r, i) => {
-          const target = r.find((j) => j.name === i.country);
+          const target = r.find(j => j.name === i.country);
           if (!target) {
             r.push({ name: i.country, count: 0, children: [i] });
           } else {
@@ -123,7 +137,7 @@ export default {
 
           return r;
         }, [])
-        .map((i) => {
+        .map(i => {
           i.count = i.children.length;
           return i;
         })
@@ -137,7 +151,7 @@ export default {
     industryData() {
       return this.currentData
         .reduce((r, i) => {
-          const target = r.find((j) => j.name === i.industry);
+          const target = r.find(j => j.name === i.industry);
           if (target) {
             target.children.push(i);
           } else {
@@ -145,29 +159,76 @@ export default {
           }
           return r;
         }, [])
-        .map((i) => {
+        .map(i => {
           i.count = i.children.length;
           return i;
         })
         .sort((a, b) => b.count - a.count);
-    },
+    }
   },
-  //   watch: {
-  //     typeBig(val) {
-  //       console.log("this.$route", this.$route);
-  //       const { query } = this.$route;
-  //       query.typeBig = val;
-  //       this.$router.push({
-  //         path: this.$route.path,
-  //         query
-  //       });
-  //     },
-  //     typeIsAll() {}
-  //   },
+
+  watch: {
+    currentYear() {
+      this.form.compare = "0";
+    },
+    // 对比功能
+    "form.compare"(val) {
+      //   const compare_keys = ["index"];
+      if (val === "1") {
+        const previousYear = this.currentYear - 1;
+        const previousData = getWorldYearData(previousYear);
+
+        this.currentData.forEach(item => {
+          if (typeof item.compare_index === "undefined") {
+            const target = previousData.find(j => j.name === item.name);
+            if (target) {
+              const compareNumber = target.index - item.index;
+              item.compare_index =
+                compareNumber === 0
+                  ? "- 0"
+                  : compareNumber > 0
+                  ? `↑ ${compareNumber}`
+                  : `↓ ${Math.abs(compareNumber)}`;
+            } else {
+              item.compare_index = "新";
+            }
+          }
+        });
+        // console.log("this.currentData", this.currentData);
+        this.configs = {
+          simple_industry: getLayout([
+            "compare_index",
+            "simpleName",
+            "industry"
+          ]),
+          simple_country: getLayout(["compare_index", "country", "simpleName"]),
+          industry: getLayout([
+            "compare_index",
+            "name",
+            "industry",
+            "revenue",
+            "profit"
+          ])
+        };
+      } else {
+        this.configs = {
+          simple_industry: getLayout(["index", "simpleName", "industry"]),
+          simple_country: getLayout(["index", "country", "simpleName"]),
+          industry: getLayout([
+            "index",
+            "name",
+            "industry",
+            "revenue",
+            "profit"
+          ])
+        };
+      }
+    }
+  },
   mounted() {
     // console.log("currentData", this.currentData);
   },
-  methods: {},
+  methods: {}
 };
 </script>
 
