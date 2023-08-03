@@ -99,7 +99,7 @@ export default {
     const { type = "1", isAll = "2" } = this.$route.query;
     return {
       currentYear: new Date().getFullYear(),
-      supportList: [2022, 2023],
+      supportList: [2021, 2022, 2023],
       form: {
         type,
         isAll,
