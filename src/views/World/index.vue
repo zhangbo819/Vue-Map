@@ -32,6 +32,11 @@
 
     <!-- 按国家 -->
     <template v-if="form.type === '1'">
+      <!-- <nav class="navList">
+        <span v-for="item in countryData" :key="'nav'+ item.name">
+          {{ `${item.name}` }}
+        </span>
+      </nav> -->
       <div v-for="item in countryData" :key="item.name">
         <h3>{{ `${item.name} (${item.count}个)` }}</h3>
         <MyTable
@@ -78,7 +83,7 @@ import { getWorldYearData } from "../China/util";
 const layout = [
   { title: "排名", key: "index" },
   { title: "排名", key: "compare_index" },
-  { title: "简称", key: "simpleName" },
+  { title: "名称", key: "simpleName" }, // 简称
   { title: "名称", key: "name" },
   { title: "行业", key: "industry" },
   { title: "国家", key: "country" },
@@ -261,6 +266,17 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.navList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  > span {
+    display: inline-block;
+    margin: 0 8px;
+  }
 }
 .simpleTable {
   margin: 0 auto;

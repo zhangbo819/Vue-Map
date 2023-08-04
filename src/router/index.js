@@ -8,8 +8,9 @@ const routes = [
   {
     path: '/',
     name: 'home',
+    redirect: '/world'
     // component: HomeView,
-    component: () => import(/* webpackChunkName: "china" */ '../views/China')
+    // component: () => import(/* webpackChunkName: "china" */ '../views/China')
   },
   {
     path: '/world',
@@ -31,7 +32,7 @@ const routes = [
 const router = new VueRouter({
   mode: 'hash',
   // base: process.env.BASE_URL,
-  routes
+  routes,
 })
 
 export default router
