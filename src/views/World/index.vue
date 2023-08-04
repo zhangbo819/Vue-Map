@@ -51,7 +51,7 @@
         <MyTable
           class="simpleTable"
           :config="
-            form.isAll === '1' ? configs.industry : configs.simple_country
+            form.isAll === '1' ? configs.country : configs.simple_country
           "
           :data="item.children"
         />
@@ -84,10 +84,11 @@ const layout = [
   { title: "国家", key: "country" },
   { title: "营收", key: "revenue" },
   { title: "净利润", key: "profit" },
+  { title: "利润率", key: "profitMargin" }
 ];
 function getLayout(targets = []) {
-  return targets.map((key) => {
-    return layout.find((i) => i.key === key);
+  return targets.map(key => {
+    return layout.find(i => i.key === key);
   });
 }
 
@@ -103,32 +104,53 @@ export default {
       form: {
         type,
         isAll,
-        compare: "0",
+        compare: "0"
       },
       configs: {
         simple_industry: getLayout(["index", "simpleName", "industry"]),
         simple_country: getLayout(["index", "country", "simpleName"]),
-        industry: getLayout(["index", "name", "industry", "revenue", "profit"]),
-      },
+        industry: getLayout([
+          "index",
+          "simpleName",
+          "industry",
+          "revenue",
+          "profit",
+          "profitMargin"
+        ]),
+        country: getLayout([
+          "index",
+          "simpleName",
+          "country",
+          "revenue",
+          "profit",
+          "profitMargin"
+        ])
+      }
     };
   },
   computed: {
     currentData() {
-      return (
-        getWorldYearData(this.currentYear).map((i) => {
-          i.simpleName = i.name.replace(
-            /有限公司|股份有限公司|有限责任公司|公司$/,
-            ""
-          );
-          return i;
-        }) || []
-      );
+      const data = getWorldYearData(this.currentYear) || [];
+      data.forEach(i => {
+        i.simpleName = i.name.replace(
+          /有限公司|股份有限公司|有限责任公司|公司$/,
+          ""
+        );
+        let { revenue = 0, profit = 0 } = i;
+        if (revenue && profit) {
+          revenue = revenue.replace(/,/g, "");
+          profit = profit.replace(/,/g, "");
+          i.profitMargin = ((profit / revenue) * 100).toFixed(2) + "%";
+        }
+        return i;
+      });
+      return data;
     },
     // 按国家分类
     countryData() {
       const data = this.currentData
         .reduce((r, i) => {
-          const target = r.find((j) => j.name === i.country);
+          const target = r.find(j => j.name === i.country);
           if (!target) {
             r.push({ name: i.country, count: 0, children: [i] });
           } else {
@@ -137,13 +159,13 @@ export default {
 
           return r;
         }, [])
-        .map((i) => {
+        .map(i => {
           i.count = i.children.length;
           return i;
         })
         .sort((a, b) => b.count - a.count);
 
-      // console.log("countryData", data);
+      //   console.log("countryData", data);
 
       return data;
     },
@@ -151,7 +173,7 @@ export default {
     industryData() {
       return this.currentData
         .reduce((r, i) => {
-          const target = r.find((j) => j.name === i.industry);
+          const target = r.find(j => j.name === i.industry);
           if (target) {
             target.children.push(i);
           } else {
@@ -159,12 +181,12 @@ export default {
           }
           return r;
         }, [])
-        .map((i) => {
+        .map(i => {
           i.count = i.children.length;
           return i;
         })
         .sort((a, b) => b.count - a.count);
-    },
+    }
   },
   watch: {
     currentYear() {
@@ -177,10 +199,10 @@ export default {
         const previousYear = this.currentYear - 1;
         const previousData = getWorldYearData(previousYear);
 
-        this.currentData.forEach((item) => {
+        this.currentData.forEach(item => {
           if (typeof item.compare_index === "undefined") {
-            const target = previousData.find((j) => j.name === item.name);
-            let text
+            const target = previousData.find(j => j.name === item.name);
+            let text;
             if (target) {
               const compareNumber = target.index - item.index;
               text =
@@ -197,8 +219,8 @@ export default {
         });
         // console.log("this.currentData", this.currentData);
         for (let key in this.configs) {
-          compare_keys.forEach((compare_key) => {
-            const target = this.configs[key].find((i) => i.key === compare_key);
+          compare_keys.forEach(compare_key => {
+            const target = this.configs[key].find(i => i.key === compare_key);
             if (target) {
               target.key = "compare_" + compare_key;
             }
@@ -206,9 +228,9 @@ export default {
         }
       } else {
         for (let key in this.configs) {
-          compare_keys.forEach((compare_key) => {
+          compare_keys.forEach(compare_key => {
             const target = this.configs[key].find(
-              (i) => i.key === "compare_" + compare_key
+              i => i.key === "compare_" + compare_key
             );
             if (target) {
               target.key = compare_key;
@@ -216,12 +238,12 @@ export default {
           });
         }
       }
-    },
+    }
   },
   mounted() {
     // console.log("currentData", this.currentData);
   },
-  methods: {},
+  methods: {}
 };
 </script>
 
