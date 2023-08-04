@@ -1,12 +1,12 @@
 <template>
   <table>
     <tr>
-      <td v-for="i in config" :key="i.title">
+      <td v-for="i in showConfig" :key="i.title">
         {{ i.title }}
       </td>
     </tr>
     <tr v-for="item in data" :key="'simple' + item.name">
-      <td v-for="j in config" :key="j.key + item[j.key]">
+      <td v-for="j in showConfig" :key="j.key + item[j.key]">
         <span
           v-if="j.key === 'compare_index'"
           :class="{
@@ -37,10 +37,15 @@ export default {
       default: () => []
     }
   },
-  data() {
-    return {};
-  },
-  methods: {}
+  computed: {
+    showConfig () {
+      return this.config.filter(i => !i.hidden)
+    }
+  }
+  // data() {
+  //   return {};
+  // },
+  // methods: {}
 };
 </script>
 

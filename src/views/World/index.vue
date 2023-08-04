@@ -83,8 +83,8 @@ const layout = [
   { title: "行业", key: "industry" },
   { title: "国家", key: "country" },
   { title: "营收", key: "revenue" },
-  { title: "净利润", key: "profit" },
-  { title: "利润率", key: "profitMargin" }
+  { title: "净利润", key: "profit", hidden: false },
+  { title: "利润率", key: "profitMargin", hidden: false }
 ];
 function getLayout(targets = []) {
   return targets.map(key => {
@@ -189,8 +189,16 @@ export default {
     }
   },
   watch: {
-    currentYear() {
-      this.form.compare = "0";
+    currentYear: {
+      immediate: true,
+      handler(val) {
+        this.form.compare = "0";
+        this.configs.industry.forEach(i => {
+          if (["profit", "profitMargin"].includes(i.key)) {
+            i.hidden = val === 2023; // 2023 没有利润 利润率 隐藏
+          }
+        });
+      }
     },
     // 对比功能
     "form.compare"(val) {
