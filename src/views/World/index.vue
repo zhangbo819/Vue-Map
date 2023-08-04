@@ -83,11 +83,11 @@ const layout = [
   { title: "行业", key: "industry" },
   { title: "国家", key: "country" },
   { title: "营收", key: "revenue" },
-  { title: "净利润", key: "profit" }
+  { title: "净利润", key: "profit" },
 ];
 function getLayout(targets = []) {
-  return targets.map(key => {
-    return layout.find(i => i.key === key);
+  return targets.map((key) => {
+    return layout.find((i) => i.key === key);
   });
 }
 
@@ -103,19 +103,19 @@ export default {
       form: {
         type,
         isAll,
-        compare: "0"
+        compare: "0",
       },
       configs: {
         simple_industry: getLayout(["index", "simpleName", "industry"]),
         simple_country: getLayout(["index", "country", "simpleName"]),
-        industry: getLayout(["index", "name", "industry", "revenue", "profit"])
-      }
+        industry: getLayout(["index", "name", "industry", "revenue", "profit"]),
+      },
     };
   },
   computed: {
     currentData() {
       return (
-        getWorldYearData(this.currentYear).map(i => {
+        getWorldYearData(this.currentYear).map((i) => {
           i.simpleName = i.name.replace(
             /有限公司|股份有限公司|有限责任公司|公司$/,
             ""
@@ -128,7 +128,7 @@ export default {
     countryData() {
       const data = this.currentData
         .reduce((r, i) => {
-          const target = r.find(j => j.name === i.country);
+          const target = r.find((j) => j.name === i.country);
           if (!target) {
             r.push({ name: i.country, count: 0, children: [i] });
           } else {
@@ -137,7 +137,7 @@ export default {
 
           return r;
         }, [])
-        .map(i => {
+        .map((i) => {
           i.count = i.children.length;
           return i;
         })
@@ -151,7 +151,7 @@ export default {
     industryData() {
       return this.currentData
         .reduce((r, i) => {
-          const target = r.find(j => j.name === i.industry);
+          const target = r.find((j) => j.name === i.industry);
           if (target) {
             target.children.push(i);
           } else {
@@ -159,12 +159,12 @@ export default {
           }
           return r;
         }, [])
-        .map(i => {
+        .map((i) => {
           i.count = i.children.length;
           return i;
         })
         .sort((a, b) => b.count - a.count);
-    }
+    },
   },
   watch: {
     currentYear() {
@@ -177,26 +177,28 @@ export default {
         const previousYear = this.currentYear - 1;
         const previousData = getWorldYearData(previousYear);
 
-        this.currentData.forEach(item => {
+        this.currentData.forEach((item) => {
           if (typeof item.compare_index === "undefined") {
-            const target = previousData.find(j => j.name === item.name);
+            const target = previousData.find((j) => j.name === item.name);
+            let text
             if (target) {
               const compareNumber = target.index - item.index;
-              item.compare_index =
+              text =
                 compareNumber === 0
-                  ? "- 0"
+                  ? "-0"
                   : compareNumber > 0
-                  ? `↑ ${compareNumber}`
-                  : `↓ ${Math.abs(compareNumber)}`;
+                  ? `↑${compareNumber}`
+                  : `↓${Math.abs(compareNumber)}`;
             } else {
-              item.compare_index = "新";
+              text = "新";
             }
+            item.compare_index = `${item.index} (${text})`;
           }
         });
         // console.log("this.currentData", this.currentData);
         for (let key in this.configs) {
-          compare_keys.forEach(compare_key => {
-            const target = this.configs[key].find(i => i.key === compare_key);
+          compare_keys.forEach((compare_key) => {
+            const target = this.configs[key].find((i) => i.key === compare_key);
             if (target) {
               target.key = "compare_" + compare_key;
             }
@@ -204,9 +206,9 @@ export default {
         }
       } else {
         for (let key in this.configs) {
-          compare_keys.forEach(compare_key => {
+          compare_keys.forEach((compare_key) => {
             const target = this.configs[key].find(
-              i => i.key === "compare_" + compare_key
+              (i) => i.key === "compare_" + compare_key
             );
             if (target) {
               target.key = compare_key;
@@ -214,12 +216,12 @@ export default {
           });
         }
       }
-    }
+    },
   },
   mounted() {
     // console.log("currentData", this.currentData);
   },
-  methods: {}
+  methods: {},
 };
 </script>
 
