@@ -6,7 +6,7 @@
       </td>
     </tr>
     <tr v-for="item in data" :key="'simple' + item.name">
-      <td v-for="j in showConfig" :key="j.key + item[j.key]">
+      <td v-for="j in showConfig" :key="j.key + item[j.key]" v-if="item[j.key]">
         <span
           v-if="j.key === 'compare_index'"
           :class="{

@@ -3,30 +3,46 @@
     <YearHeader v-model="currentYear" :yearList="supportList" />
 
     <div class="radios">
-      <RadioGroup v-model="form.type" direction="horizontal">
-        <Radio name="3">按排名</Radio>
-        <Radio name="1">按国家</Radio>
-        <Radio name="2">按行业</Radio>
-      </RadioGroup>
+      <van-radio-group v-model="form.type" direction="horizontal">
+        <van-radio :name="enumTypes.index">按排名</van-radio>
+        <van-radio :name="enumTypes.country">按国家</van-radio>
+        <van-radio :name="enumTypes.industry">按行业</van-radio>
+      </van-radio-group>
 
-      <RadioGroup
+      <van-radio-group
         v-if="supportList.includes(currentYear - 1)"
         v-model="form.compare"
         direction="horizontal"
         style="margin-top: 12px"
       >
-        <Radio name="0">正常</Radio>
-        <Radio name="1">与去年对比</Radio>
-      </RadioGroup>
+        <van-radio name="0">正常</van-radio>
+        <van-radio name="1">与去年对比</van-radio>
+      </van-radio-group>
 
-      <RadioGroup
+      <van-radio-group
         v-model="form.isAll"
         direction="horizontal"
         style="margin-top: 12px"
       >
-        <Radio name="2">精简版</Radio>
-        <Radio name="1">完整版</Radio>
-      </RadioGroup>
+        <van-radio name="0">精简版</van-radio>
+        <van-radio name="1">完整版</van-radio>
+      </van-radio-group>
+
+      <!-- 列表项 -->
+      <van-checkbox-group
+        v-model="form.layout"
+        direction="horizontal"
+        style="margin-top: 12px"
+      >
+        <van-checkbox
+          v-for="item in showConfig"
+          :key="item.key"
+          :name="item.key"
+          :disabled="form.layout.length === 1 && form.layout[0] === item.key"
+          >{{ item.title }}</van-checkbox
+        >
+      </van-checkbox-group>
+
       <p><i>单位: 百万美元</i></p>
     </div>
 
@@ -39,13 +55,7 @@
       </nav> -->
       <div v-for="item in countryData" :key="item.name">
         <h3>{{ `${item.name} (${item.count}个)` }}</h3>
-        <MyTable
-          class="simpleTable"
-          :config="
-            form.isAll === '1' ? configs.industry : configs.simple_industry
-          "
-          :data="item.children"
-        />
+        <MyTable class="simpleTable" :config="configs" :data="item.children" />
       </div>
     </template>
 
@@ -53,37 +63,34 @@
     <template v-else-if="form.type === '2'">
       <div v-for="item in industryData" :key="item.name">
         <h3>{{ `${item.name} (${item.count}个)` }}</h3>
-        <MyTable
-          class="simpleTable"
-          :config="
-            form.isAll === '1' ? configs.country : configs.simple_country
-          "
-          :data="item.children"
-        />
+        <MyTable class="simpleTable" :config="configs" :data="item.children" />
       </div>
     </template>
 
     <!-- 按排名 -->
-    <MyTable
-      v-else-if="form.type === '3'"
-      class="simpleTable"
-      :config="form.isAll === '1' ? configs.industry : configs.simple_country"
-      :data="currentData"
-    />
+    <template v-else-if="form.type === '3'">
+      <h3>{{ `${currentYear}年排名` }}</h3>
+      <MyTable class="simpleTable" :config="configs" :data="currentData" />
+    </template>
   </div>
 </template>
 
 <script>
-// import { VanRadioGroup, VanRadio } from "vant";
-import { RadioGroup, Radio, List as VanList } from "vant";
+import {
+  RadioGroup as VanRadioGroup,
+  Radio as VanRadio,
+  List as VanList,
+  Checkbox as VanCheckbox,
+  CheckboxGroup as VanCheckboxGroup
+} from "vant";
 import YearHeader from "@/components/YearHeader.vue";
 import MyTable from "@/components/MyTable.vue";
 import { getWorldYearData } from "../China/util";
 
 const layout = [
   { title: "排名", key: "index" },
-  { title: "排名", key: "compare_index" },
-  { title: "名称", key: "simpleName" }, // 简称
+  { title: "名次", key: "compare_index" },
+  { title: "简称", key: "simpleName" }, // 简称
   { title: "名称", key: "name" },
   { title: "行业", key: "industry" },
   { title: "国家", key: "country" },
@@ -96,41 +103,37 @@ function getLayout(targets = []) {
     return layout.find(i => i.key === key);
   });
 }
+const enumTypes = {
+  country: "1",
+  industry: "2",
+  index: "3"
+};
 
 export default {
   name: "WorldPage",
-  components: { YearHeader, RadioGroup, Radio, VanList, MyTable },
+  components: {
+    VanRadioGroup,
+    VanRadio,
+    VanList,
+    VanCheckbox,
+    VanCheckboxGroup,
+    YearHeader,
+    MyTable
+  },
   data() {
     // console.log("this.$route.query", this.$route.query);
-    const { type = "1", isAll = "2" } = this.$route.query;
+    const { type = enumTypes.country, isAll = "0" } = this.$route.query;
     return {
+      enumTypes,
       currentYear: new Date().getFullYear(),
       supportList: [2021, 2022, 2023],
       form: {
-        type,
-        isAll,
-        compare: "0"
+        layout: ["index", "simpleName", "industry"],
+        type, // 1 国家 2 行业 3 排名
+        isAll, //  0 精简 1 完整
+        compare: "0" // 0 正常 1 和去年对比
       },
-      configs: {
-        simple_industry: getLayout(["index", "simpleName", "industry"]),
-        simple_country: getLayout(["index", "country", "simpleName"]),
-        industry: getLayout([
-          "index",
-          "simpleName",
-          "industry",
-          "revenue",
-          "profit",
-          "profitMargin"
-        ]),
-        country: getLayout([
-          "index",
-          "simpleName",
-          "country",
-          "revenue",
-          "profit",
-          "profitMargin"
-        ])
-      }
+      showConfig: [...layout]
     };
   },
   computed: {
@@ -191,23 +194,71 @@ export default {
           return i;
         })
         .sort((a, b) => b.count - a.count);
+    },
+    genConfig() {
+      let res = [];
+      const { type, compare } = this.form;
+
+      const indexKey = compare === "0" ? "index" : "compare_index";
+      const isAll = this.form.isAll === "0";
+
+      switch (type) {
+        case enumTypes.country: {
+          res = isAll
+            ? [indexKey, "simpleName", "industry"]
+            : [
+                indexKey,
+                "simpleName",
+                "industry",
+                "revenue",
+                "profit",
+                "profitMargin"
+              ];
+          break;
+        }
+        case enumTypes.industry: {
+          res = isAll
+            ? [indexKey, "country", "simpleName"]
+            : [
+                indexKey,
+                "simpleName",
+                "country",
+                "revenue",
+                "profit",
+                "profitMargin"
+              ];
+          break;
+        }
+        case enumTypes.index: {
+          res = [indexKey, "country", "simpleName"];
+          break;
+        }
+      }
+
+      if (this.currentYear === 2023) {
+        // 2023 暂时没有利润 利润率
+        res = res.filter(i => !["profit", "profitMargin"].includes(i));
+      }
+
+      return res;
+    },
+    configs() {
+      return getLayout(this.form.layout);
     }
   },
   watch: {
+    genConfig(val) {
+      this.form.layout = val;
+    },
     currentYear: {
       immediate: true,
-      handler(val) {
+      handler() {
         this.form.compare = "0";
-        this.configs.industry.forEach(i => {
-          if (["profit", "profitMargin"].includes(i.key)) {
-            i.hidden = val === 2023; // 2023 没有利润 利润率 隐藏
-          }
-        });
       }
     },
     // 对比功能
     "form.compare"(val) {
-      const compare_keys = ["index"];
+      // const compare_keys = ["index"];
       if (val === "1") {
         const previousYear = this.currentYear - 1;
         const previousData = getWorldYearData(previousYear);
@@ -231,30 +282,8 @@ export default {
           }
         });
         // console.log("this.currentData", this.currentData);
-        for (let key in this.configs) {
-          compare_keys.forEach(compare_key => {
-            const target = this.configs[key].find(i => i.key === compare_key);
-            if (target) {
-              target.key = "compare_" + compare_key;
-            }
-          });
-        }
-      } else {
-        for (let key in this.configs) {
-          compare_keys.forEach(compare_key => {
-            const target = this.configs[key].find(
-              i => i.key === "compare_" + compare_key
-            );
-            if (target) {
-              target.key = compare_key;
-            }
-          });
-        }
       }
     }
-  },
-  mounted() {
-    // console.log("currentData", this.currentData);
   },
   methods: {}
 };
