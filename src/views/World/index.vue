@@ -32,7 +32,7 @@
       <van-checkbox-group
         v-model="form.layout"
         direction="horizontal"
-        style="margin-top: 12px"
+        style="margin-top: 12px; justify-content: center;"
       >
         <van-checkbox
           v-for="item in showConfig"
@@ -216,7 +216,8 @@ export default {
               ];
           break;
         }
-        case enumTypes.industry: {
+        case enumTypes.industry:
+        case enumTypes.index: {
           res = isAll
             ? [indexKey, "country", "simpleName"]
             : [
@@ -227,10 +228,6 @@ export default {
                 "profit",
                 "profitMargin"
               ];
-          break;
-        }
-        case enumTypes.index: {
-          res = [indexKey, "country", "simpleName"];
           break;
         }
       }
