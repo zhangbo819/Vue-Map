@@ -126,7 +126,7 @@ export default {
     return {
       enumTypes,
       currentYear: new Date().getFullYear(),
-      supportList: [2021, 2022, 2023],
+      supportList: [2020, 2021, 2022, 2023],
       form: {
         layout: ["index", "simpleName", "industry"],
         type, // 1 国家 2 行业 3 排名
@@ -141,7 +141,7 @@ export default {
       const data = getWorldYearData(this.currentYear) || [];
       data.forEach(i => {
         i.simpleName = i.name.replace(
-          /有限公司|股份有限公司|有限责任公司|公司$/,
+          /(集团)?(有限公司|股份有限公司|控股有限公司|有限责任公司|总公司|公司|集团)$/,
           ""
         );
         let { revenue = 0, profit = 0 } = i;
