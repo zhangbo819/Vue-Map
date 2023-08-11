@@ -232,10 +232,10 @@ export default {
         }
       }
 
-      if (this.currentYear === 2023) {
-        // 2023 暂时没有利润 利润率
-        res = res.filter(i => !["profit", "profitMargin"].includes(i));
-      }
+      // if (this.currentYear === 2023) {
+      //   // 2023 暂时没有利润 利润率
+      //   res = res.filter(i => !["profit", "profitMargin"].includes(i));
+      // }
 
       return res;
     },
