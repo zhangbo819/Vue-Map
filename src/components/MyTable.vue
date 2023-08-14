@@ -69,10 +69,8 @@ export default {
       
       const targetConfigItem = this.config.find(i => i.key === this.activeKey);
       if (!targetConfigItem) return this.data
-      
-      const { sortFn = null, sortFormatter = v => v } = targetConfigItem;
 
-      console.log("sortFormatter", sortFormatter);
+      const { sortFn = null, sortFormatter = v => v } = targetConfigItem;
 
       const newData = this.data.map(i => i);
 
@@ -84,7 +82,7 @@ export default {
           : sortFormatter(b[this.activeKey]) - sortFormatter(a[this.activeKey])
       );
 
-      console.log("newData", newData);
+      // console.log("newData", newData);
 
       return newData;
     }
