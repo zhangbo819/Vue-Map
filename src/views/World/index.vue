@@ -47,7 +47,7 @@
     </div>
 
     <!-- 按国家 -->
-    <template v-if="form.type === '1'">
+    <template v-if="form.type === enumTypes.country">
       <!-- <nav class="navList">
         <span v-for="item in countryData" :key="'nav'+ item.name">
           {{ `${item.name}` }}
@@ -60,7 +60,7 @@
     </template>
 
     <!-- 按行业 -->
-    <template v-else-if="form.type === '2'">
+    <template v-else-if="form.type === enumTypes.industry">
       <div v-for="item in industryData" :key="item.name">
         <h3>{{ `${item.name} (${item.count}个)` }}</h3>
         <MyTable class="simpleTable" :config="configs" :data="item.children" />
@@ -68,7 +68,7 @@
     </template>
 
     <!-- 按排名 -->
-    <template v-else-if="form.type === '3'">
+    <template v-else-if="form.type === enumTypes.index">
       <h3>{{ `${currentYear}年排名` }}</h3>
       <MyTable class="simpleTable" :config="configs" :data="currentData" />
     </template>
@@ -86,17 +86,48 @@ import {
 import YearHeader from "@/components/YearHeader.vue";
 import MyTable from "@/components/MyTable.vue";
 import { getWorldYearData } from "../China/util";
+import { sortByZhKey } from "../../utils/util";
 
 const layout = [
-  { title: "排名", key: "index" },
-  { title: "名次", key: "compare_index" },
+  { title: "排名", key: "index", sort: true },
+  {
+    title: "名次",
+    key: "compare_index",
+    sort: true,
+    sortFormatter: v => v.replace(/ \((.+?)\)/, "")
+  },
   { title: "简称", key: "simpleName" }, // 简称
   { title: "名称", key: "name" },
-  { title: "行业", key: "industry" },
-  { title: "国家", key: "country" },
-  { title: "营收", key: "revenue" },
-  { title: "净利润", key: "profit", hidden: false },
-  { title: "利润率", key: "profitMargin", hidden: false }
+  {
+    title: "行业",
+    key: "industry",
+    sort: true,
+    sortFn: sortByZhKey("industry")
+  },
+  {
+    title: "国家",
+    key: "country",
+    sort: true,
+    sortFn: sortByZhKey("country")
+  },
+  {
+    title: "营收",
+    key: "revenue",
+    sort: true,
+    sortFormatter: v => v.replace(",", "")
+  },
+  {
+    title: "净利润",
+    key: "profit",
+    sort: true,
+    sortFormatter: v => v.replace(",", "")
+  },
+  {
+    title: "利润率",
+    key: "profitMargin",
+    sort: true,
+    sortFormatter: v => v.replace("%", "")
+  }
 ];
 function getLayout(targets = []) {
   return targets.map(key => {
@@ -129,7 +160,7 @@ export default {
       supportList: [2020, 2021, 2022, 2023],
       form: {
         layout: ["index", "simpleName", "industry"],
-        type, // 1 国家 2 行业 3 排名
+        type, // enumTypes
         isAll, //  0 精简 1 完整
         compare: "0" // 0 正常 1 和去年对比
       },
@@ -303,8 +334,5 @@ export default {
     display: inline-block;
     margin: 0 8px;
   }
-}
-.simpleTable {
-  margin: 0 auto;
 }
 </style>

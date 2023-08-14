@@ -28,35 +28,35 @@ export default {
       default: () => ({
         name: "",
         count: 0,
-        children: [],
-      }),
+        children: []
+      })
     },
     isDetails: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   data() {
     return {
       config: [
-        { title: "排名", key: "index" },
+        { title: "排名", key: "index", sort: true },
         { title: "名称", key: "name" },
         this.isDetails && { title: "地址", key: "address" },
-        { title: "营收", key: "revenue" },
-      ].filter((i) => i),
+        { title: "营收", key: "revenue", sort: true }
+      ].filter(i => i)
     };
   },
 
   watch: {
     provinceData(val) {
       console.log("val", val);
-    },
+    }
   },
 
   mounted() {},
 
-  methods: {},
+  methods: {}
 };
 </script>
 
