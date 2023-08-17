@@ -79,7 +79,7 @@
 import { computed, ref, watch } from "vue";
 import YearHeader from "@/components/YearHeader.vue";
 import MyTable from "@/components/MyTable.vue";
-import { getWorldYearData } from "@/utils/world";
+import { getWorldYearData } from "@/utils/World";
 import { sortByZhKey } from "../../utils/util";
 
 const layout = [
