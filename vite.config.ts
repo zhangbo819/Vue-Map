@@ -42,7 +42,7 @@ export default defineConfig({
     // },
   },
   build: {
-    outDir: "dist", // 输出目录名
+    outDir: "docs", // 输出目录名
     // minify: "terser", // 压缩方式
     terserOptions: {
       compress: {
