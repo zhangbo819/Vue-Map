@@ -1,7 +1,7 @@
 const map: Record<string, ChinaData[]> = {};
 export async function getYearData(year: string | number) {
   if (!map[year]) {
-    map[year] = await fetchJSON(`../../utils/500/new${year}Data.json`);
+    map[year] = await fetchJSON(`../../utils/China/new${year}Data.json`);
   }
   return map[year];
 }
