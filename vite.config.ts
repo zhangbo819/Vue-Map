@@ -7,6 +7,7 @@ import * as path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "./", // 相对路径解决打包找不到资源的情况
   resolve: {
     // 设置别名
     alias: {
@@ -18,13 +19,13 @@ export default defineConfig({
     Components({
       resolvers: [VantResolver()], // 按需加载
     }),
-    // viteCompression({
-    //   verbose: true, // 是否在控制台输出压缩结果
-    //   disable: false, // 是否禁用,相当于开关在这里
-    //   threshold: 10240, // 体积大于 threshold 才会被压缩,单位 b，1b=8B, 1B=1024KB  那我们这里相当于 9kb多吧，就会压缩
-    //   algorithm: "gzip", // 压缩算法,可选 [ 'gzip' , 'brotliCompress' ,'deflate' , 'deflateRaw']
-    //   ext: ".gz", // 文件后缀
-    // }),
+    viteCompression({
+      verbose: true, // 是否在控制台输出压缩结果
+      disable: false, // 是否禁用,相当于开关在这里
+      threshold: 10240, // 体积大于 threshold 才会被压缩,单位 b，1b=8B, 1B=1024KB  那我们这里相当于 9kb多吧，就会压缩
+      algorithm: "gzip", // 压缩算法,可选 [ 'gzip' , 'brotliCompress' ,'deflate' , 'deflateRaw']
+      ext: ".gz", // 文件后缀
+    }),
   ],
   server: {
     port: 8088, //启动端口
