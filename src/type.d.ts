@@ -23,14 +23,14 @@ interface WorldClass {
 interface ChinaDataItem {
   index: string;
   name: string;
-  revenue: number;
+  revenue: number | string;
   address: string;
 }
 interface ChinaData {
   name: string;
   count: number;
   children: {
-    name: name;
+    name?: name;
     count: number;
     children: ChinaDataItem[];
   }[];

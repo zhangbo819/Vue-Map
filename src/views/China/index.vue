@@ -22,7 +22,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import CityList from "@/components/CityList.vue";
 import YearHeader from "@/components/YearHeader.vue";
 import CompanyChart from "./CompanyChart.vue";
-import { getYearData } from "./util";
+import { getYearData } from "@/utils/China";
 import router from "@/router";
 // import new2022Data from "../../utils/500/new2022Data.json";
 // console.log('china')

@@ -21,9 +21,10 @@
 <script setup lang="ts">
 import { ref, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
-import CityList from "@/components/CityList.vue";
-import { getYearData, fetchJSON } from "./util";
 import router from "@/router";
+import CityList from "@/components/CityList.vue";
+import { getYearData } from "@/utils/China";
+import { getProvinceData } from "@/utils/省份数据/json(省份)";
 
 const route = useRoute();
 
@@ -158,9 +159,8 @@ const renderMap = async () => {
   const provinceName = route.query.provinceName;
   const province = route.query.province;
   // this.provinceName = provinceName;
-  const provinceJSON = await fetchJSON(
-    "../../utils/省份数据/json(省份)/" + provinceName
-  );
+  const provinceJSON = getProvinceData(provinceName as string);
+
   option.value.geo.map = province as string;
   option.value.series[0].data = currentData.value
     .find((item) => item.name.includes(route.query.province))
