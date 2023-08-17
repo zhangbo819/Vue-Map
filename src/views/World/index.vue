@@ -1,6 +1,6 @@
 <template>
   <div>
-    <YearHeader v-model="currentYear" :yearList="supportList" />
+    <YearHeader v-model="currentYear" :year-list="supportList" />
 
     <div class="radios">
       <van-radio-group v-model="form.type" direction="horizontal">
@@ -32,7 +32,7 @@
       <van-checkbox-group
         v-model="form.layout"
         direction="horizontal"
-        style="margin-top: 12px; justify-content: center;"
+        style="margin-top: 12px; justify-content: center"
       >
         <van-checkbox
           v-for="item in showConfig"
@@ -75,14 +75,8 @@
   </div>
 </template>
 
-<script>
-import {
-  RadioGroup as VanRadioGroup,
-  Radio as VanRadio,
-  List as VanList,
-  Checkbox as VanCheckbox,
-  CheckboxGroup as VanCheckboxGroup
-} from "vant";
+<script setup lang="ts">
+import { computed, ref, watch } from "vue";
 import YearHeader from "@/components/YearHeader.vue";
 import MyTable from "@/components/MyTable.vue";
 import { getWorldYearData } from "../China/util";
@@ -94,7 +88,7 @@ const layout = [
     title: "名次",
     key: "compare_index",
     sort: true,
-    sortFormatter: v => v.replace(/ \((.+?)\)/, "")
+    sortFormatter: (v: string) => v.replace(/ \((.+?)\)/, ""),
   },
   { title: "简称", key: "simpleName" }, // 简称
   { title: "名称", key: "name" },
@@ -102,219 +96,218 @@ const layout = [
     title: "行业",
     key: "industry",
     sort: true,
-    sortFn: sortByZhKey("industry")
+    sortFn: sortByZhKey("industry"),
   },
   {
     title: "国家",
     key: "country",
     sort: true,
-    sortFn: sortByZhKey("country")
+    sortFn: sortByZhKey("country"),
   },
   {
     title: "营收",
     key: "revenue",
     sort: true,
-    sortFormatter: v => v.replace(",", "")
+    sortFormatter: (v: string) => v.replace(",", ""),
   },
   {
     title: "净利润",
     key: "profit",
     sort: true,
-    sortFormatter: v => v.replace(",", "")
+    sortFormatter: (v: string) => v.replace(",", ""),
   },
   {
     title: "利润率",
     key: "profitMargin",
     sort: true,
-    sortFormatter: v => v.replace("%", "")
-  }
+    sortFormatter: (v: string) => v.replace("%", ""),
+  },
 ];
-function getLayout(targets = []) {
-  return targets.map(key => {
-    return layout.find(i => i.key === key);
+function getLayout(targets: string[]) {
+  return targets.map((key) => {
+    return layout.find((i) => i.key === key);
   });
 }
 const enumTypes = {
   country: "1",
   industry: "2",
-  index: "3"
+  index: "3",
 };
 
-export default {
-  name: "WorldPage",
-  components: {
-    VanRadioGroup,
-    VanRadio,
-    VanList,
-    VanCheckbox,
-    VanCheckboxGroup,
-    YearHeader,
-    MyTable
+const currentYear = ref(new Date().getFullYear());
+const supportList = ref([2020, 2021, 2022, 2023]);
+const form = ref({
+  layout: ["index", "simpleName", "industry"],
+  type: enumTypes.country, // enumTypes
+  isAll: "0", //  0 精简 1 完整
+  compare: "0", // 0 正常 1 和去年对比
+});
+const showConfig = ref([...layout]);
+
+const currentData = ref<WorldItem[]>([]);
+watch(
+  () => currentYear.value,
+  async () => {
+    const data = (await getWorldYearData(currentYear.value)) || [];
+    data.forEach((i) => {
+      i.simpleName = i.name.replace(
+        /(集团)?(有限公司|股份有限公司|控股有限公司|有限责任公司|总公司|公司|集团)$/,
+        ""
+      );
+      let { revenue = "0", profit = "0" } = i;
+      if (revenue && profit) {
+        revenue = revenue.replace(/,/g, "");
+        profit = profit.replace(/,/g, "");
+        i.profitMargin =
+          ((Number(profit) / Number(revenue)) * 100).toFixed(2) + "%";
+      }
+      return i;
+    });
+    currentData.value = data;
   },
-  data() {
-    // console.log("this.$route.query", this.$route.query);
-    const { type = enumTypes.country, isAll = "0" } = this.$route.query;
-    return {
-      enumTypes,
-      currentYear: new Date().getFullYear(),
-      supportList: [2020, 2021, 2022, 2023],
-      form: {
-        layout: ["index", "simpleName", "industry"],
-        type, // enumTypes
-        isAll, //  0 精简 1 完整
-        compare: "0" // 0 正常 1 和去年对比
-      },
-      showConfig: [...layout]
-    };
-  },
-  computed: {
-    currentData() {
-      const data = getWorldYearData(this.currentYear) || [];
-      data.forEach(i => {
-        i.simpleName = i.name.replace(
-          /(集团)?(有限公司|股份有限公司|控股有限公司|有限责任公司|总公司|公司|集团)$/,
-          ""
-        );
-        let { revenue = 0, profit = 0 } = i;
-        if (revenue && profit) {
-          revenue = revenue.replace(/,/g, "");
-          profit = profit.replace(/,/g, "");
-          i.profitMargin = ((profit / revenue) * 100).toFixed(2) + "%";
+  { immediate: true }
+);
+
+// 按国家分类
+const countryData = ref<WorldClass[]>([]);
+watch([() => currentYear.value, () => currentData.value], async () => {
+  const data = currentData.value
+    .reduce((r, i) => {
+      const target = r.find((j) => j.name === i.country);
+      if (!target) {
+        r.push({ name: i.country, count: 0, children: [i] });
+      } else {
+        target.children.push(i);
+      }
+
+      return r;
+    }, [] as WorldClass[])
+    .map((i) => {
+      i.count = i.children.length;
+      return i;
+    })
+    .sort((a, b) => b.count - a.count);
+
+  //   console.log("countryData", data);
+
+  countryData.value = data;
+});
+// 按行业分类
+const industryData = ref<WorldClass[]>([]);
+watch(
+  () => currentYear.value,
+  async () => {
+    industryData.value = currentData.value
+      .reduce((r, i) => {
+        const target = r.find((j) => j.name === i.industry);
+        if (target) {
+          target.children.push(i);
+        } else {
+          r.push({ name: i.industry, count: 1, children: [i] });
         }
+        return r;
+      }, [] as { name: string; count: number; children: WorldItem[] }[])
+      .map((i) => {
+        i.count = i.children.length;
         return i;
-      });
-      return data;
-    },
-    // 按国家分类
-    countryData() {
-      const data = this.currentData
-        .reduce((r, i) => {
-          const target = r.find(j => j.name === i.country);
-          if (!target) {
-            r.push({ name: i.country, count: 0, children: [i] });
-          } else {
-            target.children.push(i);
-          }
+      })
+      .sort((a, b) => b.count - a.count);
+  }
+);
 
-          return r;
-        }, [])
-        .map(i => {
-          i.count = i.children.length;
-          return i;
-        })
-        .sort((a, b) => b.count - a.count);
+const genConfig = computed(() => {
+  let res: string[] = [];
+  const { type, compare } = form.value;
 
-      //   console.log("countryData", data);
+  const indexKey = compare === "0" ? "index" : "compare_index";
+  const isAll = form.value.isAll === "0";
 
-      return data;
-    },
-    // 按行业分类
-    industryData() {
-      return this.currentData
-        .reduce((r, i) => {
-          const target = r.find(j => j.name === i.industry);
+  switch (type) {
+    case enumTypes.country: {
+      res = isAll
+        ? [indexKey, "simpleName", "industry"]
+        : [
+            indexKey,
+            "simpleName",
+            "industry",
+            "revenue",
+            "profit",
+            "profitMargin",
+          ];
+      break;
+    }
+    case enumTypes.industry:
+    case enumTypes.index: {
+      res = isAll
+        ? [indexKey, "country", "simpleName"]
+        : [
+            indexKey,
+            "simpleName",
+            "country",
+            "revenue",
+            "profit",
+            "profitMargin",
+          ];
+      break;
+    }
+  }
+
+  // if (this.currentYear === 2023) {
+  //   // 2023 暂时没有利润 利润率
+  //   res = res.filter(i => !["profit", "profitMargin"].includes(i));
+  // }
+
+  return res;
+});
+
+const configs = computed(() => getLayout(form.value.layout));
+
+watch(
+  () => genConfig.value,
+  (val) => {
+    form.value.layout = val;
+  }
+);
+
+watch(
+  () => currentYear.value,
+  () => {
+    form.value.compare = "0";
+  },
+  { immediate: true }
+);
+
+// 对比功能
+watch(
+  () => form.value.compare,
+  async (val) => {
+    // const compare_keys = ["index"];
+    if (val === "1") {
+      const previousYear = currentYear.value - 1;
+      const previousData = await getWorldYearData(previousYear);
+
+      currentData.value.forEach((item) => {
+        if (typeof item.compare_index === "undefined") {
+          const target = previousData.find((j) => j.name === item.name);
+          let text;
           if (target) {
-            target.children.push(i);
+            const compareNumber = Number(target.index) - Number(item.index);
+            text =
+              compareNumber === 0
+                ? "-0"
+                : compareNumber > 0
+                ? `↑${compareNumber}`
+                : `↓${Math.abs(compareNumber)}`;
           } else {
-            r.push({ name: i.industry, count: 1, children: [i] });
+            text = "新";
           }
-          return r;
-        }, [])
-        .map(i => {
-          i.count = i.children.length;
-          return i;
-        })
-        .sort((a, b) => b.count - a.count);
-    },
-    genConfig() {
-      let res = [];
-      const { type, compare } = this.form;
-
-      const indexKey = compare === "0" ? "index" : "compare_index";
-      const isAll = this.form.isAll === "0";
-
-      switch (type) {
-        case enumTypes.country: {
-          res = isAll
-            ? [indexKey, "simpleName", "industry"]
-            : [
-                indexKey,
-                "simpleName",
-                "industry",
-                "revenue",
-                "profit",
-                "profitMargin"
-              ];
-          break;
+          item.compare_index = `${item.index} (${text})`;
         }
-        case enumTypes.industry:
-        case enumTypes.index: {
-          res = isAll
-            ? [indexKey, "country", "simpleName"]
-            : [
-                indexKey,
-                "simpleName",
-                "country",
-                "revenue",
-                "profit",
-                "profitMargin"
-              ];
-          break;
-        }
-      }
-
-      // if (this.currentYear === 2023) {
-      //   // 2023 暂时没有利润 利润率
-      //   res = res.filter(i => !["profit", "profitMargin"].includes(i));
-      // }
-
-      return res;
-    },
-    configs() {
-      return getLayout(this.form.layout);
+      });
+      // console.log("this.currentData", this.currentData);
     }
-  },
-  watch: {
-    genConfig(val) {
-      this.form.layout = val;
-    },
-    currentYear: {
-      immediate: true,
-      handler() {
-        this.form.compare = "0";
-      }
-    },
-    // 对比功能
-    "form.compare"(val) {
-      // const compare_keys = ["index"];
-      if (val === "1") {
-        const previousYear = this.currentYear - 1;
-        const previousData = getWorldYearData(previousYear);
-
-        this.currentData.forEach(item => {
-          if (typeof item.compare_index === "undefined") {
-            const target = previousData.find(j => j.name === item.name);
-            let text;
-            if (target) {
-              const compareNumber = target.index - item.index;
-              text =
-                compareNumber === 0
-                  ? "-0"
-                  : compareNumber > 0
-                  ? `↑${compareNumber}`
-                  : `↓${Math.abs(compareNumber)}`;
-            } else {
-              text = "新";
-            }
-            item.compare_index = `${item.index} (${text})`;
-          }
-        });
-        // console.log("this.currentData", this.currentData);
-      }
-    }
-  },
-  methods: {}
-};
+  }
+);
 </script>
 
 <style lang="scss" scoped>

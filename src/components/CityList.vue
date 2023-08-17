@@ -14,50 +14,24 @@
   <div v-else>暂无数据</div>
 </template>
 
-<script>
+<script setup lang="ts">
 import MyTable from "@/components/MyTable.vue";
+import { ref } from "vue";
 
-export default {
-  name: "CityList",
+const props = defineProps<{
+  provinceData?: ChinaData;
+  isDetails: boolean;
+}>();
+// const emit = defineEmits();
 
-  components: { MyTable },
-
-  props: {
-    provinceData: {
-      type: Object,
-      default: () => ({
-        name: "",
-        count: 0,
-        children: []
-      })
-    },
-    isDetails: {
-      type: Boolean,
-      default: false
-    }
-  },
-
-  data() {
-    return {
-      config: [
-        { title: "排名", key: "index", sort: true },
-        { title: "名称", key: "name" },
-        this.isDetails && { title: "地址", key: "address" },
-        { title: "营收", key: "revenue", sort: true }
-      ].filter(i => i)
-    };
-  },
-
-  watch: {
-    provinceData(val) {
-      console.log("val", val);
-    }
-  },
-
-  mounted() {},
-
-  methods: {}
-};
+const config = ref(
+  [
+    { title: "排名", key: "index", sort: true },
+    { title: "名称", key: "name" },
+    props.isDetails && { title: "地址", key: "address" },
+    { title: "营收", key: "revenue", sort: true },
+  ].filter((i) => i)
+);
 </script>
 
 <style lang="scss" scoped></style>

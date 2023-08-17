@@ -5,8 +5,8 @@
         <th
           v-for="i in showConfig"
           :key="i.title"
-          @click="handleTitle(i, i.key)"
           :class="{ sortTh: i.sort }"
+          @click="handleTitle(i, i.key)"
         >
           {{ i.title }}
           <template v-if="i.sort">
@@ -21,16 +21,13 @@
     </thead>
     <tbody class="tbody">
       <tr v-for="item in sortData" :key="'simple' + item.name">
-        <td
-          v-for="j in showConfig"
-          :key="j.key + item[j.key]"
-          v-if="item[j.key]"
-        >
+        <!-- v-if="item[j.key]" -->
+        <td v-for="j in showConfig" :key="j.key + item[j.key]">
           <span
-            v-if="j.key === 'compare_index'"
+            v-if="j.key === 'compare_index' && item[j.key]"
             :class="{
               up: item[j.key].includes('↑') || item[j.key].endsWith('(新)'),
-              down: item[j.key].includes('↓')
+              down: item[j.key].includes('↓'),
             }"
           >
             {{ item[j.key] }}
@@ -44,72 +41,59 @@
   </table>
 </template>
 
-<script>
-import { Icon as VanIcon } from "vant";
+<script setup lang="ts">
+import { computed, ref } from "vue";
 
-export default {
-  name: "MyTable",
-  components: { VanIcon },
-  props: {
-    config: {
-      type: Array,
-      default: () => []
-    },
-    data: {
-      type: Array,
-      default: () => []
-    }
-  },
-  computed: {
-    showConfig() {
-      return this.config.filter(i => !i.hidden);
-    },
-    sortData() {
-      if (this.activeKey === null) return this.data;
-      
-      const targetConfigItem = this.config.find(i => i.key === this.activeKey);
-      if (!targetConfigItem) return this.data
+// import { Icon as VanIcon } from "vant";
 
-      const { sortFn = null, sortFormatter = v => v } = targetConfigItem;
+const props = defineProps<{ config: any[]; data: any[] }>();
+// const emit = defineEmits();
 
-      const newData = this.data.map(i => i);
+const activeKey = ref<string | null>(null);
+const isSortUp = ref(true);
 
-      newData.sort((a, b) =>
-        sortFn
-          ? sortFn(a, b, this.isSortUp)
-          : this.isSortUp
-          ? sortFormatter(a[this.activeKey]) - sortFormatter(b[this.activeKey])
-          : sortFormatter(b[this.activeKey]) - sortFormatter(a[this.activeKey])
-      );
+const showConfig = computed(() => {
+  return props.config.filter((i) => !i.hidden);
+});
+const sortData = computed(() => {
+  if (activeKey.value === null) return props.data;
 
-      // console.log("newData", newData);
+  const targetConfigItem = props.config.find((i) => i.key === activeKey.value);
+  if (!targetConfigItem) return props.data;
 
-      return newData;
-    }
-  },
-  data() {
-    return {
-      activeKey: null,
-      isSortUp: true
-    };
-  },
-  methods: {
-    handleTitle(i, key) {
-      if (!i.sort) return
-      // console.log("key", key);
-      if (this.activeKey !== key) {
-        this.activeKey = key;
-        this.isSortUp = true;
-      } else if (this.isSortUp) {
-        this.isSortUp = !this.isSortUp;
-      } else {
-        this.activeKey = null;
-      }
+  const { sortFn = null, sortFormatter = (v: string) => v } = targetConfigItem;
 
-      console.log("activeKey", this.activeKey);
-      console.log("isSortUp", this.isSortUp);
-    }
+  const newData = props.data.map((i) => i);
+
+  const activeKeyValue = activeKey.value;
+
+  newData.sort((a, b) =>
+    sortFn
+      ? sortFn(a, b, isSortUp.value)
+      : isSortUp.value
+      ? sortFormatter(a[activeKeyValue]) - sortFormatter(b[activeKeyValue])
+      : sortFormatter(b[activeKeyValue]) - sortFormatter(a[activeKeyValue])
+  );
+
+  // console.log("newData", newData);
+
+  return newData;
+});
+
+const handleTitle = (i: any, key: string) => {
+  if (!i.sort) return;
+  // console.log("key", key);
+  if (activeKey.value !== key) {
+    activeKey.value = key;
+    isSortUp.value = true;
+  } else if (isSortUp.value) {
+    isSortUp.value = !isSortUp.value;
+  } else {
+    activeKey.value = null;
   }
+
+  // console.log("activeKey", activeKey.value);
+  // console.log("isSortUp", isSortUp.value);
 };
 </script>
 

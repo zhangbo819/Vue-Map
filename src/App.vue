@@ -9,13 +9,8 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 console.log("app in");
-export default {
-  mounted() {
-    console.log('app mounted', this.$route)
-  }
-}
 </script>
 
 <style lang="scss">

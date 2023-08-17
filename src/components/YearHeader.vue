@@ -12,34 +12,17 @@
   </header>
 </template>
 
-<script>
-export default {
-  name: "YearHeader",
+<script setup lang="ts">
+import { ref } from "vue";
 
-  props: {
-    value: {
-      type: Number,
-      default: new Date().getFullYear()
-    },
-    yearList: {
-      type: Array,
-      default: () => []
-    }
-  },
+const props = defineProps<{ modelValue: number; yearList: number[] }>();
+const emit = defineEmits(["update:modelValue"]);
 
-  data() {
-    return {
-      //   yearList: [2021, 2022, 2023],
-      currentYear: this.value
-    };
-  },
+const currentYear = ref(props.modelValue);
 
-  methods: {
-    handerYear(year) {
-      this.currentYear = year;
-      this.$emit("input", year);
-    }
-  }
+const handerYear = (year: number) => {
+  currentYear.value = year;
+  emit("update:modelValue", year);
 };
 </script>
 
