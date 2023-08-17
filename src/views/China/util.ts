@@ -9,7 +9,7 @@ export async function getYearData(year: string | number) {
 const worldMap: Record<string | number, WorldItem[]> = {};
 export async function getWorldYearData(year: string | number) {
   if (!worldMap[year]) {
-    worldMap[year] = await fetchJSON(`../../utils/world/${year}Data.json`);
+    worldMap[year] = await fetchJSON(`../../utils/World/${year}Data.json`);
   }
   return worldMap[year];
 }
