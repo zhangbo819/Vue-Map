@@ -194,26 +194,23 @@ watch([() => currentYear.value, () => currentData.value], async () => {
 });
 // 按行业分类
 const industryData = ref<WorldClass[]>([]);
-watch(
-  () => currentYear.value,
-  async () => {
-    industryData.value = currentData.value
-      .reduce((r, i) => {
-        const target = r.find((j) => j.name === i.industry);
-        if (target) {
-          target.children.push(i);
-        } else {
-          r.push({ name: i.industry, count: 1, children: [i] });
-        }
-        return r;
-      }, [] as { name: string; count: number; children: WorldItem[] }[])
-      .map((i) => {
-        i.count = i.children.length;
-        return i;
-      })
-      .sort((a, b) => b.count - a.count);
-  }
-);
+watch([() => currentYear.value, () => currentData.value], async () => {
+  industryData.value = currentData.value
+    .reduce((r, i) => {
+      const target = r.find((j) => j.name === i.industry);
+      if (target) {
+        target.children.push(i);
+      } else {
+        r.push({ name: i.industry, count: 1, children: [i] });
+      }
+      return r;
+    }, [] as { name: string; count: number; children: WorldItem[] }[])
+    .map((i) => {
+      i.count = i.children.length;
+      return i;
+    })
+    .sort((a, b) => b.count - a.count);
+});
 
 const genConfig = computed(() => {
   let res: string[] = [];
