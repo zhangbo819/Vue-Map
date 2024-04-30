@@ -1,6 +1,6 @@
 <template>
   <div>
-    <YearHeader v-model="currentYear" :year-list="[2021, 2022, 2023]" />
+    <YearHeader v-model="currentYear" :year-list="[2021, 2022, 2023, 2024]" />
 
     <!-- 公司柱状图 -->
     <CompanyChart :data="currentData" />

@@ -10,5 +10,5 @@ const map: Record<string | number, WorldItem[]> = {
   new2023Data,
 };
 export async function getWorldYearData(year: string | number) {
-  return map[`new${year}Data`];
+  return map[`new${year}Data`] || [];
 }
