@@ -1,9 +1,14 @@
 <template>
-  <div>astrology</div>
+  <div>
+    <p>astrology</p>
+    <p>{{ data }}</p>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { ref } from "vue";
+
+const data = ref([]);
 </script>
 
 <style lang="scss" scoped></style>
