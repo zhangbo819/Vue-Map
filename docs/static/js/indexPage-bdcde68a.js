@@ -1,0 +1,1 @@
+import{e as t,r as a,s as e,x as r}from"./@vue_runtime-core@3.2.47-3f4c49b0.js";import{r as s}from"./@vue_reactivity@3.2.47-9d7d88d9.js";import{I as n}from"./@vue_shared@3.2.47-19384108.js";const l=e("p",null,"astrology",-1),d=t({__name:"indexPage",setup(p){const o=s([]);return(c,i)=>(r(),a("div",null,[l,e("p",null,n(o.value),1)]))}});export{d as default};
