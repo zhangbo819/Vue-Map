@@ -11,17 +11,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/world",
     name: "world",
-    component: () => import("@/views/World/index.vue"),
+    component: () => import("@/views/World/indexPage.vue"),
   },
   {
     path: "/china",
     name: "China",
-    component: () => import("@/views/China/index.vue"),
+    component: () => import("@/views/China/indexPage.vue"),
   },
   {
     path: "/province",
     name: "province",
-    component: () => import("@/views/China/province.vue"),
+    component: () => import("@/views/China/provincePage.vue"),
+  },
+  {
+    path: "/astrology",
+    name: "astrology",
+    component: () => import("@/views/Astrology/indexPage.vue"),
   },
 ];
 
