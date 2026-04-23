@@ -63,7 +63,6 @@
 
 <script setup lang="ts">
 import { getAllPlanets } from "@/utils/planets";
-import { Body } from "astronomy-engine";
 import { ref } from "vue";
 
 const data = ref(getAllPlanets());
@@ -84,16 +83,16 @@ const title12 = [
 ];
 
 const planentsMap: Record<string, string> = {
-  [Body.Sun]: "太阳",
-  [Body.Moon]: "月亮",
-  [Body.Mercury]: "水星",
-  [Body.Venus]: "金星",
-  [Body.Mars]: "火星",
-  [Body.Jupiter]: "木星",
-  [Body.Saturn]: "土星",
-  [Body.Uranus]: "天王星",
-  [Body.Neptune]: "海王星",
-  [Body.Pluto]: "冥王星",
+  Sun: "太阳",
+  Moon: "月亮",
+  Mercury: "水星",
+  Venus: "金星",
+  Mars: "火星",
+  Jupiter: "木星",
+  Saturn: "土星",
+  Uranus: "天王星",
+  Neptune: "海王星",
+  Pluto: "冥王星",
 };
 
 const map12: Record<
