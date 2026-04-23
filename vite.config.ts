@@ -28,10 +28,11 @@ export default defineConfig({
     }),
   ],
   server: {
-    port: 8088, //启动端口
+    host: "127.0.0.1", // 这块必须得加否则无法热更新
+    port: 8098, //启动端口
     hmr: {
       host: "127.0.0.1",
-      port: 8088,
+      port: 8098,
     },
     // // 设置 https 代理
     // proxy: {
