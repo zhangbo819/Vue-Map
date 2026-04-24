@@ -1,6 +1,6 @@
 <template>
   <div>
-    <YearHeader v-model="currentYear" :year-list="[2021, 2022, 2023, 2024]" />
+    <YearHeader v-model="currentYear" :year-list="[2021, 2022, 2023]" />
 
     <!-- 公司柱状图 -->
     <CompanyChart :data="currentData" />
@@ -70,7 +70,9 @@ const dataList = ref<DataListItem[]>([
   { ename: "xianggang", name: "香港" },
   { ename: "aomen", name: "澳门" },
 ]);
-const currentYear = ref(new Date().getFullYear());
+// TODO currentYear
+// const currentYear = ref(new Date().getFullYear());
+const currentYear = ref(2023);
 const currentProvince = ref("");
 
 const currentData = ref<ChinaData[]>([]);

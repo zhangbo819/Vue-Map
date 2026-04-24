@@ -4,7 +4,7 @@
       <!-- <router-link to="/">Home</router-link> | -->
       <router-link to="/china">中国</router-link> |
       <router-link to="/world">世界</router-link> |
-      <!-- <router-link to="/astrology">占星</router-link> -->
+      <router-link to="/astrology">占星</router-link>
     </nav>
     <router-view />
   </div>

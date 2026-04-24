@@ -15,7 +15,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/china",
-    name: "China",
+    name: "china",
     component: () => import("@/views/China/indexPage.vue"),
   },
   {

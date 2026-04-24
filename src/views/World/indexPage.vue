@@ -134,8 +134,9 @@ const enumTypes = {
   index: "3",
 };
 
-const currentYear = ref(new Date().getFullYear());
-const supportList = ref([2020, 2021, 2022, 2023, 2024]);
+const currentYear = ref(2023);
+// const currentYear = ref(new Date().getFullYear());
+const supportList = ref([2020, 2021, 2022, 2023]);
 const form = ref({
   layout: ["index", "simpleName", "industry"],
   type: enumTypes.country, // enumTypes

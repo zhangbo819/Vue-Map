@@ -7,8 +7,8 @@ import * as path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/Vue-Map/",
-  // base: "./", // 相对路径解决打包找不到资源的情况
+  // base: "/Vue-Map/",
+  base: "./", // 相对路径解决打包找不到资源的情况
   resolve: {
     // 设置别名
     alias: {
@@ -30,10 +30,10 @@ export default defineConfig({
   ],
   server: {
     host: "127.0.0.1", // 这块必须得加否则无法热更新
-    port: 8098, //启动端口
+    port: 8088, //启动端口
     hmr: {
       host: "127.0.0.1",
-      port: 8098,
+      port: 8088,
     },
     // // 设置 https 代理
     // proxy: {
