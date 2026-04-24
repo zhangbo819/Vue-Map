@@ -48,6 +48,7 @@ export default defineConfig({
     outDir: "docs", // 输出目录名
     // minify: "terser", // 压缩方式
     terserOptions: {
+      keep_fnames: true,
       compress: {
         drop_console: true, // 剔除 console 和 debugger
         drop_debugger: true,
