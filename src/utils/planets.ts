@@ -42,7 +42,7 @@ const BODIES = [
   Body.Pluto,
 ];
 
-interface PlanetItem {
+export interface PlanetItem {
   name: Body;
   sign: string;
   degree: number;
