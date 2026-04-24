@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>Astrology 2026</p>
+    <p>Astrology</p>
     <!-- 星座盘 -->
     <div class="constellation">
       <div class="line" />

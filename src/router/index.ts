@@ -4,7 +4,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "home",
-    redirect: "/world",
+    redirect: "/astrology",
     // component: HomeView,
     // component: () => import(/* webpackChunkName: "china" */ '../views/China')
   },
