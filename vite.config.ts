@@ -7,7 +7,8 @@ import * as path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "./", // 相对路径解决打包找不到资源的情况
+  base: "/Vue-Map/",
+  // base: "./", // 相对路径解决打包找不到资源的情况
   resolve: {
     // 设置别名
     alias: {
