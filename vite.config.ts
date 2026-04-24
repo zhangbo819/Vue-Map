@@ -45,7 +45,7 @@ export default defineConfig({
     // },
   },
   build: {
-    outDir: "docs", // 输出目录名
+    outDir: "dist", // 输出目录名
     // minify: "terser", // 压缩方式
     terserOptions: {
       // keep_fnames: true, // 打包后的仍保持原函数名，debug 用

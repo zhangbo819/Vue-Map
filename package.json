@@ -12,7 +12,7 @@
     "prettier:comment": "自动格式化当前目录下的所有文件",
     "prettier": "prettier --write",
     "release": "pnpm build && git add . && git commit -m 'release' && git push",
-    "deploy": "gh-pages -d docs"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "astronomy-engine": "^2.1.19",
