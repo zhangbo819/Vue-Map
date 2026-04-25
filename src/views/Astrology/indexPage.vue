@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <h1 style="margin-bottom: 8px; font-size: 1.6em">Astrology</h1>
     <!-- 星座盘 -->
     <div class="constellation">
@@ -34,6 +34,8 @@
           class="star"
           :style="{ '--angle': -1 * item.longitude + 'deg' }"
         >
+          <!-- :style="{ '--angle': -1 * CSS_longitude[item.name] + 'deg' }" -->
+
           <div class="dot" />
           <p
             class="planent-name"
@@ -51,10 +53,52 @@
       </div>
     </div>
 
+    <van-cell title="手动">
+      <van-row>
+        <van-col span="8" @click="onClickDay(-1)"
+          ><van-icon name="arrow-left"
+        /></van-col>
+        <van-col span="8">{{ time.getDate() }} </van-col>
+        <van-col span="8" @click="onClickDay(1)"
+          ><van-icon name="arrow"
+        /></van-col>
+      </van-row>
+    </van-cell>
+    <van-cell
+      title="滑块组选择"
+      :value="time.toLocaleString()"
+      @click="showPickerGroup = true"
+    />
+    <van-popup v-model:show="showPickerGroup" position="bottom">
+      <van-picker-group
+        title="指定星盘日期"
+        :tabs="['选择日期', '选择时间']"
+        next-step-text="下一步"
+        @confirm="onPickerGroupConfirm"
+        @cancel="showPickerGroup = false"
+      >
+        <van-date-picker
+          v-model="currentDate"
+          :min-date="minDate"
+          :max-date="maxDate"
+        />
+        <van-time-picker v-model="currentTime" :formatter="formatter" />
+      </van-picker-group>
+    </van-popup>
+    <van-cell
+      title="日历选择"
+      :value="time.toLocaleString()"
+      @click="showCalendar = true"
+    />
+    <van-calendar
+      v-model:show="showCalendar"
+      switch-mode="year-month"
+      @confirm="onCalendarConfirm"
+    />
     <p>{{ time.toLocaleString() }}</p>
-    <van-button round @click="onClickTime"> 更新时间 </van-button>
+    <!-- <van-button round @click="onClickTime"> 更新时间 </van-button> -->
 
-    <!-- list -->
+    <!-- 参数详情列表 -->
     <van-cell-group inset>
       <van-cell
         v-for="item in data"
@@ -73,16 +117,17 @@
 </template>
 
 <script setup lang="ts">
-import { getAllPlanets, PlanetItem } from "@/utils/planets";
+import { ref, watch } from "vue";
+import { BODIES, getAllPlanets, PlanetItem } from "@/utils/planets";
 // import { showSuccessToast } from "vant";
-import { ref } from "vue";
 
 type PlanentRotaItem = Record<string, number>;
 
 const time = ref(new Date());
-const data = ref(getAllPlanets(time.value));
-const planentRota = ref<PlanentRotaItem>({}); // 计算行星偏移量，避免行星重叠
+const data = ref<PlanetItem[]>([]);
 
+// 计算行星偏移量，避免行星重叠
+const planentRota = ref<PlanentRotaItem>({});
 function groupClosePlanets(planets: PlanetItem[]) {
   const threshold = 6;
   const sorted = [...planets].sort((a, b) => a.longitude - b.longitude);
@@ -129,10 +174,64 @@ function applyLabelRotation(groups: PlanetItem[][]) {
   return result;
 }
 
-const groups = groupClosePlanets(data.value);
-console.log("groups", groups);
-planentRota.value = applyLabelRotation(groups);
-console.log(planentRota.value);
+// 时间一变全部重新计算
+watch(
+  () => time.value,
+  (val) => {
+    data.value = getAllPlanets(val);
+    // console.log([...data.value]);
+
+    const groups = groupClosePlanets(data.value);
+    // console.log("groups", groups);
+    planentRota.value = applyLabelRotation(groups);
+    // console.log(planentRota.value);
+  },
+  { immediate: true }
+);
+
+// // 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
+// const CSS_longitude = ref<Record<PlanetItem["name"], PlanetItem["longitude"]>>(
+//   BODIES.reduce((r, key) => {
+//     r[key] = 0;
+//     return r;
+//   }, {} as any)
+// );
+// function normalizeAngle(prev: number, next: number) {
+//   let diff = next - prev;
+
+//   if (diff > 180) next -= 360;
+//   if (diff < -180) next += 360;
+
+//   return next;
+// }
+// watch(
+//   () => data.value,
+//   (newVal, oldVal) => {
+//     const res = newVal.reduce((r, p) => {
+//       r[p.name] = p.longitude;
+//       return r;
+//     }, {} as any);
+//     // console.log("oldData", oldVal);
+//     // console.log("newData", newVal);
+//     if (oldVal) {
+//       // 初始状态时 无 oldVal
+//       newVal.forEach((p) => {
+//         // const oldLongitude = p.longitude;
+//         const oldLongitude = CSS_longitude.value[p.name];
+//         const newItem = res[p.name];
+//         const fixLongitude = normalizeAngle(oldLongitude, newItem);
+
+//         if (fixLongitude !== newItem) {
+//           console.log(p.name, oldLongitude, fixLongitude);
+//           res[p.name] = fixLongitude;
+//         }
+//       });
+//     }
+
+//     CSS_longitude.value = res;
+//   },
+//   { immediate: true }
+// );
 
 const title12 = [
   "Aries",
@@ -149,41 +248,113 @@ const title12 = [
   "Pisces",
 ];
 
+// Element
+enum EL {
+  Fire = "Fire",
+  Earth = "Earth",
+  Air = "Air",
+  Water = "Water",
+}
+
+const eColors = {
+  [EL.Fire]: "#FF5A5F", // 火：橙红（行动/能量）
+  [EL.Earth]: "#C2B280", // 土：橄榄绿（稳定/现实）
+  [EL.Air]: "#7BAFD4", // 风：清蓝（思维/交流）
+  [EL.Water]: "#4A6CF7", // 水：靛紫（情绪/直觉）
+};
+
 const planentsMap: Record<string, { name: string; n?: string; color: string }> =
   {
-    Sun: { name: "太阳", n: "日", color: "#f00" }, // 红色（太阳）
-    Moon: { name: "月亮", color: "#A7B6FF" }, // 月光蓝（情绪/柔和）
-    Mercury: { name: "水星", color: "#7AD1B8" }, // 青绿色（思维/流动）
-    Venus: { name: "金星", color: "#F29CB0" }, // 粉玫瑰（爱/美感）
-    Mars: { name: "火星", color: "#E4572E" }, // 火红（行动力）
-    Jupiter: { name: "木星", color: "#7E57C2" }, // 紫色（扩张/幸运）
-    Saturn: { name: "土星", color: "#5A5A7A" }, // 深灰蓝（结构/限制）
-    Uranus: { name: "天王星", color: "#3ED1D3" }, // 电光青（变革）
-    Neptune: { name: "海王星", color: "#4A6CF7" }, // 深海蓝（幻想/灵性）
-    Pluto: { name: "冥王星", color: "#6A1B9A" }, // 深紫（转化/深层力量）
+    Sun: { name: "太阳", n: "日", color: eColors[EL.Fire] }, // 红色（太阳）
+    Moon: { name: "月亮", color: eColors[EL.Water] }, // 月光蓝（情绪/柔和）
+    Mercury: { name: "水星", color: eColors[EL.Air] }, // 青绿色（思维/流动）
+    Venus: { name: "金星", color: eColors[EL.Air] }, // 粉玫瑰（爱/美感）
+    Mars: { name: "火星", color: eColors[EL.Fire] }, // 火红（行动力）
+    Jupiter: { name: "木星", color: eColors[EL.Fire] }, // 紫色（扩张/幸运）
+    Saturn: { name: "土星", color: eColors[EL.Earth] }, // 深灰蓝（结构/限制）
+    Uranus: { name: "天王星", color: eColors[EL.Earth] }, // 电光青（变革）
+    Neptune: { name: "海王星", color: eColors[EL.Water] }, // 深海蓝（幻想/灵性）
+    Pluto: { name: "冥王星", color: eColors[EL.Water] }, // 深紫（转化/深层力量）
   };
 
 const map12: Record<
   string,
   { name: string; n: string; icon: string; color: string }
 > = {
-  Aries: { name: "白羊座", n: "羊", icon: "♈", color: "#FF5A5F" },
-  Taurus: { name: "金牛座", n: "牛", icon: "♉", color: "#C2B280" },
-  Gemini: { name: "双子座", n: "双", icon: "♊", color: "#7BAFD4" },
-  Cancer: { name: "巨蟹座", n: "蟹", icon: "♋", color: "#1B3B6F" },
-  Leo: { name: "狮子座", n: "狮", icon: "♌", color: "#FF5A5F" },
-  Virgo: { name: "处女座", n: "处", icon: "♍", color: "#C2B280" },
-  Libra: { name: "天秤座", n: "秤", icon: "♎", color: "#7BAFD4" },
-  Scorpio: { name: "天蝎座", n: "蝎", icon: "♏", color: "#1B3B6F" },
-  Sagittarius: { name: "射手座", n: "射", icon: "♐", color: "#FF5A5F" },
-  Capricorn: { name: "摩羯座", n: "摩", icon: "♑", color: "#C2B280" },
-  Aquarius: { name: "水瓶座", n: "瓶", icon: "♒", color: "#7BAFD4" },
-  Pisces: { name: "双鱼座", n: "鱼", icon: "♓", color: "#1B3B6F" },
+  Aries: { name: "白羊座", n: "羊", icon: "♈", color: eColors[EL.Fire] },
+  Taurus: { name: "金牛座", n: "牛", icon: "♉", color: eColors[EL.Earth] },
+  Gemini: { name: "双子座", n: "双", icon: "♊", color: eColors[EL.Air] },
+  Cancer: { name: "巨蟹座", n: "蟹", icon: "♋", color: eColors[EL.Water] },
+  Leo: { name: "狮子座", n: "狮", icon: "♌", color: eColors[EL.Fire] },
+  Virgo: { name: "处女座", n: "处", icon: "♍", color: eColors[EL.Earth] },
+  Libra: { name: "天秤座", n: "秤", icon: "♎", color: eColors[EL.Air] },
+  Scorpio: { name: "天蝎座", n: "蝎", icon: "♏", color: eColors[EL.Water] },
+  Sagittarius: { name: "射手座", n: "射", icon: "♐", color: eColors[EL.Fire] },
+  Capricorn: { name: "摩羯座", n: "摩", icon: "♑", color: eColors[EL.Earth] },
+  Aquarius: { name: "水瓶座", n: "瓶", icon: "♒", color: eColors[EL.Air] },
+  Pisces: { name: "双鱼座", n: "鱼", icon: "♓", color: eColors[EL.Water] },
 };
 
 const onClickTime = () => {
   time.value = new Date();
   // showSuccessToast("设置成功");
+};
+
+const onClickDay = (step: number) => {
+  const newDate = new Date(time.value);
+
+  const day = newDate.getDate() + step;
+
+  newDate.setDate(day);
+
+  time.value = newDate;
+};
+
+const showCalendar = ref(false);
+
+const onCalendarConfirm = (value: Date) => {
+  showCalendar.value = false;
+
+  const newDate = new Date(time.value);
+
+  newDate.setFullYear(value.getFullYear());
+  newDate.setMonth(value.getMonth());
+  newDate.setDate(value.getDate());
+
+  time.value = newDate;
+};
+
+const showPickerGroup = ref(false);
+const now = new Date();
+const currentDate = ref([now.getFullYear(), now.getMonth(), now.getDate()]);
+const minDate = new Date(1900, 0, 1); // 最小 1900 年
+const maxDate = new Date(new Date().getFullYear() + 100, 11, 31); // 100 年后
+const currentTime = ref();
+
+const formatter = (type: string, option: any) => {
+  if (type === "hour") {
+    option.text += "时";
+  }
+  if (type === "minute") {
+    option.text += "分";
+  }
+  return option;
+};
+
+const onPickerGroupConfirm = () => {
+  const [year, month, day] = currentDate.value;
+  const [hour, minute] = currentTime.value;
+
+  const newDate = new Date(time.value);
+
+  newDate.setFullYear(year);
+  newDate.setMonth(month);
+  newDate.setDate(day);
+  newDate.setHours(hour);
+  newDate.setMinutes(minute);
+
+  time.value = newDate;
+  showPickerGroup.value = false;
 };
 </script>
 
@@ -203,6 +374,7 @@ h1 {
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   background-color: #000;
+  overflow: hidden;
 
   .line {
     position: absolute;
@@ -270,6 +442,9 @@ h1 {
     text-align: left;
     transform: rotate(var(--angle)) translateX(-80%)
       rotate(calc(-1 * var(--angle)));
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); // 惯性效果
+    // transition: transform 0.2s linear; // 月
+    // transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); // 慢惯性
 
     .dot {
       margin-right: 4px;

@@ -29,7 +29,7 @@ export const SIGNS = [
 //   Pluto = Body.Pluto,
 // }
 
-const BODIES = [
+export const BODIES = [
   Body.Sun,
   Body.Moon,
   Body.Mercury,
