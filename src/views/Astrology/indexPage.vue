@@ -31,10 +31,10 @@
         <div
           v-for="item in data"
           :key="item.name"
-          class="star"
-          :style="{ '--angle': -1 * item.longitude + 'deg' }"
+          :class="{ star: true, 'no-transition': disableTransition[item.name] }"
+          :style="{ '--angle': -1 * css_longitude[item.name] + 'deg' }"
         >
-          <!-- :style="{ '--angle': -1 * CSS_longitude[item.name] + 'deg' }" -->
+          <!-- :style="{ '--angle': -1 * item.longitude + 'deg' }" -->
 
           <div class="dot" />
           <p
@@ -189,49 +189,96 @@ watch(
   { immediate: true }
 );
 
-// // 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
-// const CSS_longitude = ref<Record<PlanetItem["name"], PlanetItem["longitude"]>>(
-//   BODIES.reduce((r, key) => {
-//     r[key] = 0;
-//     return r;
-//   }, {} as any)
-// );
-// function normalizeAngle(prev: number, next: number) {
-//   let diff = next - prev;
+// 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
+const css_longitude = ref<Record<PlanetItem["name"], PlanetItem["longitude"]>>(
+  BODIES.reduce((r, key) => {
+    r[key] = 0;
+    return r;
+  }, {} as any)
+);
+const disableTransition = ref<Record<string, boolean>>(
+  BODIES.reduce((r, key) => {
+    r[key] = false;
+    return r;
+  }, {} as any)
+);
+function normalizeAngle(prev: number, next: number) {
+  let diff = next - prev;
 
-//   if (diff > 180) next -= 360;
-//   if (diff < -180) next += 360;
+  if (diff > 180) next -= 360;
+  if (diff < -180) next += 360;
 
-//   return next;
-// }
-// watch(
-//   () => data.value,
-//   (newVal, oldVal) => {
-//     const res = newVal.reduce((r, p) => {
-//       r[p.name] = p.longitude;
-//       return r;
-//     }, {} as any);
-//     // console.log("oldData", oldVal);
-//     // console.log("newData", newVal);
-//     if (oldVal) {
-//       // 初始状态时 无 oldVal
-//       newVal.forEach((p) => {
-//         // const oldLongitude = p.longitude;
-//         const oldLongitude = CSS_longitude.value[p.name];
-//         const newItem = res[p.name];
-//         const fixLongitude = normalizeAngle(oldLongitude, newItem);
+  return next;
+}
+watch(
+  () => data.value,
+  (newVal, oldVal) => {
+    const res = newVal.reduce((r, p) => {
+      r[p.name] = p.longitude;
+      return r;
+    }, {} as any);
 
-//         if (fixLongitude !== newItem) {
-//           console.log(p.name, oldLongitude, fixLongitude);
-//           res[p.name] = fixLongitude;
-//         }
-//       });
-//     }
+    const needResetName: PlanetItem["name"][] = [];
+    if (oldVal) {
+      newVal.forEach((p) => {
+        const prev = css_longitude.value[p.name];
+        const next = res[p.name];
 
-//     CSS_longitude.value = res;
-//   },
-//   { immediate: true }
-// );
+        let fixed = normalizeAngle(prev, next);
+
+        // TODO bug: 现在顺时针时还会有问题
+        // debug
+        if (p.name === "Moon") {
+          console.log(fixed);
+        }
+
+        // ⭐ 在这里做“安全重置”
+        const LIMIT = 400;
+
+        const isNeedReset = Math.abs(fixed) > LIMIT;
+
+        if (isNeedReset) {
+          needResetName.push(p.name);
+          res[p.name] = fixed % 360;
+        } else {
+          res[p.name] = fixed;
+        }
+      });
+      // 有需要重置的
+      if (needResetName.length) {
+        // res 新的并且可能有多个
+        const resetVal = oldVal.reduce((r, p) => {
+          if (needResetName.includes(p.name)) {
+            p.longitude %= 360;
+            disableTransition.value[p.name] = true;
+          }
+          r[p.name] = p.longitude;
+          return r;
+        }, {} as any);
+        css_longitude.value = resetVal; // 无动画清空原值
+
+        // 强制下一帧恢复动画
+        requestAnimationFrame(() => {
+          needResetName.forEach(
+            (name) => (disableTransition.value[name] = false)
+          );
+          // 恢复新值
+          requestAnimationFrame(() => {
+            // console.log("最后再向前移动");
+            css_longitude.value = res;
+          });
+        });
+      } else {
+        // 马上更新
+        css_longitude.value = res;
+      }
+    } else {
+      // 马上更新
+      css_longitude.value = res;
+    }
+  },
+  { immediate: true }
+);
 
 const title12 = [
   "Aries",
@@ -463,6 +510,9 @@ h1 {
       font-size: 14px;
       font-weight: bold;
     }
+  }
+  .star.no-transition {
+    transition: none !important;
   }
 }
 .value {
