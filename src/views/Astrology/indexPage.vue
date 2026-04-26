@@ -96,7 +96,7 @@
       @confirm="onCalendarConfirm"
     />
     <p>{{ time.toLocaleString() }}</p>
-    <!-- <van-button round @click="onClickTime"> 更新时间 </van-button> -->
+    <van-button @click="onClickTime"> 此时此刻 </van-button>
 
     <!-- 参数详情列表 -->
     <van-cell-group inset>
@@ -403,6 +403,7 @@ const onPickerGroupConfirm = () => {
   time.value = newDate;
   showPickerGroup.value = false;
 };
+
 </script>
 
 <style lang="scss" scoped>
@@ -456,7 +457,7 @@ h1 {
     transform-origin: right;
     z-index: 10;
     color: #fff;
-    font-size: 14px;
+    font-size: clamp(14px, 2.5vw, 32px);
     font-weight: bold;
     transform: rotate(var(--angle)) translateX(-95%)
       rotate(calc(-1 * var(--angle)));
@@ -507,7 +508,7 @@ h1 {
         rotate(calc(-1 * var(--rot)));
       transform-origin: left center;
       color: #fffb;
-      font-size: 14px;
+      font-size: clamp(14px, 2.5vw, 32px);
       font-weight: bold;
     }
   }
