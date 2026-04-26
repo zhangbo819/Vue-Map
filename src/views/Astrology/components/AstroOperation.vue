@@ -68,8 +68,6 @@ const onClickDay = (step: number) => {
 
   newDate.setDate(day);
 
-  console.log("newDate", newDate);
-
   emit("update:time", newDate);
 };
 

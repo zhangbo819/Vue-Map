@@ -8,6 +8,7 @@
     <astro-operation v-model:time="time" />
 
     <!-- 参数详情列表 -->
+    <h2>参数详情列表</h2>
     <van-cell-group inset>
       <van-cell
         v-for="item in data"
@@ -22,28 +23,50 @@
         <p class="value">{{ item.degree }}°</p>
       </van-cell>
     </van-cell-group>
+
+    <h2>主要相位</h2>
+    <van-cell-group inset>
+      <van-cell
+        v-for="item in phaseData"
+        :key="item.between"
+        :title="`${item.between.map((i) => planentsMap[i].name).join(' - ')}`"
+        :label="item.angle + ' °'"
+      >
+        <p class="value" :style="{ color: phasePosition.map[item.type].color }">
+          {{ phasePosition.map[item.type].name }}
+        </p>
+        <p
+          class="value"
+          :style="{
+            fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
+          }"
+        >
+          {{ item.strength }}
+        </p>
+      </van-cell>
+    </van-cell-group>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { getAllPlanets, PlanetItem } from "@/utils/planets";
+import { computed, ref, watch } from "vue";
+import { getAllPlanets, phasePosition, PlanetItem } from "@/utils/planets";
 import AstroOperation from "./components/AstroOperation.vue";
 import AstroRoundPlate from "./components/AstroRoundPlate.vue";
 import { map12, planentsMap } from "./astroUI";
+import { color } from "echarts";
 // import { showSuccessToast } from "vant";
 
 const time = ref(new Date());
-const data = ref<PlanetItem[]>([]);
 
-watch(
-  () => time.value,
-  (val) => {
-    data.value = getAllPlanets(val);
-    // console.log([...data.value]);
-  },
-  { immediate: true }
-);
+const data = computed(() => {
+  return getAllPlanets(time.value);
+});
+
+const phaseData = computed(() => {
+  return phasePosition.calculateAspects(data.value);
+});
+console.log("phaseData", phaseData.value);
 </script>
 
 <style lang="scss" scoped>
