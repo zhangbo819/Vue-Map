@@ -30,10 +30,10 @@
         v-for="item in phaseData"
         :key="item.between"
         :title="`${item.between.map((i) => planentsMap[i].name).join(' - ')}`"
-        :label="item.angle + ' °'"
+        :label="item.between.join(' - ')"
       >
         <p class="value" :style="{ color: phasePosition.map[item.type].color }">
-          {{ phasePosition.map[item.type].name }}
+          {{ item.type }} {{ phasePosition.map[item.type].name }}
         </p>
         <p
           class="value"
@@ -41,7 +41,7 @@
             fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
           }"
         >
-          {{ item.strength }}
+          {{ item.strength }} ({{ item.orb }}°)
         </p>
       </van-cell>
     </van-cell-group>
@@ -49,12 +49,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { getAllPlanets, phasePosition, PlanetItem } from "@/utils/planets";
+import { computed, ref } from "vue";
+import { getAllPlanets, phasePosition } from "@/utils/planets";
 import AstroOperation from "./components/AstroOperation.vue";
 import AstroRoundPlate from "./components/AstroRoundPlate.vue";
 import { map12, planentsMap } from "./astroUI";
-import { color } from "echarts";
 // import { showSuccessToast } from "vant";
 
 const time = ref(new Date());
@@ -64,7 +63,7 @@ const data = computed(() => {
 });
 
 const phaseData = computed(() => {
-  return phasePosition.calculateAspects(data.value);
+  return phasePosition.getData(data.value);
 });
 console.log("phaseData", phaseData.value);
 </script>

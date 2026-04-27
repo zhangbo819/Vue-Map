@@ -109,11 +109,11 @@ class PhasePosition {
     { name: Aspect["Opposition"], title: "冲", angle: 180, orb: 8 },
   ];
   map = {
-    [Aspect.Conjunction]: { name: "合相", color: "#000" }, // 靛蓝（中性、融合）
-    [Aspect.Sextile]: { name: "六合", color: "#10B981" }, // 绿色（和谐、机会）
-    [Aspect.Square]: { name: "刑", color: "#EF4444" }, // 红色（冲突、张力）
-    [Aspect.Trine]: { name: "三合", color: "#04b84cbf" }, // 蓝色（顺畅、流动）
-    [Aspect.Opposition]: { name: "冲", color: "#be95fa" }, // 橙色（对立但有连接）
+    [Aspect.Conjunction]: { name: "合相", color: "#ff8549" }, // 靛蓝（中性、融合）
+    [Aspect.Sextile]: { name: "六合", color: "#40c977" }, // 绿色（和谐、机会）
+    [Aspect.Square]: { name: "刑", color: "#f00" }, // 红色（冲突、张力）
+    [Aspect.Trine]: { name: "三合", color: "#00a240" }, // 蓝色（顺畅、流动）
+    [Aspect.Opposition]: { name: "冲", color: "#8046d9" }, // 橙色（对立但有连接）
   };
   private getDynamicOrb(
     n1: PlanetItem["name"],
@@ -145,7 +145,9 @@ class PhasePosition {
     }
     return null;
   }
-  public calculateAspects(planets: PlanetItem[]) {
+
+  // 获取相位数据
+  public getData(planets: PlanetItem[]) {
     const aspects = [];
 
     for (let i = 0; i < planets.length; i++) {

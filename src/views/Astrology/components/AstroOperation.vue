@@ -1,5 +1,5 @@
 <template>
-  <van-cell title="手动">
+  <van-cell title="手动切换">
     <van-row>
       <van-col span="8" @click="onClickDay(-1)"
         ><van-icon name="arrow-left"
@@ -41,8 +41,11 @@
     switch-mode="year-month"
     @confirm="onCalendarConfirm"
   />
-  <p>{{ time.toLocaleString() }}</p>
-  <van-button @click="onClickTime"> 此时此刻 </van-button>
+  <van-cell
+    title="此时此刻"
+    :value="time.toLocaleString()"
+    @click="onClickTime"
+  />
 </template>
 
 <script setup lang="ts">
