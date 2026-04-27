@@ -65,7 +65,6 @@ const data = computed(() => {
 const phaseData = computed(() => {
   return phasePosition.getData(data.value);
 });
-console.log("phaseData", phaseData.value);
 </script>
 
 <style lang="scss" scoped>

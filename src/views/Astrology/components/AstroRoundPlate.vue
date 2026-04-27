@@ -56,6 +56,7 @@
             color: planentsMap[item.name].color,
             '--rot': -planentRota[item.name] + 'deg',
           }"
+          @click="onClickPlanent(item)"
         >
           {{
             planentsMap[item.name].n ?? planentsMap[item.name].name.slice(0, 1)
@@ -64,12 +65,63 @@
       </div>
     </div>
   </div>
+
+  <!-- 圆角弹窗（居中） -->
+  <van-popup v-model:show="showPopup" round class="aspect-popup">
+    <template v-if="activeAspect.plant">
+      <h2>
+        <span :style="{ color: planentsMap[activeAspect.plant.name].color }"
+          >{{ activeAspect.plant.name }}
+          {{ planentsMap[activeAspect.plant.name].name }}</span
+        >&nbsp;
+        <span>
+          {{ `[${activeAspect.plant.retrograde ? "逆行" : "顺行"}]` }}</span
+        >
+      </h2>
+      <h3>
+        落在
+        <span :style="{ color: map12[activeAspect.plant.sign].color }"
+          >{{ activeAspect.plant.sign }}
+          {{ map12[activeAspect.plant.sign].name }}
+          {{ map12[activeAspect.plant.sign].icon }}</span
+        >
+        {{ activeAspect.plant.degree }}°
+      </h3>
+    </template>
+    <div
+      v-for="(item, index) in activeAspect.aspects"
+      :key="item.between.join('-')"
+    >
+      <p>
+        &nbsp;&nbsp;
+        <strong>{{ index + 1 }}. </strong>
+        <span
+          :style="{
+            fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
+          }"
+        >
+          与
+          <span :style="{ color: planentsMap[item.other].color }"
+            >{{ item.other }} {{ planentsMap[item.other].name }}</span
+          >
+          成
+          <span :style="{ color: phasePosition.map[item.type].color }">
+            {{ item.type }}
+            {{ phasePosition.map[item.type].name }}
+            {{ item.angle }}
+          </span>
+          &nbsp;
+          <span> {{ item.strength }} ({{ item.orb }}°) </span>
+        </span>
+      </p>
+    </div>
+  </van-popup>
 </template>
 <script setup lang="tsx">
-import { phasePosition, PlanetItem } from "@/utils/planets";
+import { AspectItem, phasePosition, PlanetItem } from "@/utils/planets";
 import { map12, planentsMap, title12 } from "../astroUI";
 import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
-import { computed, onMounted, onUnmounted, ref, toRef } from "vue";
+import { computed, onMounted, ref, toRef } from "vue";
 
 const props = defineProps<{ data: PlanetItem[]; time: Date }>();
 
@@ -130,6 +182,29 @@ const phaseLines = computed(() => {
 
   return res;
 });
+
+const showPopup = ref(false);
+const activeAspect = ref<{
+  plant: PlanetItem | null;
+  aspects: (AspectItem & { other: PlanetItem["name"] })[];
+}>({
+  plant: null,
+  aspects: [],
+});
+const onClickPlanent = (item: PlanetItem) => {
+  console.log(item);
+  showPopup.value = true;
+  const phaseData = phasePosition.getData(props.data);
+
+  const aspects = phaseData
+    .filter((i) => i.between.includes(item.name))
+    .map((i) => ({
+      ...i,
+      other: i.between.find((i) => i !== item.name)!,
+    }));
+
+  activeAspect.value = { plant: { ...item }, aspects };
+};
 </script>
 
 <style lang="scss" scoped>
@@ -180,9 +255,10 @@ const phaseLines = computed(() => {
     z-index: 10;
     color: #fff;
     font-size: clamp(14px, 2.5vw, 32px);
-    font-weight: bold;
+    // font-weight: bold;
     transform: rotate(var(--angle)) translateX(-95%)
       rotate(calc(-1 * var(--angle)));
+    pointer-events: none;
     > span {
       display: inline-block;
       transform: translateX(-50%);
@@ -234,7 +310,7 @@ const phaseLines = computed(() => {
       font-size: var(--fs);
       // 行高也要设置和字体大小一致，否则会有空白影响背景
       line-height: var(--fs);
-      font-weight: bold;
+      // font-weight: bold;
       background-color: #0008; // 给文字带个背景，让文字在相位线上时更显眼
     }
   }
@@ -246,6 +322,12 @@ const phaseLines = computed(() => {
     position: absolute;
     width: 100%;
     height: 100%;
+    pointer-events: none;
   }
+}
+
+.aspect-popup {
+  padding: 0 2em 1em;
+  text-align: left;
 }
 </style>

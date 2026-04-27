@@ -100,6 +100,13 @@ enum Aspect {
 }
 
 // 相位
+export interface AspectItem {
+  between: [PlanetItem["name"], PlanetItem["name"]];
+  type: Aspect;
+  angle: string;
+  orb: number;
+  strength: "strong" | "normal";
+}
 class PhasePosition {
   ASPECTS = [
     { name: Aspect["Conjunction"], title: "合相", angle: 0, orb: 8 },
@@ -148,7 +155,7 @@ class PhasePosition {
 
   // 获取相位数据
   public getData(planets: PlanetItem[]) {
-    const aspects = [];
+    const aspects: AspectItem[] = [];
 
     for (let i = 0; i < planets.length; i++) {
       for (let j = i + 1; j < planets.length; j++) {
