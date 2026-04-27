@@ -110,7 +110,7 @@ const onPickerGroupConfirm = () => {
   const newDate = new Date(props.time);
 
   newDate.setFullYear(year);
-  newDate.setMonth(month);
+  newDate.setMonth(month - 1);
   newDate.setDate(day);
   newDate.setHours(hour);
   newDate.setMinutes(minute);

@@ -38,6 +38,7 @@
           :y2="item.p2.y"
           :stroke="item.color"
           stroke-width="1"
+          :style="{ opacity: item.isStrong ? 1 : 0.8 }"
         />
       </svg>
 
@@ -123,6 +124,7 @@ const phaseLines = computed(() => {
       p1: map[n1],
       p2: map[n2],
       color: phasePosition.map[i.type].color,
+      isStrong: i.strength === "strong",
     };
   });
 
@@ -244,7 +246,6 @@ const phaseLines = computed(() => {
     position: absolute;
     width: 100%;
     height: 100%;
-    opacity: 0.8;
   }
 }
 </style>
