@@ -175,6 +175,20 @@ class PhasePosition {
 
     return aspects;
   }
+
+  // 根据经度获取 x y，坐标原点为左上角，经度为 0 时坐标为 (0, R - r)
+  // R 为星盘半径，r 为行星自己轨道的最大半径
+  public getPosition(longitude: number, R: number) {
+    const r = 0.8 * R; // translateX(-80%)
+
+    // 转弧度 + 偏移 180°
+    const rad = ((longitude + 180) * Math.PI) / 180;
+
+    return {
+      x: R + r * Math.cos(rad),
+      y: R - r * Math.sin(rad),
+    };
+  }
 }
 
 export const phasePosition = new PhasePosition();
