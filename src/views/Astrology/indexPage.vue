@@ -27,13 +27,16 @@
     <h2>主要相位</h2>
     <van-cell-group inset>
       <van-cell
-        v-for="item in phaseData"
+        v-for="item in aspectData"
         :key="item.between"
         :title="`${item.between.map((i) => planentsMap[i].name).join(' - ')}`"
         :label="item.between.join(' - ')"
       >
-        <p class="value" :style="{ color: phasePosition.map[item.type].color }">
-          {{ item.type }} {{ phasePosition.map[item.type].name }}
+        <p
+          class="value"
+          :style="{ color: aspectPosition.map[item.type].color }"
+        >
+          {{ item.type }} {{ aspectPosition.map[item.type].name }}
         </p>
         <p
           class="value"
@@ -50,11 +53,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { getAllPlanets, phasePosition } from "@/utils/planets";
+import { getAllPlanets, aspectPosition } from "@/utils/planets";
 import AstroOperation from "./components/AstroOperation.vue";
 import AstroRoundPlate from "./components/AstroRoundPlate.vue";
 import { map12, planentsMap } from "./astroUI";
-// import { showSuccessToast } from "vant";
 
 const time = ref(new Date());
 
@@ -62,8 +64,8 @@ const data = computed(() => {
   return getAllPlanets(time.value);
 });
 
-const phaseData = computed(() => {
-  return phasePosition.getData(data.value);
+const aspectData = computed(() => {
+  return aspectPosition.getData(data.value);
 });
 </script>
 

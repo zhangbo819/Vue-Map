@@ -107,7 +107,7 @@ export interface AspectItem {
   orb: number;
   strength: "strong" | "normal";
 }
-class PhasePosition {
+class AspectPosition {
   ASPECTS = [
     { name: Aspect["Conjunction"], title: "合相", angle: 0, orb: 8 },
     { name: Aspect["Sextile"], title: "六合", angle: 60, orb: 4 },
@@ -198,4 +198,4 @@ class PhasePosition {
   }
 }
 
-export const phasePosition = new PhasePosition();
+export const aspectPosition = new AspectPosition();

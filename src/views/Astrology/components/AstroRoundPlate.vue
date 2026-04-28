@@ -28,18 +28,19 @@
       <div class="line line150" />
 
       <!-- 相位线 -->
-      <svg ref="svgRef" class="phaseBox">
-        <line
-          v-for="item in phaseLines"
-          :key="item.n1 + item.n2"
-          :x1="item.p1.x"
-          :y1="item.p1.y"
-          :x2="item.p2.x"
-          :y2="item.p2.y"
-          :stroke="item.color"
-          stroke-width="1"
-          :style="{ opacity: item.isStrong ? 1 : 0.8 }"
-        />
+      <svg ref="svgRef" class="aspect-box">
+        <transition-group name="aspect">
+          <path
+            v-for="item in aspectLines"
+            :key="item.n1 + '-' + item.n2"
+            :d="`M ${item.p1.x} ${item.p1.y} L ${item.p2.x} ${item.p2.y}`"
+            class="aspect-line"
+            :style="{
+              '--m-color': item.color,
+              '--m-opacity': item.isStrong ? 1 : 0.8,
+            }"
+          />
+        </transition-group>
       </svg>
 
       <!-- 运动的行星 -->
@@ -105,9 +106,9 @@
             >{{ item.other }} {{ planentsMap[item.other].name }}</span
           >
           成
-          <span :style="{ color: phasePosition.map[item.type].color }">
+          <span :style="{ color: aspectPosition.map[item.type].color }">
             {{ item.type }}
-            {{ phasePosition.map[item.type].name }}
+            {{ aspectPosition.map[item.type].name }}
             {{ item.angle }}
           </span>
           &nbsp;
@@ -118,7 +119,7 @@
   </van-popup>
 </template>
 <script setup lang="tsx">
-import { AspectItem, phasePosition, PlanetItem } from "@/utils/planets";
+import { AspectItem, aspectPosition, PlanetItem } from "@/utils/planets";
 import { map12, planentsMap, title12 } from "../astroUI";
 import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
 import { computed, onMounted, ref, toRef } from "vue";
@@ -138,6 +139,7 @@ const planentRota = useAvoidPlanetOverlap(
 
 const svgRef = ref<SVGSVGElement | null>(null);
 
+// 相位线
 const svgPosition = ref({ r: 0 });
 const update = () => {
   const rect = svgRef.value!.getBoundingClientRect();
@@ -154,20 +156,17 @@ onMounted(() => {
 //   window.removeEventListener("resize", update);
 // });
 
-// 相位线
-const phaseLines = computed(() => {
-  // console.log("svgPosition", svgPosition.value);
-  // console.log("props.data", props.data);
-
-  const phaseData = phasePosition.getData(props.data);
+// 相位线数据
+const aspectLines = computed(() => {
+  const aspectData = aspectPosition.getData(props.data);
 
   const map: Record<PlanetItem["name"], { x: number; y: number }> =
     props.data.reduce((r, p) => {
-      r[p.name] = phasePosition.getPosition(p.longitude, svgPosition.value.r);
+      r[p.name] = aspectPosition.getPosition(p.longitude, svgPosition.value.r);
       return r;
     }, {} as any);
 
-  const res = phaseData.map((i) => {
+  const res = aspectData.map((i) => {
     const [n1, n2] = i.between;
 
     return {
@@ -175,7 +174,7 @@ const phaseLines = computed(() => {
       n2,
       p1: map[n1],
       p2: map[n2],
-      color: phasePosition.map[i.type].color,
+      color: aspectPosition.map[i.type].color,
       isStrong: i.strength === "strong",
     };
   });
@@ -183,6 +182,7 @@ const phaseLines = computed(() => {
   return res;
 });
 
+// 行星提示弹窗
 const showPopup = ref(false);
 const activeAspect = ref<{
   plant: PlanetItem | null;
@@ -194,9 +194,9 @@ const activeAspect = ref<{
 const onClickPlanent = (item: PlanetItem) => {
   console.log(item);
   showPopup.value = true;
-  const phaseData = phasePosition.getData(props.data);
+  const aspectData = aspectPosition.getData(props.data);
 
-  const aspects = phaseData
+  const aspects = aspectData
     .filter((i) => i.between.includes(item.name))
     .map((i) => ({
       ...i,
@@ -276,9 +276,12 @@ const onClickPlanent = (item: PlanetItem) => {
   background-color: #000;
   border: 1px solid #333;
 
-  .star {
-    --radius: 140px; /* 控制半径 */
+  --anim-time: 0.6s;
+  --anim-fn: cubic-bezier(0.22, 1, 0.36, 1); // 惯性效果
+  // transition: transform 0.2s linear; // 月
+  // transition: transform var(--anim-time) cubic-bezier(0.4, 0, 0.2, 1); // 慢惯性
 
+  .star {
     position: absolute;
     left: 50%;
     width: 50%;
@@ -287,9 +290,11 @@ const onClickPlanent = (item: PlanetItem) => {
     text-align: left;
     transform: rotate(var(--angle)) translateX(-80%)
       rotate(calc(-1 * var(--angle)));
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); // 惯性效果
-    // transition: transform 0.2s linear; // 月
-    // transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); // 慢惯性
+    transition: transform var(--anim-time) var(--anim-fn);
+
+    &.no-transition {
+      transition: none !important;
+    }
 
     .dot {
       width: 4px;
@@ -308,21 +313,46 @@ const onClickPlanent = (item: PlanetItem) => {
       transform-origin: left center;
       color: #fffb;
       font-size: var(--fs);
-      // 行高也要设置和字体大小一致，否则会有空白影响背景
-      line-height: var(--fs);
+      line-height: var(
+        --fs
+      ); // 行高也要设置和字体大小一致，否则会有空白影响背景
       // font-weight: bold;
       background-color: #0008; // 给文字带个背景，让文字在相位线上时更显眼
+      cursor: pointer;
     }
   }
-  .star.no-transition {
-    transition: none !important;
-  }
 
-  .phaseBox {
+  .aspect-box {
     position: absolute;
     width: 100%;
     height: 100%;
     pointer-events: none;
+
+    // transition d，保证更新x y 后的需要移动的线也有动画
+    .aspect-line {
+      fill: none; /* ❗非常关键 */
+      stroke: var(--m-color); /* 线的颜色 */
+      stroke-width: 1; /* 线宽 */
+      transition: d var(--anim-time) var(--anim-fn), opacity var(--anim-time);
+      opacity: var(--m-opacity);
+    }
+
+    // 新的线缓缓出现
+    .aspect-enter-from {
+      opacity: 0;
+    }
+    .aspect-enter-to {
+      opacity: var(--m-opacity);
+    }
+
+    // 确保离开时瞬间消失
+    .aspect-leave-active {
+      transition: none !important;
+    }
+    .aspect-leave-from,
+    .aspect-leave-to {
+      opacity: 0;
+    }
   }
 }
 
