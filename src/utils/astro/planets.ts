@@ -1,7 +1,8 @@
 // Astronomy Engine 轻量计算 各行星实时位置无上升无宫位 可用于客户端
 import { Body, Ecliptic, GeoVector } from "astronomy-engine";
+import { BODIES, BodyInUse } from "./constant";
 
-export const SIGNS = [
+const SIGNS = [
   "Aries",
   "Taurus",
   "Gemini",
@@ -15,21 +16,6 @@ export const SIGNS = [
   "Aquarius",
   "Pisces",
 ];
-
-export const BODIES = [
-  Body.Sun,
-  Body.Moon,
-  Body.Mercury,
-  Body.Venus,
-  Body.Mars,
-  Body.Jupiter,
-  Body.Saturn,
-  Body.Uranus,
-  Body.Neptune,
-  Body.Pluto,
-] as const;
-
-type BodyInUse = (typeof BODIES)[number];
 
 export interface PlanetItem {
   name: BodyInUse;

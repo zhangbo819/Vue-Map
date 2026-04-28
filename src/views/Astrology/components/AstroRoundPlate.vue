@@ -73,7 +73,7 @@
     round
     class="aspect-popup"
     :overlay-style="{
-      '--van-overlay-background': 'none',
+      '--van-overlay-background': 'rgba(0, 0, 0, .2)',
     }"
   >
     <template v-if="activeAspect.plant">
@@ -86,6 +86,7 @@
           {{ `[${activeAspect.plant.retrograde ? "逆行" : "顺行"}]` }}</span
         >
       </h2>
+      <strong>{{ planetTexts[activeAspect.plant.name].long }}</strong>
       <h3>
         落在
         <span :style="{ color: map12[activeAspect.plant.sign].color }"
@@ -126,9 +127,14 @@
   </van-popup>
 </template>
 <script setup lang="tsx">
-import { computed, onMounted, ref, toRef } from "vue";
+import { computed, onMounted, onUnmounted, ref, toRef } from "vue";
 import { AspectItem, aspectPosition, PlanetItem } from "@/utils/astro/planets";
-import { map12, planentsMap, title12 } from "@/utils/astro/astroUI";
+import {
+  map12,
+  planentsMap,
+  planetTexts,
+  title12,
+} from "@/utils/astro/astroUI";
 import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
 
 const props = defineProps<{ data: PlanetItem[] }>();
@@ -145,30 +151,38 @@ const svgRef = ref<SVGSVGElement | null>(null);
 
 // 相位线
 const svgPosition = ref({ r: 0 });
+let timer: ReturnType<typeof setTimeout> | null = null;
 const update = () => {
-  const rect = svgRef.value!.getBoundingClientRect();
+  if (!svgRef.value) return;
+  const rect = svgRef.value.getBoundingClientRect();
+
+  // console.log("in", rect.width / 2);
 
   svgPosition.value = {
     r: rect.width / 2,
   };
 };
+const onResize = () => {
+  timer && clearTimeout(timer);
+
+  timer = setTimeout(update, 50);
+};
 onMounted(() => {
   update();
-  // window.addEventListener("resize", update);
+  window.addEventListener("resize", onResize);
 });
-// onUnmounted(() => {
-//   window.removeEventListener("resize", update);
-// });
+onUnmounted(() => {
+  window.removeEventListener("resize", onResize);
+});
 
 // 相位线数据
 const aspectLines = computed(() => {
   const aspectData = aspectPosition.getData(props.data);
 
-  const map: Record<PlanetItem["name"], { x: number; y: number }> =
-    props.data.reduce((r, p) => {
-      r[p.name] = aspectPosition.getPosition(p.longitude, svgPosition.value.r);
-      return r;
-    }, {} as any);
+  const map = props.data.reduce((r, p) => {
+    r[p.name] = aspectPosition.getPosition(p.longitude, svgPosition.value.r);
+    return r;
+  }, {} as Record<PlanetItem["name"], { x: number; y: number }>);
 
   const res = aspectData.map((i) => {
     const [n1, n2] = i.between;
@@ -362,6 +376,7 @@ const onClickPlanent = (item: PlanetItem) => {
 
 .aspect-popup {
   padding: 0 2em 1em;
+  max-width: 90%;
   text-align: left;
 }
 </style>
