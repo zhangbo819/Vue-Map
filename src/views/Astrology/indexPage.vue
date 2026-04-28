@@ -2,7 +2,7 @@
   <div style="width: 100%">
     <h1 style="margin-bottom: 8px; font-size: 1.6em">Astrology</h1>
     <!-- 星座盘 -->
-    <astro-round-plate :time="time" :data="data" />
+    <astro-round-plate :data="data" />
 
     <!-- 操作栏 -->
     <astro-operation v-model:time="time" />

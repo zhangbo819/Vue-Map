@@ -124,7 +124,7 @@ import { map12, planentsMap, title12 } from "../astroUI";
 import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
 import { computed, onMounted, ref, toRef } from "vue";
 
-const props = defineProps<{ data: PlanetItem[]; time: Date }>();
+const props = defineProps<{ data: PlanetItem[] }>();
 
 // 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
 const { css_longitude, disableTransition } = useResetLongitude(
@@ -132,10 +132,7 @@ const { css_longitude, disableTransition } = useResetLongitude(
 );
 
 // 计算行星偏移量，避免行星重叠
-const planentRota = useAvoidPlanetOverlap(
-  toRef(props, "time"),
-  toRef(props, "data")
-);
+const planentRota = useAvoidPlanetOverlap(toRef(props, "data"));
 
 const svgRef = ref<SVGSVGElement | null>(null);
 

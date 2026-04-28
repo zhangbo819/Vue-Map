@@ -105,10 +105,7 @@ type PlanentRotaItem = Record<string, number>;
 
 // 计算行星偏移量，避免行星重叠
 // TODO 仍有可能会重叠，需要优化
-export function useAvoidPlanetOverlap(
-  time: Ref<Date>,
-  data: Ref<PlanetItem[]>
-) {
+export function useAvoidPlanetOverlap(data: Ref<PlanetItem[]>) {
   const planentRota = ref<PlanentRotaItem>({});
 
   //   TODO 优化： 将其分两种情况，聚集的组和排成一条线的组
@@ -132,6 +129,18 @@ export function useAvoidPlanetOverlap(
     }
 
     groups.push(current);
+
+    // 当 350多度时，也会和 0 度左右的第一组成一组
+    const first_group = groups[0][0];
+    const last_group = groups[groups.length - 1];
+    if (
+      first_group.longitude <= threshold &&
+      360 - last_group[last_group.length - 1].longitude <= threshold
+    ) {
+      groups.pop();
+      groups[0] = last_group.concat(groups[0]);
+    }
+
     return groups;
   }
   function applyLabelRotation(groups: PlanetItem[][]) {
@@ -144,7 +153,8 @@ export function useAvoidPlanetOverlap(
         let rotation = 0;
 
         if (len === 1) {
-          rotation = 0;
+          // 只有一个组时，在左侧时文字靠左，在右侧时文字靠右
+          rotation = p.longitude < 90 || p.longitude > 270 ? 180 : 0;
         } else {
           // 让 label 在一个小扇形内分散
           const spread = 360; // 总展开角度
@@ -164,7 +174,7 @@ export function useAvoidPlanetOverlap(
     () => data.value,
     (val) => {
       const groups = groupClosePlanets(val);
-      // console.log("groups", groups);
+      console.log("groups", groups);
       planentRota.value = applyLabelRotation(groups);
       // console.log(planentRota.value);
     },

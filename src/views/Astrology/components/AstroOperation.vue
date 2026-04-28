@@ -1,11 +1,11 @@
 <template>
   <van-cell title="手动切换">
     <van-row>
-      <van-col span="8" @click="onClickDay(-1)"
+      <van-col span="8" class="btn" @click="onClickDay(-1)"
         ><van-icon name="arrow-left"
       /></van-col>
       <van-col span="8">{{ time.getDate() }} </van-col>
-      <van-col span="8" @click="onClickDay(1)"
+      <van-col span="8" class="btn" @click="onClickDay(1)"
         ><van-icon name="arrow"
       /></van-col>
     </van-row>
@@ -39,6 +39,7 @@
   <van-calendar
     v-model:show="showCalendar"
     switch-mode="year-month"
+    :default-date="time"
     @confirm="onCalendarConfirm"
   />
   <van-cell
@@ -119,3 +120,9 @@ const onPickerGroupConfirm = () => {
   showPickerGroup.value = false;
 };
 </script>
+
+<style lang="scss" scoped>
+.btn {
+  cursor: pointer;
+}
+</style>
