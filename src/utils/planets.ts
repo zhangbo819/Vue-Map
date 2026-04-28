@@ -16,19 +16,6 @@ export const SIGNS = [
   "Pisces",
 ];
 
-// export enum Planets {
-//   Sun = Body.Sun,
-//   Moon = Body.Moon,
-//   Mercury = Body.Mercury,
-//   Venus = Body.Venus,
-//   Mars = Body.Mars,
-//   Jupiter = Body.Jupiter,
-//   Saturn = Body.Saturn,
-//   Uranus = Body.Uranus,
-//   Neptune = Body.Neptune,
-//   Pluto = Body.Pluto,
-// }
-
 export const BODIES = [
   Body.Sun,
   Body.Moon,
@@ -40,24 +27,26 @@ export const BODIES = [
   Body.Uranus,
   Body.Neptune,
   Body.Pluto,
-];
+] as const;
+
+type BodyInUse = (typeof BODIES)[number];
 
 export interface PlanetItem {
-  name: Body;
+  name: BodyInUse;
   sign: string;
   degree: number;
   longitude: number;
   retrograde: boolean;
 }
 
-function getPlanetInfo(body: Body, date: Date) {
-  const vec = GeoVector(body, date, true);
+function getPlanetInfo(name: BodyInUse, date: Date) {
+  const vec = GeoVector(name, date, true);
   const ecl = Ecliptic(vec);
 
   const lon = (ecl.elon + 360) % 360;
 
   return {
-    name: body,
+    name,
     sign: SIGNS[Math.floor(lon / 30)],
     degree: +(lon % 30).toFixed(2),
     longitude: lon,
@@ -66,21 +55,21 @@ function getPlanetInfo(body: Body, date: Date) {
 
 // 拿到10行星的经度 落座 度数
 export function getAllPlanets(date = new Date()): PlanetItem[] {
-  return BODIES.map((body) => ({
-    ...getPlanetInfo(body, date),
-    retrograde: isRetrograde(body, date),
+  return BODIES.map((name) => ({
+    ...getPlanetInfo(name, date),
+    retrograde: isRetrograde(name, date),
   }));
 }
 
 // 判断是否逆行
-export function isRetrograde(body: Body, date: Date) {
+export function isRetrograde(name: BodyInUse, date: Date) {
   // 日月不会逆行
-  if (body === Body.Sun || body === Body.Moon) return false;
+  if (name === Body.Sun || name === Body.Moon) return false;
 
   const dt = 60 * 60 * 1000; // 一小时
 
-  const lon1 = getPlanetInfo(body, date).longitude;
-  const lon2 = getPlanetInfo(body, new Date(date.getTime() + dt)).longitude;
+  const lon1 = getPlanetInfo(name, date).longitude;
+  const lon2 = getPlanetInfo(name, new Date(date.getTime() + dt)).longitude;
 
   let diff = lon2 - lon1; // 每小时移动多少度
 
@@ -122,6 +111,7 @@ class AspectPosition {
     [Aspect.Trine]: { name: "三合", color: "#00a240" }, // 蓝色（顺畅、流动）
     [Aspect.Opposition]: { name: "冲", color: "#8046d9" }, // 橙色（对立但有连接）
   };
+  // 针对行星使用单独的容许度
   private getDynamicOrb(
     n1: PlanetItem["name"],
     n2: PlanetItem["name"],

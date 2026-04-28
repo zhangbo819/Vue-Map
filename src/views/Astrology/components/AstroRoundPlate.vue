@@ -68,7 +68,14 @@
   </div>
 
   <!-- 圆角弹窗（居中） -->
-  <van-popup v-model:show="showPopup" round class="aspect-popup">
+  <van-popup
+    v-model:show="showPopup"
+    round
+    class="aspect-popup"
+    :overlay-style="{
+      '--van-overlay-background': 'none',
+    }"
+  >
     <template v-if="activeAspect.plant">
       <h2>
         <span :style="{ color: planentsMap[activeAspect.plant.name].color }"

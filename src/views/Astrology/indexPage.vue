@@ -15,6 +15,7 @@
         :key="item.name"
         :title="`${item.name} ${planentsMap[item.name].name}`"
         :label="item.longitude"
+        :title-style="{ color: planentsMap[item.name].color }"
       >
         <p class="value" :style="{ color: map12[item.sign].color }">
           {{ item.sign }} {{ map12[item.sign].name }}
@@ -29,9 +30,19 @@
       <van-cell
         v-for="item in aspectData"
         :key="item.between"
-        :title="`${item.between.map((i) => planentsMap[i].name).join(' - ')}`"
         :label="item.between.join(' - ')"
       >
+        <template #title>
+          <p>
+            <span :style="{ color: planentsMap[item.between[0]].color }">{{
+              planentsMap[item.between[0]].name
+            }}</span>
+            -
+            <span :style="{ color: planentsMap[item.between[1]].color }">{{
+              planentsMap[item.between[1]].name
+            }}</span>
+          </p>
+        </template>
         <p
           class="value"
           :style="{ color: aspectPosition.map[item.type].color }"
@@ -57,6 +68,7 @@ import { getAllPlanets, aspectPosition } from "@/utils/planets";
 import AstroOperation from "./components/AstroOperation.vue";
 import AstroRoundPlate from "./components/AstroRoundPlate.vue";
 import { map12, planentsMap } from "./astroUI";
+import { color } from "echarts";
 
 const time = ref(new Date());
 

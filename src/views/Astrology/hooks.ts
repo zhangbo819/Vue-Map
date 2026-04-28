@@ -1,24 +1,24 @@
 import { Ref, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import { BODIES, getAllPlanets, PlanetItem } from "@/utils/planets";
+import { BODIES, PlanetItem } from "@/utils/planets";
+
+type nameLongitudeMap = Record<PlanetItem["name"], PlanetItem["longitude"]>;
 
 // 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
 // 方案在从 350+ -> 1 时，让其变成 350+ -> 361，然后在后续避免无限增加在达到某个临界点进行恢复 如 400 -> 40
 export function useResetLongitude(data: Ref<PlanetItem[]>) {
-  const css_longitude = ref<
-    Record<PlanetItem["name"], PlanetItem["longitude"]>
-  >(
+  const css_longitude = ref<nameLongitudeMap>(
     BODIES.reduce((r, key) => {
       r[key] = 0;
       return r;
-    }, {} as any)
+    }, {} as nameLongitudeMap)
   );
-  const disableTransition = ref<Record<string, boolean>>(
+  const disableTransition = ref(
     BODIES.reduce((r, key) => {
       r[key] = false;
       return r;
-    }, {} as any)
+    }, {} as Record<PlanetItem["name"], boolean>)
   );
   function normalizeAngle(prev: number, next: number) {
     const diff = next - prev;
@@ -34,7 +34,7 @@ export function useResetLongitude(data: Ref<PlanetItem[]>) {
       const res = newVal.reduce((r, p) => {
         r[p.name] = p.longitude;
         return r;
-      }, {} as any);
+      }, {} as nameLongitudeMap);
 
       const needResetName: PlanetItem["name"][] = [];
       if (oldVal) {
@@ -72,7 +72,7 @@ export function useResetLongitude(data: Ref<PlanetItem[]>) {
             }
             r[p.name] = p.longitude;
             return r;
-          }, {} as any);
+          }, {} as nameLongitudeMap);
           css_longitude.value = resetVal; // 无动画清空原值
 
           // 强制下一帧恢复动画
@@ -110,7 +110,7 @@ export function useAvoidPlanetOverlap(data: Ref<PlanetItem[]>) {
 
   //   TODO 优化： 将其分两种情况，聚集的组和排成一条线的组
   function groupClosePlanets(planets: PlanetItem[]) {
-    const threshold = 5; // 5 度为一组
+    const threshold = 8; // 8 度为一组
     const sorted = [...planets].sort((a, b) => a.longitude - b.longitude);
 
     const groups = [];
@@ -134,8 +134,9 @@ export function useAvoidPlanetOverlap(data: Ref<PlanetItem[]>) {
     const first_group = groups[0][0];
     const last_group = groups[groups.length - 1];
     if (
-      first_group.longitude <= threshold &&
-      360 - last_group[last_group.length - 1].longitude <= threshold
+      first_group.longitude +
+        (360 - last_group[last_group.length - 1].longitude) <=
+      threshold
     ) {
       groups.pop();
       groups[0] = last_group.concat(groups[0]);
@@ -174,7 +175,7 @@ export function useAvoidPlanetOverlap(data: Ref<PlanetItem[]>) {
     () => data.value,
     (val) => {
       const groups = groupClosePlanets(val);
-      console.log("groups", groups);
+      // console.log("groups", groups);
       planentRota.value = applyLabelRotation(groups);
       // console.log(planentRota.value);
     },
