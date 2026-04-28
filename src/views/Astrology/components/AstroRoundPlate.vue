@@ -126,10 +126,10 @@
   </van-popup>
 </template>
 <script setup lang="tsx">
-import { AspectItem, aspectPosition, PlanetItem } from "@/utils/planets";
-import { map12, planentsMap, title12 } from "../astroUI";
-import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
 import { computed, onMounted, ref, toRef } from "vue";
+import { AspectItem, aspectPosition, PlanetItem } from "@/utils/astro/planets";
+import { map12, planentsMap, title12 } from "@/utils/astro/astroUI";
+import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
 
 const props = defineProps<{ data: PlanetItem[] }>();
 

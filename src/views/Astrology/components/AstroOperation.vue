@@ -1,11 +1,11 @@
 <template>
   <van-cell title="手动切换">
     <van-row>
-      <van-col span="8" class="btn" @click="onClickDay(-1)"
+      <van-col span="8" class="cursor" @click="onClickDay(-1)"
         ><van-icon name="arrow-left"
       /></van-col>
       <van-col span="8">{{ time.getDate() }} </van-col>
-      <van-col span="8" class="btn" @click="onClickDay(1)"
+      <van-col span="8" class="cursor" @click="onClickDay(1)"
         ><van-icon name="arrow"
       /></van-col>
     </van-row>
@@ -13,6 +13,7 @@
   <van-cell
     title="滑块组选择"
     :value="time.toLocaleString()"
+    class="cursor"
     @click="showPickerGroup = true"
   />
   <van-popup v-model:show="showPickerGroup" position="bottom">
@@ -34,6 +35,7 @@
   <van-cell
     title="日历选择"
     :value="time.toLocaleString()"
+    class="cursor"
     @click="showCalendar = true"
   />
   <van-calendar
@@ -45,6 +47,7 @@
   <van-cell
     title="此时此刻"
     :value="time.toLocaleString()"
+    class="cursor"
     @click="onClickTime"
   />
 </template>
@@ -122,7 +125,7 @@ const onPickerGroupConfirm = () => {
 </script>
 
 <style lang="scss" scoped>
-.btn {
+.cursor {
   cursor: pointer;
 }
 </style>

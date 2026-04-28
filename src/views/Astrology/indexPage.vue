@@ -64,11 +64,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { getAllPlanets, aspectPosition } from "@/utils/planets";
+import { getAllPlanets, aspectPosition } from "@/utils/astro/planets";
+import { map12, planentsMap } from "@/utils/astro/astroUI";
 import AstroOperation from "./components/AstroOperation.vue";
 import AstroRoundPlate from "./components/AstroRoundPlate.vue";
-import { map12, planentsMap } from "./astroUI";
-import { color } from "echarts";
 
 const time = ref(new Date());
 

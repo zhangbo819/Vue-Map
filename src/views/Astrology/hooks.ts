@@ -1,7 +1,7 @@
 import { Ref, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import { BODIES, PlanetItem } from "@/utils/planets";
+import { BODIES, PlanetItem } from "@/utils/astro/planets";
 
 type nameLongitudeMap = Record<PlanetItem["name"], PlanetItem["longitude"]>;
 
