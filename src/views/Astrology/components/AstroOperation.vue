@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   time: {
@@ -62,6 +62,22 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["update:time"]);
+
+const now = new Date();
+const minDate = new Date(1900, 0, 1); // 最小 1900 年
+const maxDate = new Date(now.getFullYear() + 100, 11, 31); // 100 年后
+const currentDate = ref([now.getFullYear(), now.getMonth() + 1, now.getDate()]);
+const currentTime = ref([now.getHours(), now.getMinutes()]);
+const showPickerGroup = ref(false);
+
+watch(
+  () => props.time,
+  (val) => {
+    currentDate.value = [val.getFullYear(), val.getMonth() + 1, val.getDate()];
+    currentTime.value = [val.getHours(), val.getMinutes()];
+  },
+  { immediate: true }
+);
 
 const onClickTime = () => {
   emit("update:time", new Date());
@@ -90,13 +106,6 @@ const onCalendarConfirm = (value: Date) => {
 
   emit("update:time", newDate);
 };
-
-const showPickerGroup = ref(false);
-const now = new Date();
-const currentDate = ref([now.getFullYear(), now.getMonth(), now.getDate()]);
-const minDate = new Date(1900, 0, 1); // 最小 1900 年
-const maxDate = new Date(new Date().getFullYear() + 100, 11, 31); // 100 年后
-const currentTime = ref();
 
 const formatter = (type: string, option: any) => {
   if (type === "hour") {

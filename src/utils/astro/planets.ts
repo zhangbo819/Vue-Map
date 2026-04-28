@@ -84,11 +84,11 @@ export interface AspectItem {
 }
 class AspectPosition {
   ASPECTS = [
-    { name: Aspect["Conjunction"], title: "合相", angle: 0, orb: 8 },
-    { name: Aspect["Sextile"], title: "六合", angle: 60, orb: 4 },
-    { name: Aspect["Square"], title: "刑", angle: 90, orb: 6 },
-    { name: Aspect["Trine"], title: "三合", angle: 120, orb: 6 },
-    { name: Aspect["Opposition"], title: "冲", angle: 180, orb: 8 },
+    { name: Aspect["Conjunction"], title: "合相", angle: 0, orb: 6 },
+    { name: Aspect["Sextile"], title: "六合", angle: 60, orb: 3 },
+    { name: Aspect["Square"], title: "刑", angle: 90, orb: 5 },
+    { name: Aspect["Trine"], title: "三合", angle: 120, orb: 7 },
+    { name: Aspect["Opposition"], title: "冲", angle: 180, orb: 5 },
   ];
   map = {
     [Aspect.Conjunction]: { name: "合相", color: "#ff8549" }, // 靛蓝（中性、融合）
