@@ -1,25 +1,26 @@
 // Astronomy Engine 轻量计算 各行星实时位置无上升无宫位 可用于客户端
 import { Body, Ecliptic, GeoVector } from "astronomy-engine";
 import { BODIES, BodyInUse } from "./constant";
+import { Star } from "./astroUI";
 
 const SIGNS = [
-  "Aries",
-  "Taurus",
-  "Gemini",
-  "Cancer",
-  "Leo",
-  "Virgo",
-  "Libra",
-  "Scorpio",
-  "Sagittarius",
-  "Capricorn",
-  "Aquarius",
-  "Pisces",
+  Star.Aries,
+  Star.Taurus,
+  Star.Gemini,
+  Star.Cancer,
+  Star.Leo,
+  Star.Virgo,
+  Star.Libra,
+  Star.Scorpio,
+  Star.Sagittarius,
+  Star.Capricorn,
+  Star.Aquarius,
+  Star.Pisces,
 ];
 
 export interface PlanetItem {
   name: BodyInUse;
-  sign: string;
+  sign: Star;
   degree: number;
   longitude: number;
   retrograde: boolean;

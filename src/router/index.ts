@@ -26,7 +26,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/astrology",
     name: "astrology",
-    component: () => import("@/views/Astrology/indexPage.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/Astrology/indexPage.vue"),
+      },
+      {
+        path: "interpret",
+        component: () => import("@/views/Astrology/InterPret.vue"),
+      },
+    ],
   },
 ];
 

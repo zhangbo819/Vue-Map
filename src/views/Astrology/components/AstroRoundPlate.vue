@@ -86,14 +86,17 @@
           {{ `[${activeAspect.plant.retrograde ? "逆行" : "顺行"}]` }}</span
         >
       </h2>
-      <strong>{{ planetTexts[activeAspect.plant.name].long }}</strong>
+      <strong>{{ planetTexts[activeAspect.plant.name].short }}</strong>
       <h3>
         落在
-        <span :style="{ color: map12[activeAspect.plant.sign].color }"
+        <span
+          class="navText"
+          :style="{ color: map12[activeAspect.plant.sign].color }"
+          @click="onClickSign"
           >{{ activeAspect.plant.sign }}
           {{ map12[activeAspect.plant.sign].name }}
-          {{ map12[activeAspect.plant.sign].icon }}</span
-        >
+        </span>
+        {{ map12[activeAspect.plant.sign].icon }}
         {{ activeAspect.plant.degree }}°
       </h3>
     </template>
@@ -136,6 +139,7 @@ import {
   title12,
 } from "@/utils/astro/astroUI";
 import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
+import router from "@/router";
 
 const props = defineProps<{ data: PlanetItem[] }>();
 
@@ -222,6 +226,17 @@ const onClickPlanent = (item: PlanetItem) => {
     }));
 
   activeAspect.value = { plant: { ...item }, aspects };
+};
+
+const onClickSign = () => {
+  if (!activeAspect.value.plant) return;
+
+  const { name, sign } = activeAspect.value.plant;
+
+  router.push({
+    path: "/astrology/interpret",
+    query: { name, sign },
+  });
 };
 </script>
 
@@ -378,5 +393,10 @@ const onClickPlanent = (item: PlanetItem) => {
   padding: 0 2em 1em;
   max-width: 90%;
   text-align: left;
+}
+
+.navText {
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

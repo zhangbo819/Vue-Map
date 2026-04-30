@@ -15,6 +15,21 @@ const eColors = {
   [EL.Water]: "#4A6CF7", // 水：靛紫（情绪/直觉）
 };
 
+export enum Star {
+  "Aries" = "Aries",
+  "Taurus" = "Taurus",
+  "Gemini" = "Gemini",
+  "Cancer" = "Cancer",
+  "Leo" = "Leo",
+  "Virgo" = "Virgo",
+  "Libra" = "Libra",
+  "Scorpio" = "Scorpio",
+  "Sagittarius" = "Sagittarius",
+  "Capricorn" = "Capricorn",
+  "Aquarius" = "Aquarius",
+  "Pisces" = "Pisces",
+}
+
 export const planentsMap: Record<
   BodyInUse,
   { name: string; n?: string; color: string }
@@ -81,34 +96,121 @@ export const planetTexts: Record<
 };
 
 export const map12: Record<
-  string,
+  Star,
   { name: string; n: string; icon: string; color: string }
 > = {
-  Aries: { name: "白羊座", n: "羊", icon: "♈", color: eColors[EL.Fire] },
-  Taurus: { name: "金牛座", n: "牛", icon: "♉", color: eColors[EL.Earth] },
-  Gemini: { name: "双子座", n: "双", icon: "♊", color: eColors[EL.Air] },
-  Cancer: { name: "巨蟹座", n: "蟹", icon: "♋", color: eColors[EL.Water] },
-  Leo: { name: "狮子座", n: "狮", icon: "♌", color: eColors[EL.Fire] },
-  Virgo: { name: "处女座", n: "处", icon: "♍", color: eColors[EL.Earth] },
-  Libra: { name: "天秤座", n: "秤", icon: "♎", color: eColors[EL.Air] },
-  Scorpio: { name: "天蝎座", n: "蝎", icon: "♏", color: eColors[EL.Water] },
-  Sagittarius: { name: "射手座", n: "射", icon: "♐", color: eColors[EL.Fire] },
-  Capricorn: { name: "摩羯座", n: "摩", icon: "♑", color: eColors[EL.Earth] },
-  Aquarius: { name: "水瓶座", n: "瓶", icon: "♒", color: eColors[EL.Air] },
-  Pisces: { name: "双鱼座", n: "鱼", icon: "♓", color: eColors[EL.Water] },
+  [Star.Aries]: {
+    name: "白羊座",
+    n: "羊",
+    icon: "♈",
+    color: eColors[EL.Fire],
+  },
+  [Star.Taurus]: {
+    name: "金牛座",
+    n: "牛",
+    icon: "♉",
+    color: eColors[EL.Earth],
+  },
+  [Star.Gemini]: {
+    name: "双子座",
+    n: "双",
+    icon: "♊",
+    color: eColors[EL.Air],
+  },
+  [Star.Cancer]: {
+    name: "巨蟹座",
+    n: "蟹",
+    icon: "♋",
+    color: eColors[EL.Water],
+  },
+  [Star.Leo]: { name: "狮子座", n: "狮", icon: "♌", color: eColors[EL.Fire] },
+  [Star.Virgo]: {
+    name: "处女座",
+    n: "处",
+    icon: "♍",
+    color: eColors[EL.Earth],
+  },
+  [Star.Libra]: { name: "天秤座", n: "秤", icon: "♎", color: eColors[EL.Air] },
+  [Star.Scorpio]: {
+    name: "天蝎座",
+    n: "蝎",
+    icon: "♏",
+    color: eColors[EL.Water],
+  },
+  [Star.Sagittarius]: {
+    name: "射手座",
+    n: "射",
+    icon: "♐",
+    color: eColors[EL.Fire],
+  },
+  [Star.Capricorn]: {
+    name: "摩羯座",
+    n: "摩",
+    icon: "♑",
+    color: eColors[EL.Earth],
+  },
+  [Star.Aquarius]: {
+    name: "水瓶座",
+    n: "瓶",
+    icon: "♒",
+    color: eColors[EL.Air],
+  },
+  [Star.Pisces]: {
+    name: "双鱼座",
+    n: "鱼",
+    icon: "♓",
+    color: eColors[EL.Water],
+  },
 };
 
 export const title12 = [
-  "Aries",
-  "Taurus",
-  "Gemini",
-  "Cancer",
-  "Leo",
-  "Virgo",
-  "Libra",
-  "Scorpio",
-  "Sagittarius",
-  "Capricorn",
-  "Aquarius",
-  "Pisces",
+  Star.Aries,
+  Star.Taurus,
+  Star.Gemini,
+  Star.Cancer,
+  Star.Leo,
+  Star.Virgo,
+  Star.Libra,
+  Star.Scorpio,
+  Star.Sagittarius,
+  Star.Capricorn,
+  Star.Aquarius,
+  Star.Pisces,
 ];
+
+const signTexts: Record<Star, { short: string; style: string }> = {
+  [Star.Aries]: { short: "直接、冲动", style: "以行动为导向，快速反应" },
+  [Star.Taurus]: { short: "稳定、务实", style: "重视安全与实际体验" },
+  [Star.Gemini]: { short: "多变、好奇", style: "通过交流与信息建立连接" },
+  [Star.Cancer]: { short: "敏感、保护", style: "以情感与安全感为中心" },
+  [Star.Leo]: { short: "表达、自信", style: "渴望被看见与认可" },
+  [Star.Virgo]: { short: "细致、分析", style: "通过优化与改进获得掌控感" },
+  [Star.Libra]: { short: "平衡、关系", style: "关注互动与和谐" },
+  [Star.Scorpio]: { short: "深刻、极端", style: "追求深层连接与控制" },
+  [Star.Sagittarius]: { short: "探索、自由", style: "寻找意义与更大视野" },
+  [Star.Capricorn]: { short: "现实、责任", style: "以目标与成就为导向" },
+  [Star.Aquarius]: { short: "独立、创新", style: "强调个体与群体的突破" },
+  [Star.Pisces]: { short: "感性、融合", style: "倾向于共情与想象" },
+};
+
+export function generateInterpretation(p: BodyInUse, s: Star): string {
+  const planet = planetTexts[p];
+  const sign = signTexts[s];
+  // const house = houseTexts[p.house];
+
+  const pName = planentsMap[p].name;
+  const signName = map12[s].name;
+
+  // ，第${p.house}宫。
+  // 这种能量主要体现在「${house}」这一领域。
+
+  return `
+你的${pName}落在${signName}。
+
+这意味着：你的「${planet.short}」会以一种「${sign.short}」的方式表现，
+通常呈现为：${sign.style}。
+
+进一步来说，${planet.long}
+在这个位置上，你往往会在该领域中，以这种方式不断发展与体验。
+  `.trim();
+}
