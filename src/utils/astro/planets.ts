@@ -1,5 +1,5 @@
 // Astronomy Engine 轻量计算 各行星实时位置无上升无宫位 可用于客户端
-import { Body, Ecliptic, GeoVector } from "astronomy-engine";
+import { Body, Ecliptic, GeoVector, PairLongitude } from "astronomy-engine";
 import { BODIES, BodyInUse } from "./constant";
 import { Star } from "./astroUI";
 
@@ -173,6 +173,162 @@ class AspectPosition {
       y: R - r * Math.sin(rad),
     };
   }
+
+  // 判断是否命中相位
+  private isAspectHit(diff: number, target: number, orb: number) {
+    return Math.abs(diff - target) <= orb;
+  }
+
+  // 算每 deg/hour
+  private getRelativeSpeed(
+    date: Date,
+    b1: PlanetItem["name"],
+    b2: PlanetItem["name"]
+  ): number {
+    const dt = 60 * 60 * 1000;
+
+    const d1 = PairLongitude(b1, b2, date);
+    const d2 = PairLongitude(b1, b2, new Date(date.getTime() + dt));
+
+    return this.getAngleDiff(d1, d2); // deg/hour
+  }
+
+  // 根据行星获取动态的步长，快行星走的快，慢行星走的慢，优化计算速度
+  private getDynamicStepMs(
+    date: Date,
+    b1: PlanetItem["name"],
+    b2: PlanetItem["name"],
+    target: number,
+    orb: number
+  ) {
+    const speed = this.getRelativeSpeed(date, b1, b2); // deg/hour
+
+    // 防止极小值（外行星）
+    const safeSpeed = Math.max(speed, 0.001);
+
+    // 目标：一次移动 ≈ orb 的一小部分（比如 1/5）
+    const hours = orb / safeSpeed / 5;
+
+    // 转成 ms
+    let step = hours * 3600 * 1000;
+
+    // 加边界限制（很重要）
+    const MIN = 5 * 60 * 1000; // 5分钟
+    const MAX = 24 * 3600 * 1000; // 24小时
+
+    // 此时的 step 就可以用了
+    step = Math.max(MIN, Math.min(MAX, step));
+
+    const diff = PairLongitude(b1, b2, date);
+    const distance = Math.abs(diff - target);
+
+    // 越接近相位 → step 越小
+    const factor = Math.max(distance / orb, 0.1);
+    const newStep = step * factor;
+
+    return Math.max(step, newStep);
+  }
+
+  // 找边界（开始 / 结束）
+  private findBoundary(
+    date: Date,
+    b1: PlanetItem["name"],
+    b2: PlanetItem["name"],
+    get: (d: Date) => number,
+    target: number,
+    orb: number,
+    direction: 1 | -1
+  ) {
+    let t = new Date(date);
+
+    // 动态计算步数
+    const stepMs = this.getDynamicStepMs(t, b1, b2, target, orb);
+
+    // 先扫出边界区间
+    while (this.isAspectHit(get(t), target, orb)) {
+      t = new Date(t.getTime() + direction * stepMs);
+    }
+
+    // 二分精确边界
+    let t1 = new Date(t.getTime() - direction * stepMs);
+    let t2 = t;
+
+    for (let i = 0; i < 20; i++) {
+      const mid = new Date((t1.getTime() + t2.getTime()) / 2);
+      const hit = this.isAspectHit(get(mid), target, orb);
+
+      if (hit) {
+        t1 = mid;
+      } else {
+        t2 = mid;
+      }
+    }
+
+    return new Date((t1.getTime() + t2.getTime()) / 2);
+  }
+
+  // 🔹 找精确相位（exact）
+  private findExact(date: Date, get: (d: Date) => number, target: number) {
+    let t1 = new Date(date.getTime() - 2 * 24 * 3600 * 1000);
+    let t2 = new Date(date.getTime() + 2 * 24 * 3600 * 1000);
+
+    for (let i = 0; i < 25; i++) {
+      const mid = new Date((t1.getTime() + t2.getTime()) / 2);
+
+      const d1 = get(t1) - target;
+      const dmid = get(mid) - target;
+
+      if (d1 * dmid <= 0) {
+        t2 = mid;
+      } else {
+        t1 = mid;
+      }
+    }
+
+    return new Date((t1.getTime() + t2.getTime()) / 2);
+  }
+
+  // Applying / Separating 入相/出相
+  private isApplying(d1: number, d2: number, target: number) {
+    return Math.abs(d2 - target) < Math.abs(d1 - target);
+  }
+
+  // 找某一个相位的 开始/结束时间
+  public findAspectWindow(
+    date: Date,
+    b1: PlanetItem["name"],
+    b2: PlanetItem["name"],
+    aspect: Aspect
+  ) {
+    const _now = new Date(); // debug 计算用时
+    const get = (d: Date) => PairLongitude(b1, b2, d);
+
+    // TODO 优化 use map
+    const item = this.ASPECTS.find((i) => i.name === aspect);
+
+    const target = item!.angle;
+    const orb = this.getDynamicOrb(b1, b2, item!.orb);
+    // const isMoonInvolved = b1 === "Moon" || b2 === "Moon";
+
+    const start = this.findBoundary(date, b1, b2, get, target, orb, -1);
+    const end = this.findBoundary(date, b1, b2, get, target, orb, +1);
+    const exact = this.findExact(date, get, target);
+
+    const t = Date.now() - _now.getTime(); // debug 用
+
+    return { start, exact, end, t };
+  }
 }
 
 export const aspectPosition = new AspectPosition();
+
+// const result = aspectPosition.findAspectWindow(
+//   new Date(),
+//   Body.Jupiter,
+//   Body.Mars,
+//   Aspect.Square // 刑相
+// );
+
+// console.log(result.start.toLocaleDateString());
+// console.log(result.end.toLocaleDateString());
+// console.log(result.exact.toLocaleDateString());

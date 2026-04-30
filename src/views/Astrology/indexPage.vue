@@ -49,14 +49,27 @@
         >
           {{ item.type }} {{ aspectPosition.map[item.type].name }}
         </p>
-        <p
+        <p class="value">
+          开始时间 {{ item.start.toLocaleDateString() }}
+          {{ item.start.getHours() }}:{{ item.start.getMinutes() }}
+        </p>
+        <p class="value">
+          力量最强 {{ item.exact.toLocaleDateString() }}
+          {{ item.exact.getHours() }}:{{ item.exact.getMinutes() }}
+        </p>
+        <p class="value">
+          结束时间 {{ item.end.toLocaleDateString() }}
+          {{ item.end.getHours() }}:{{ item.end.getMinutes() }}
+        </p>
+        <p class="value">计算耗时 {{ item.t }} ms</p>
+        <!-- <p
           class="value"
           :style="{
             fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
           }"
         >
           {{ item.strength }} ({{ item.orb }}°)
-        </p>
+        </p> -->
       </van-cell>
     </van-cell-group>
   </div>
@@ -76,7 +89,18 @@ const data = computed(() => {
 });
 
 const aspectData = computed(() => {
-  return aspectPosition.getData(data.value);
+  return aspectPosition.getData(data.value).map((i) => {
+    const r = aspectPosition.findAspectWindow(
+      time.value,
+      i.between[0],
+      i.between[1],
+      i.type
+    );
+    return {
+      ...i,
+      ...r,
+    };
+  });
 });
 </script>
 
