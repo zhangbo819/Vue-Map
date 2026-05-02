@@ -308,7 +308,6 @@ class AspectPosition {
 
     const target = item!.angle;
     const orb = this.getDynamicOrb(b1, b2, item!.orb);
-    // const isMoonInvolved = b1 === "Moon" || b2 === "Moon";
 
     const start = this.findBoundary(date, b1, b2, get, target, orb, -1);
     const end = this.findBoundary(date, b1, b2, get, target, orb, +1);
