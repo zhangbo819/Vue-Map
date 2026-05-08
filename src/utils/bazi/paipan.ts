@@ -73,7 +73,7 @@ const VE = function (yy: number) {
  * @param float jd
  * @return number 返回某时刻(儒略日历)的攝動偏移量
  */
-const Perturbation = function (jd) {
+const Perturbation = function (jd: number) {
   const t = (jd - 2451545) / 36525;
   let s = 0;
   for (let k = 0; k <= 23; k++) {
@@ -90,7 +90,7 @@ const Perturbation = function (jd) {
  * @param int mm 月份
  * @return number
  */
-const DeltaT = function (yy, mm) {
+const DeltaT = function (yy: number, mm: number) {
   let u, t, dt;
   const y = yy + (mm - 0.5) / 12;
 
@@ -222,15 +222,15 @@ const DeltaT = function (yy, mm) {
  * @param int yy
  * @return boolean
  */
-const MeanJQJD = function (yy) {
+const MeanJQJD = function (yy: number) {
   const jd = VE(yy);
   if (!jd) {
     //该年的春分點
     return [];
   }
-  const ty = VE(yy + 1) - jd; //该年的回歸年長
+  const ty = VE(yy + 1) - jd; // 该年的回歸年長
 
-  const num = 24 + 2; //另外多取2个确保覆盖完一个公历年
+  const num = 24 + 2; // 另外多取2个确保覆盖完一个公历年
 
   const ath = (2 * Math.PI) / 24;
   const tx = (jd - 2451545) / 365250;
@@ -250,7 +250,7 @@ const MeanJQJD = function (yy) {
     8.16716666602386e-6 * tt * tt * tt * tt;
   const rvp = (vp * 2 * Math.PI) / 360;
   const peri = [];
-  for (var i = 0; i < num; i++) {
+  for (let i = 0; i < num; i++) {
     let flag = 0;
     let th = ath * i + rvp;
     if (th > Math.PI && th <= 3 * Math.PI) {
@@ -273,7 +273,7 @@ const MeanJQJD = function (yy) {
     peri[i] = f;
   }
   const jqjd = [];
-  for (var i = 0; i < num; i++) {
+  for (let i = 0; i < num; i++) {
     jqjd[i] = jd + peri[i] - peri[0];
   }
 
@@ -286,7 +286,7 @@ const MeanJQJD = function (yy) {
  * @param int end 0-25
  * @return array
  */
-const GetAdjustedJQ = function (yy, start, end) {
+const GetAdjustedJQ = function (yy: number, start: number, end: number) {
   if (start < 0 || start > 25) {
     return [];
   }
@@ -316,11 +316,11 @@ const GetAdjustedJQ = function (yy, start, end) {
  * @param int yy
  * @return array jq[(2*k+21)%24]
  */
-const GetPureJQsinceSpring = function (yy) {
+const GetPureJQsinceSpring = function (yy: number) {
   const jdpjq = [];
 
   let dj = GetAdjustedJQ(yy - 1, 19, 23); //求出含指定年立春開始之3個節氣JD值,以前一年的年值代入
-  for (var k in dj) {
+  for (const k in dj) {
     if (k < 19) {
       continue;
     }
@@ -334,7 +334,7 @@ const GetPureJQsinceSpring = function (yy) {
   }
 
   dj = GetAdjustedJQ(yy, 0, 25); //求出指定年節氣之JD值,從春分開始,到大寒,多取两个确保覆盖一个公历年,也方便计算起运数
-  for (var k in dj) {
+  for (const k in dj) {
     if (k % 2 == 0) {
       continue;
     }
@@ -502,7 +502,7 @@ const GetZQandSMandLunarMonthCode = function (yy) {
   let yz = 0; //設定旗標,0表示未遇到閏月,1表示已遇到閏月
   if (Math.floor(jdzq[12] + 0.5) >= Math.floor(jdnm[13] + 0.5)) {
     //若第13個中氣jdzq(12)大於或等於第14個新月jdnm(13)
-    for (var i = 1; i <= 14; i++) {
+    for (let i = 1; i <= 14; i++) {
       //表示此兩個冬至之間的11個中氣要放到12個朔望月中,
       //至少有一個朔望月不含中氣,第一個不含中氣的月即為閏月
       //若阴曆臘月起始日大於冬至中氣日,且阴曆正月起始日小於或等於大寒中氣日,則此月為閏月,其餘同理
@@ -520,11 +520,11 @@ const GetZQandSMandLunarMonthCode = function (yy) {
     }
   } else {
     //否則表示兩個連續冬至之間只有11個整月,故無閏月
-    for (var i = 0; i <= 12; i++) {
+    for (let i = 0; i <= 12; i++) {
       //直接賦予這12個月月代碼
       mc[i] = i;
     }
-    for (var i = 13; i <= 14; i++) {
+    for (let i = 13; i <= 14; i++) {
       //處理次一置月年的11月與12月,亦有可能含閏月
       //若次一阴曆臘月起始日大於附近的冬至中氣日,且阴曆正月起始日小於或等於大寒中氣日,則此月為閏月,次一正月同理.
       if (
@@ -548,7 +548,7 @@ const GetZQandSMandLunarMonthCode = function (yy) {
  * @param float jdws 冬至的儒略日历时间
  * @return array
  */
-var GetSMsinceWinterSolstice = function (yy, jdws) {
+const GetSMsinceWinterSolstice = function (yy, jdws) {
   const tjd = [];
 
   const jd = Solar2Julian(yy - 1, 11, 1, 0, 0, 0); //求年初前兩個月附近的新月點(即前一年的11月初)
@@ -557,22 +557,25 @@ var GetSMsinceWinterSolstice = function (yy, jdws) {
   const thejd = nm[1];
   for (let i = 0; i <= 19; i++) {
     //求出連續20個朔望月
-    var k = kn + i;
+    const k = kn + i;
     const mjd = thejd + synmonth * i;
     tjd[i] = TrueNewMoon(k) + 1 / 3; //以k值代入求瞬時朔望日,因中國比格林威治先行8小時,加1/3天
     //下式為修正dynamical time to Universal time
     tjd[i] = tjd[i] - DeltaT(yy, i - 1) / 1440; //1為1月,0為前一年12月,-1為前一年11月(當i=0時,i-1=-1,代表前一年11月)
   }
-  for (var j = 0; j <= 18; j++) {
+  let target_j = 0;
+  for (let j = 0; j <= 18; j++) {
     if (Math.floor(tjd[j] + 0.5) > Math.floor(jdws + 0.5)) {
+      target_j = j;
       break;
-    } //已超過冬至中氣(比較日期法)
+    } // 已超過冬至中氣(比較日期法)
+    target_j = j;
   }
 
   const jdnm = [];
-  for (var k = 0; k <= 15; k++) {
+  for (let k = 0; k <= 15; k++) {
     //取上一步的索引值
-    jdnm[k] = tjd[j - 1 + k]; //重排索引,使含冬至朔望月的索引為0
+    jdnm[k] = tjd[target_j - 1 + k]; //重排索引,使含冬至朔望月的索引為0
   }
   return jdnm;
 };
@@ -586,7 +589,7 @@ var GetSMsinceWinterSolstice = function (yy, jdws) {
  * @param int ss [0-59]
  * @return boolean|number
  */
-var Solar2Julian = function (yy, mm, dd, hh = 0, mt = 0, ss = 0) {
+const Solar2Julian = function (yy, mm, dd, hh = 0, mt = 0, ss = 0) {
   if (!ValidDate(yy, mm, dd)) {
     return false;
   }
@@ -626,7 +629,7 @@ var Solar2Julian = function (yy, mm, dd, hh = 0, mt = 0, ss = 0) {
  * @param int dd
  * @return boolean
  */
-var ValidDate = (this.ValidDate = function (yy, mm, dd) {
+function ValidDate(yy, mm, dd) {
   if (yy < -1000 || yy > 3000) {
     //适用于西元-1000年至西元3000年,超出此范围误差较大
     return false;
@@ -656,10 +659,10 @@ var ValidDate = (this.ValidDate = function (yy, mm, dd) {
   }
 
   return true;
-});
+}
 
 class Paipan {
-  constructor() {}
+  //   constructor() {}
   /**
    * 是否区分 早晚子 时,true则23:00-24:00算成上一天
    * @var bool
@@ -1227,7 +1230,7 @@ class Paipan {
         data: [],
       },
       bazi: [JZ_60.甲子, JZ_60.甲子, JZ_60.甲子, JZ_60.甲子],
-      xz: XZ.白羊座,
+      //   xz: XZ.白羊座,
       sx: '',
       yinli: [],
       yangli: [],
@@ -1241,7 +1244,7 @@ class Paipan {
     const { tg, dz, jd, jq, ix } = this.GetGanZhi(yy, mm, dd, hh, mt, ss);
 
     // 四柱
-    for (var i = 0; i <= 3; i++) {
+    for (let i = 0; i <= 3; i++) {
       res.bazi[i] = (this.ctg[tg[i]] + this.cdz[dz[i]]) as JZ_60;
     }
 
@@ -1252,7 +1255,7 @@ class Paipan {
       // 起大运时间,阳男阴女顺排
       span = jq[ix + 1] - jd; // 往后数一个节,计算时间跨度
 
-      for (var i = 1; i <= 12; i++) {
+      for (let i = 1; i <= 12; i++) {
         // 大运干支
         big_tg.push((tg[1] + i) % 10);
         big_dz.push((dz[1] + i) % 12);
@@ -1261,7 +1264,7 @@ class Paipan {
       // 阴男阳女逆排,往前数一个节
       span = jd - jq[ix];
 
-      for (var i = 1; i <= 12; i++) {
+      for (let i = 1; i <= 12; i++) {
         // 确保是正数
         big_tg.push((tg[1] + 20 - i) % 10);
         big_dz.push((dz[1] + 24 - i) % 12);
@@ -1288,7 +1291,7 @@ class Paipan {
     const start_jdtime = jd + span * 120; // 三天折合一年,一天折合四个月,一个时辰折合十天,一个小时折合五天,反推得到一年按360天算
     res.big.start_time = Julian2Solar(start_jdtime); // 转换成公历形式,注意这里变成了数组
 
-    for (var i = 0; i < 12; i++) {
+    for (let i = 0; i < 12; i++) {
       res.big.data.push({
         name: (this.ctg[big_tg[i]] + this.cdz[big_dz[i]]) as JZ_60,
         start_time: Julian2Solar(start_jdtime + i * 10 * 360),
@@ -1345,7 +1348,8 @@ class Paipan {
     });
     // console.log('xiaoyun', res.big.data[0]);
 
-    res.xz = this.cxz[this.GetZodiac(mm, dd)]; // 星座
+    // 注释掉星座，之后直接从星座包中获取
+    // res.xz = this.cxz[this.GetZodiac(mm, dd)]; // 星座
     res.sx = this.csa[dz[0]]; // 生肖
 
     // 十神对应关系表
@@ -1746,7 +1750,7 @@ export type PaipanInfo = {
     )[];
   };
   bazi: [JZ_60, JZ_60, JZ_60, JZ_60]; // 八字文字形式
-  xz: XZ; // 星座
+  //   xz: XZ; // 星座
   sx: string; // 属相
   yinli: number[]; // 阴历
   yangli: (string | number)[]; // 阳历

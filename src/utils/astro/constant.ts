@@ -1,4 +1,4 @@
-import { Body } from "astronomy-engine";
+import { Body } from 'astronomy-engine';
 
 export const BODIES = [
   Body.Sun,

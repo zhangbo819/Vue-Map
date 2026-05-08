@@ -1051,7 +1051,7 @@ class WuXingClass {
 
     // console.log('tgs, dzs', tgs, dzs);
 
-    const yueling = WuXing.getWuxing(bazi[1][1]) as WX;
+    const yueling = this.getWuxing(bazi[1][1]) as WX;
     const yueMap = YueLinByWuxing[yueling];
 
     const res: sizhuDetailsItem[] = WuXing5.map((i) => {
@@ -1183,7 +1183,7 @@ class WuXingClass {
     // 1 月令
     function getYuelingScore() {
       const yuezhi = bazi[1][1];
-      const yueling = WuXing.getWuxing(yuezhi) as WX;
+      const yueling = getWuxing(yuezhi) as WX;
       const yueMap = YueLinByWuxing[yueling];
       const map = [1.2, 1.1, 1, 0.75, 0.6];
 

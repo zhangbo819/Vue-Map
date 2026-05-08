@@ -1,10 +1,39 @@
-import { DZ, TG } from './wuxing';
+// import { DZ, TG } from './wuxing';
 
 // enum TH_LEVEL {
 //   '极佳',
 //   '较佳',
 //   '不佳',
 // }
+
+// TODO ues import by wuxing
+enum TG {
+  甲 = '甲',
+  乙 = '乙',
+  丙 = '丙',
+  丁 = '丁',
+  戊 = '戊',
+  己 = '己',
+  庚 = '庚',
+  辛 = '辛',
+  壬 = '壬',
+  癸 = '癸',
+}
+
+enum DZ {
+  子 = '子',
+  丑 = '丑',
+  寅 = '寅',
+  卯 = '卯',
+  辰 = '辰',
+  巳 = '巳',
+  午 = '午',
+  未 = '未',
+  申 = '申',
+  酉 = '酉',
+  戌 = '戌',
+  亥 = '亥',
+}
 
 // TODO target
 export const DH_MAP: Record<TG, Record<DZ, { text: string; target: TG[] }>> = {
