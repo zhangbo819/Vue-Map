@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <nav>
-      <!-- <router-link to="/">Home</router-link> | -->
-      <router-link to="/china">中国</router-link> |
-      <router-link to="/world">世界</router-link> |
-      <router-link to="/astrology">占星</router-link>
-    </nav>
     <router-view />
+    <van-tabbar route placeholder>
+      <van-tabbar-item to="/astrology" icon="home-o">占星</van-tabbar-item>
+      <!-- <van-tabbar-item to="/world" icon="search">标签</van-tabbar-item> -->
+      <van-tabbar-item to="/china" icon="balance-list-o">500强</van-tabbar-item>
+    </van-tabbar>
   </div>
 </template>
 
 <script setup lang="ts">
-console.log("app in");
+// console.log('app in');
 </script>
 
 <style lang="scss">

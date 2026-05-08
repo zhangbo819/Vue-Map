@@ -1,5 +1,9 @@
 <template>
   <div>
+    <nav>
+      <router-link to="/china">中国</router-link> | <router-link to="/world">世界</router-link>
+    </nav>
+
     <YearHeader v-model="currentYear" :year-list="supportList" />
 
     <div class="radios">
@@ -19,11 +23,7 @@
         <van-radio name="1">与去年对比</van-radio>
       </van-radio-group>
 
-      <van-radio-group
-        v-model="form.isAll"
-        direction="horizontal"
-        style="margin-top: 12px"
-      >
+      <van-radio-group v-model="form.isAll" direction="horizontal" style="margin-top: 12px">
         <van-radio name="0">精简版</van-radio>
         <van-radio name="1">完整版</van-radio>
       </van-radio-group>
@@ -76,51 +76,51 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import YearHeader from "@/components/YearHeader.vue";
-import MyTable from "@/components/MyTable.vue";
-import { getWorldYearData } from "@/utils/world";
-import { sortByZhKey } from "../../utils/util";
+import { computed, ref, watch } from 'vue';
+import YearHeader from '@/components/YearHeader.vue';
+import MyTable from '@/components/MyTable.vue';
+import { getWorldYearData } from '@/utils/world';
+import { sortByZhKey } from '../../utils/util';
 
 const layout = [
-  { title: "排名", key: "index", sort: true },
+  { title: '排名', key: 'index', sort: true },
   {
-    title: "名次",
-    key: "compare_index",
+    title: '名次',
+    key: 'compare_index',
     sort: true,
-    sortFormatter: (v: string) => v.replace(/ \((.+?)\)/, ""),
+    sortFormatter: (v: string) => v.replace(/ \((.+?)\)/, ''),
   },
-  { title: "简称", key: "simpleName" }, // 简称
-  { title: "名称", key: "name" },
+  { title: '简称', key: 'simpleName' }, // 简称
+  { title: '名称', key: 'name' },
   {
-    title: "行业",
-    key: "industry",
+    title: '行业',
+    key: 'industry',
     sort: true,
-    sortFn: sortByZhKey("industry"),
-  },
-  {
-    title: "国家",
-    key: "country",
-    sort: true,
-    sortFn: sortByZhKey("country"),
+    sortFn: sortByZhKey('industry'),
   },
   {
-    title: "营收",
-    key: "revenue",
+    title: '国家',
+    key: 'country',
     sort: true,
-    sortFormatter: (v: string) => v.replace(",", ""),
+    sortFn: sortByZhKey('country'),
   },
   {
-    title: "净利润",
-    key: "profit",
+    title: '营收',
+    key: 'revenue',
     sort: true,
-    sortFormatter: (v: string) => v.replace(",", ""),
+    sortFormatter: (v: string) => v.replace(',', ''),
   },
   {
-    title: "利润率",
-    key: "profitMargin",
+    title: '净利润',
+    key: 'profit',
     sort: true,
-    sortFormatter: (v: string) => v.replace("%", ""),
+    sortFormatter: (v: string) => v.replace(',', ''),
+  },
+  {
+    title: '利润率',
+    key: 'profitMargin',
+    sort: true,
+    sortFormatter: (v: string) => v.replace('%', ''),
   },
 ];
 function getLayout(targets: string[]) {
@@ -129,19 +129,19 @@ function getLayout(targets: string[]) {
   });
 }
 const enumTypes = {
-  country: "1",
-  industry: "2",
-  index: "3",
+  country: '1',
+  industry: '2',
+  index: '3',
 };
 
 const currentYear = ref(2023);
 // const currentYear = ref(new Date().getFullYear());
 const supportList = ref([2020, 2021, 2022, 2023]);
 const form = ref({
-  layout: ["index", "simpleName", "industry"],
+  layout: ['index', 'simpleName', 'industry'],
   type: enumTypes.country, // enumTypes
-  isAll: "0", //  0 精简 1 完整
-  compare: "0", // 0 正常 1 和去年对比
+  isAll: '0', //  0 精简 1 完整
+  compare: '0', // 0 正常 1 和去年对比
 });
 const showConfig = ref([...layout]);
 
@@ -153,14 +153,13 @@ watch(
     data.forEach((i) => {
       i.simpleName = i.name.replace(
         /(集团)?(有限公司|股份有限公司|控股有限公司|有限责任公司|总公司|公司|集团)$/,
-        ""
+        ''
       );
-      let { revenue = "0", profit = "0" } = i;
+      let { revenue = '0', profit = '0' } = i;
       if (revenue && profit) {
-        revenue = revenue.replace(/,/g, "");
-        profit = profit.replace(/,/g, "");
-        i.profitMargin =
-          ((Number(profit) / Number(revenue)) * 100).toFixed(2) + "%";
+        revenue = revenue.replace(/,/g, '');
+        profit = profit.replace(/,/g, '');
+        i.profitMargin = ((Number(profit) / Number(revenue)) * 100).toFixed(2) + '%';
       }
       return i;
     });
@@ -217,35 +216,21 @@ const genConfig = computed(() => {
   let res: string[] = [];
   const { type, compare } = form.value;
 
-  const indexKey = compare === "0" ? "index" : "compare_index";
-  const isAll = form.value.isAll === "0";
+  const indexKey = compare === '0' ? 'index' : 'compare_index';
+  const isAll = form.value.isAll === '0';
 
   switch (type) {
     case enumTypes.country: {
       res = isAll
-        ? [indexKey, "simpleName", "industry"]
-        : [
-            indexKey,
-            "simpleName",
-            "industry",
-            "revenue",
-            "profit",
-            "profitMargin",
-          ];
+        ? [indexKey, 'simpleName', 'industry']
+        : [indexKey, 'simpleName', 'industry', 'revenue', 'profit', 'profitMargin'];
       break;
     }
     case enumTypes.industry:
     case enumTypes.index: {
       res = isAll
-        ? [indexKey, "country", "simpleName"]
-        : [
-            indexKey,
-            "simpleName",
-            "country",
-            "revenue",
-            "profit",
-            "profitMargin",
-          ];
+        ? [indexKey, 'country', 'simpleName']
+        : [indexKey, 'simpleName', 'country', 'revenue', 'profit', 'profitMargin'];
       break;
     }
   }
@@ -270,7 +255,7 @@ watch(
 watch(
   () => currentYear.value,
   () => {
-    form.value.compare = "0";
+    form.value.compare = '0';
   },
   { immediate: true }
 );
@@ -280,24 +265,24 @@ watch(
   () => form.value.compare,
   async (val) => {
     // const compare_keys = ["index"];
-    if (val === "1") {
+    if (val === '1') {
       const previousYear = currentYear.value - 1;
       const previousData = await getWorldYearData(previousYear);
 
       currentData.value.forEach((item) => {
-        if (typeof item.compare_index === "undefined") {
+        if (typeof item.compare_index === 'undefined') {
           const target = previousData.find((j) => j.name === item.name);
           let text;
           if (target) {
             const compareNumber = Number(target.index) - Number(item.index);
             text =
               compareNumber === 0
-                ? "-0"
+                ? '-0'
                 : compareNumber > 0
                 ? `↑${compareNumber}`
                 : `↓${Math.abs(compareNumber)}`;
           } else {
-            text = "新";
+            text = '新';
           }
           item.compare_index = `${item.index} (${text})`;
         }
