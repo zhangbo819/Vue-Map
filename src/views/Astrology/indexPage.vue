@@ -103,7 +103,7 @@ import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
 import { map12, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
-import paipan from '@/utils/bazi/paipan';
+import { paipan } from 'astro-bazi-utils';
 
 const time = ref(new Date());
 
@@ -125,7 +125,7 @@ const aspectData = computed(() => {
 
 const bazi = computed(() => {
   const data = paipan.GetInfo(1, time.value.getTime());
-  // console.log(data);
+  console.log(data);
   return data.bazi;
 });
 </script>
