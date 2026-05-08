@@ -7,58 +7,69 @@
     <!-- 操作栏 -->
     <astro-operation v-model:time="time" />
 
-    <!-- 参数详情列表 -->
-    <h2>参数详情列表</h2>
-    <van-cell-group inset>
-      <van-cell
-        v-for="item in data"
-        :key="item.name"
-        :title="`${item.name} ${planentsMap[item.name].name}`"
-        :label="item.longitude"
-        :title-style="{ color: planentsMap[item.name].color }"
-      >
-        <p class="value" :style="{ color: map12[item.sign].color }">
-          {{ item.sign }} {{ map12[item.sign].name }}
-          <span v-if="item.retrograde">R</span>
-        </p>
-        <p class="value">{{ item.degree }}°</p>
-      </van-cell>
-    </van-cell-group>
-
-    <h2>主要相位</h2>
-    <van-cell-group inset>
-      <van-cell v-for="item in aspectData" :key="item.between" :label="item.between.join(' - ')">
+    <van-collapse v-model="activeTab">
+      <!-- 参数详情列表 -->
+      <van-collapse-item name="1">
         <template #title>
-          <p>
-            <span :style="{ color: planentsMap[item.between[0]].color }">{{
-              planentsMap[item.between[0]].name
-            }}</span>
-            -
-            <span :style="{ color: planentsMap[item.between[1]].color }">{{
-              planentsMap[item.between[1]].name
-            }}</span>
-          </p>
+          <h2>参数详情列表</h2>
         </template>
-        <p class="value" :style="{ color: aspectPosition.map[item.type].color }">
-          {{ item.type }} {{ aspectPosition.map[item.type].name }}
-        </p>
-        <p class="value">
-          开始时间 {{ item.start.toLocaleDateString() }} {{ item.start.getHours() }}:{{
-            item.start.getMinutes()
-          }}
-        </p>
-        <p class="value">
-          力量最强 {{ item.exact.toLocaleDateString() }} {{ item.exact.getHours() }}:{{
-            item.exact.getMinutes()
-          }}
-        </p>
-        <p class="value">
-          结束时间 {{ item.end.toLocaleDateString() }} {{ item.end.getHours() }}:{{
-            item.end.getMinutes()
-          }}
-        </p>
-        <p class="value">计算耗时 {{ item.t }} ms</p>
-        <!-- <p
+        <van-cell-group inset>
+          <van-cell
+            v-for="item in data"
+            :key="item.name"
+            :title="`${item.name} ${planentsMap[item.name].name}`"
+            :label="item.longitude"
+            :title-style="{ color: planentsMap[item.name].color }"
+          >
+            <p class="value" :style="{ color: map12[item.sign].color }">
+              {{ item.sign }} {{ map12[item.sign].name }}
+              <span v-if="item.retrograde">R</span>
+            </p>
+            <p class="value">{{ item.degree }}°</p>
+          </van-cell>
+        </van-cell-group>
+      </van-collapse-item>
+
+      <!-- 相位 -->
+      <van-collapse-item name="2">
+        <template #title> <h2>主要相位</h2></template>
+        <van-cell-group inset>
+          <van-cell
+            v-for="item in aspectData"
+            :key="item.between"
+            :label="item.between.join(' - ')"
+          >
+            <template #title>
+              <p>
+                <span :style="{ color: planentsMap[item.between[0]].color }">{{
+                  planentsMap[item.between[0]].name
+                }}</span>
+                -
+                <span :style="{ color: planentsMap[item.between[1]].color }">{{
+                  planentsMap[item.between[1]].name
+                }}</span>
+              </p>
+            </template>
+            <p class="value" :style="{ color: aspectPosition.map[item.type].color }">
+              {{ item.type }} {{ aspectPosition.map[item.type].name }}
+            </p>
+            <p class="value">
+              开始时间 {{ item.start.toLocaleDateString() }} {{ item.start.getHours() }}:{{
+                item.start.getMinutes()
+              }}
+            </p>
+            <p class="value">
+              力量最强 {{ item.exact.toLocaleDateString() }} {{ item.exact.getHours() }}:{{
+                item.exact.getMinutes()
+              }}
+            </p>
+            <p class="value">
+              结束时间 {{ item.end.toLocaleDateString() }} {{ item.end.getHours() }}:{{
+                item.end.getMinutes()
+              }}
+            </p>
+            <p class="value">计算耗时 {{ item.t }} ms</p>
+            <!-- <p
           class="value"
           :style="{
             fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
@@ -66,17 +77,23 @@
         >
           {{ item.strength }} ({{ item.orb }}°)
         </p> -->
-      </van-cell>
-    </van-cell-group>
+          </van-cell>
+        </van-cell-group>
+      </van-collapse-item>
 
-    <!-- 八字 临时放这里 -->
-    <h2>八字</h2>
-    <van-row>
-      <van-col v-for="item in bazi" :key="item" span="6">
-        <p>{{ item[0] }}</p>
-        <p>{{ item[1] }}</p>
-      </van-col>
-    </van-row>
+      <!-- 八字 临时放这里 -->
+      <van-collapse-item name="3">
+        <template #title>
+          <h2>八字</h2>
+        </template>
+        <van-row>
+          <van-col v-for="item in bazi" :key="item" span="6">
+            <p>{{ item[0] }}</p>
+            <p>{{ item[1] }}</p>
+          </van-col>
+        </van-row>
+      </van-collapse-item>
+    </van-collapse>
   </div>
 </template>
 
@@ -93,6 +110,8 @@ const time = ref(new Date());
 const data = computed(() => {
   return getAllPlanets(time.value);
 });
+
+const activeTab = ref(['1', '2', '3']);
 
 const aspectData = computed(() => {
   return aspectPosition.getData(data.value).map((i) => {

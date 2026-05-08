@@ -17,6 +17,8 @@ declare module 'vue' {
     VanCheckbox: typeof import('vant/es')['Checkbox']
     VanCheckboxGroup: typeof import('vant/es')['CheckboxGroup']
     VanCol: typeof import('vant/es')['Col']
+    VanCollapse: typeof import('vant/es')['Collapse']
+    VanCollapseItem: typeof import('vant/es')['CollapseItem']
     VanDatePicker: typeof import('vant/es')['DatePicker']
     VanIcon: typeof import('vant/es')['Icon']
     VanPickerGroup: typeof import('vant/es')['PickerGroup']
