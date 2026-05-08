@@ -70,13 +70,13 @@
     </van-cell-group>
 
     <!-- 八字 临时放这里 -->
-    <!-- <h2>八字</h2>
+    <h2>八字</h2>
     <van-row>
       <van-col v-for="item in bazi" :key="item" span="6">
         <p>{{ item[0] }}</p>
         <p>{{ item[1] }}</p>
       </van-col>
-    </van-row> -->
+    </van-row>
   </div>
 </template>
 
@@ -86,7 +86,7 @@ import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
 import { map12, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
-// import paipan from '@/utils/bazi/paipan';
+import paipan from '@/utils/bazi/paipan';
 
 const time = ref(new Date());
 
@@ -104,11 +104,11 @@ const aspectData = computed(() => {
   });
 });
 
-// const bazi = computed(() => {
-//   const data = paipan.GetInfo(1, time.value.getTime());
-//   // console.log(data);
-//   return data.bazi;
-// });
+const bazi = computed(() => {
+  const data = paipan.GetInfo(1, time.value.getTime());
+  // console.log(data);
+  return data.bazi;
+});
 </script>
 
 <style lang="scss" scoped>
