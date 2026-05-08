@@ -1,10 +1,10 @@
-import { Ref, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { Ref, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-import { PlanetItem } from "@/utils/astro/planets";
-import { BODIES } from "@/utils/astro/constant";
+import { PlanetItem } from '@/utils/astro/planets';
+import { BODIES } from '@/utils/astro/constant';
 
-type nameLongitudeMap = Record<PlanetItem["name"], PlanetItem["longitude"]>;
+type nameLongitudeMap = Record<PlanetItem['name'], PlanetItem['longitude']>;
 
 // 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
 // 方案在从 350+ -> 1 时，让其变成 350+ -> 361，然后在后续避免无限增加在达到某个临界点进行恢复 如 400 -> 40
@@ -19,7 +19,7 @@ export function useResetLongitude(data: Ref<PlanetItem[]>) {
     BODIES.reduce((r, key) => {
       r[key] = false;
       return r;
-    }, {} as Record<PlanetItem["name"], boolean>)
+    }, {} as Record<PlanetItem['name'], boolean>)
   );
   function normalizeAngle(prev: number, next: number) {
     const diff = next - prev;
@@ -37,7 +37,7 @@ export function useResetLongitude(data: Ref<PlanetItem[]>) {
         return r;
       }, {} as nameLongitudeMap);
 
-      const needResetName: PlanetItem["name"][] = [];
+      const needResetName: PlanetItem['name'][] = [];
       if (oldVal) {
         newVal.forEach((p) => {
           const prev = css_longitude.value[p.name];
@@ -47,7 +47,7 @@ export function useResetLongitude(data: Ref<PlanetItem[]>) {
 
           // TODO bug: 现在顺时针时还会有问题
           // debug
-          if (p.name === "Moon") {
+          if (p.name === 'Moon') {
             console.log(fixed);
           }
 
@@ -78,9 +78,7 @@ export function useResetLongitude(data: Ref<PlanetItem[]>) {
 
           // 强制下一帧恢复动画
           requestAnimationFrame(() => {
-            needResetName.forEach(
-              (name) => (disableTransition.value[name] = false)
-            );
+            needResetName.forEach((name) => (disableTransition.value[name] = false));
             // 恢复新值
             requestAnimationFrame(() => {
               // console.log("最后再向前移动");
@@ -134,11 +132,7 @@ export function useAvoidPlanetOverlap(data: Ref<PlanetItem[]>) {
     // 当 350多度时，也会和 0 度左右的第一组成一组
     const first_group = groups[0][0];
     const last_group = groups[groups.length - 1];
-    if (
-      first_group.longitude +
-        (360 - last_group[last_group.length - 1].longitude) <=
-      threshold
-    ) {
+    if (first_group.longitude + (360 - last_group[last_group.length - 1].longitude) <= threshold) {
       groups.pop();
       groups[0] = last_group.concat(groups[0]);
     }
@@ -187,7 +181,7 @@ export function useAvoidPlanetOverlap(data: Ref<PlanetItem[]>) {
 }
 
 // 暂未使用 同步改变地址栏
-export function useQuerySync(key: string, defaultValue = "") {
+export function useQuerySync(key: string, defaultValue = '') {
   const route = useRoute();
   const router = useRouter();
 

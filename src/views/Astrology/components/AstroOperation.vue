@@ -5,9 +5,7 @@
         ><van-icon name="arrow-left"
       /></van-col>
       <van-col span="8">{{ time.getDate() }} </van-col>
-      <van-col span="8" class="cursor" @click="onClickDay(1)"
-        ><van-icon name="arrow"
-      /></van-col>
+      <van-col span="8" class="cursor" @click="onClickDay(1)"><van-icon name="arrow" /></van-col>
     </van-row>
   </van-cell>
   <van-cell
@@ -24,11 +22,7 @@
       @confirm="onPickerGroupConfirm"
       @cancel="showPickerGroup = false"
     >
-      <van-date-picker
-        v-model="currentDate"
-        :min-date="minDate"
-        :max-date="maxDate"
-      />
+      <van-date-picker v-model="currentDate" :min-date="minDate" :max-date="maxDate" />
       <van-time-picker v-model="currentTime" :formatter="formatter" />
     </van-picker-group>
   </van-popup>
@@ -44,16 +38,11 @@
     :default-date="time"
     @confirm="onCalendarConfirm"
   />
-  <van-cell
-    title="此时此刻"
-    :value="time.toLocaleString()"
-    class="cursor"
-    @click="onClickTime"
-  />
+  <van-cell title="此时此刻" :value="time.toLocaleString()" class="cursor" @click="onClickTime" />
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   time: {
@@ -61,7 +50,7 @@ const props = defineProps({
     required: true,
   },
 });
-const emit = defineEmits(["update:time"]);
+const emit = defineEmits(['update:time']);
 
 const now = new Date();
 const minDate = new Date(1900, 0, 1); // 最小 1900 年
@@ -80,7 +69,7 @@ watch(
 );
 
 const onClickTime = () => {
-  emit("update:time", new Date());
+  emit('update:time', new Date());
   // showSuccessToast("设置成功");
 };
 
@@ -91,7 +80,7 @@ const onClickDay = (step: number) => {
 
   newDate.setDate(day);
 
-  emit("update:time", newDate);
+  emit('update:time', newDate);
 };
 
 const showCalendar = ref(false);
@@ -104,15 +93,15 @@ const onCalendarConfirm = (value: Date) => {
   newDate.setMonth(value.getMonth());
   newDate.setDate(value.getDate());
 
-  emit("update:time", newDate);
+  emit('update:time', newDate);
 };
 
 const formatter = (type: string, option: any) => {
-  if (type === "hour") {
-    option.text += "时";
+  if (type === 'hour') {
+    option.text += '时';
   }
-  if (type === "minute") {
-    option.text += "分";
+  if (type === 'minute') {
+    option.text += '分';
   }
   return option;
 };
@@ -128,7 +117,7 @@ const onPickerGroupConfirm = () => {
   newDate.setHours(hour);
   newDate.setMinutes(minute);
 
-  emit("update:time", newDate);
+  emit('update:time', newDate);
   showPickerGroup.value = false;
 };
 </script>

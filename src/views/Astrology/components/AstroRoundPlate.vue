@@ -59,9 +59,7 @@
           }"
           @click="onClickPlanent(item)"
         >
-          {{
-            planentsMap[item.name].n ?? planentsMap[item.name].name.slice(0, 1)
-          }}
+          {{ planentsMap[item.name].n ?? planentsMap[item.name].name.slice(0, 1) }}
         </p>
       </div>
     </div>
@@ -79,12 +77,9 @@
     <template v-if="activeAspect.plant">
       <h2>
         <span :style="{ color: planentsMap[activeAspect.plant.name].color }"
-          >{{ activeAspect.plant.name }}
-          {{ planentsMap[activeAspect.plant.name].name }}</span
+          >{{ activeAspect.plant.name }} {{ planentsMap[activeAspect.plant.name].name }}</span
         >&nbsp;
-        <span>
-          {{ `[${activeAspect.plant.retrograde ? "逆行" : "顺行"}]` }}</span
-        >
+        <span> {{ `[${activeAspect.plant.retrograde ? '逆行' : '顺行'}]` }}</span>
       </h2>
       <strong>{{ planetTexts[activeAspect.plant.name].short }}</strong>
       <h3>
@@ -100,10 +95,7 @@
         {{ activeAspect.plant.degree }}°
       </h3>
     </template>
-    <div
-      v-for="(item, index) in activeAspect.aspects"
-      :key="item.between.join('-')"
-    >
+    <div v-for="(item, index) in activeAspect.aspects" :key="item.between.join('-')">
       <p>
         &nbsp;&nbsp;
         <strong>{{ index + 1 }}. </strong>
@@ -130,26 +122,19 @@
   </van-popup>
 </template>
 <script setup lang="tsx">
-import { computed, onMounted, onUnmounted, ref, toRef } from "vue";
-import { AspectItem, aspectPosition, PlanetItem } from "@/utils/astro/planets";
-import {
-  map12,
-  planentsMap,
-  planetTexts,
-  title12,
-} from "@/utils/astro/astroUI";
-import { useAvoidPlanetOverlap, useResetLongitude } from "../hooks";
-import router from "@/router";
+import { computed, onMounted, onUnmounted, ref, toRef } from 'vue';
+import { AspectItem, aspectPosition, PlanetItem } from '@/utils/astro/planets';
+import { map12, planentsMap, planetTexts, title12 } from '@/utils/astro/astroUI';
+import { useAvoidPlanetOverlap, useResetLongitude } from '../hooks';
+import router from '@/router';
 
 const props = defineProps<{ data: PlanetItem[] }>();
 
 // 解决在跨 360° 旋转时，CSS 会走 358°反方向动画
-const { css_longitude, disableTransition } = useResetLongitude(
-  toRef(props, "data")
-);
+const { css_longitude, disableTransition } = useResetLongitude(toRef(props, 'data'));
 
 // 计算行星偏移量，避免行星重叠
-const planentRota = useAvoidPlanetOverlap(toRef(props, "data"));
+const planentRota = useAvoidPlanetOverlap(toRef(props, 'data'));
 
 const svgRef = ref<SVGSVGElement | null>(null);
 
@@ -173,10 +158,10 @@ const onResize = () => {
 };
 onMounted(() => {
   update();
-  window.addEventListener("resize", onResize);
+  window.addEventListener('resize', onResize);
 });
 onUnmounted(() => {
-  window.removeEventListener("resize", onResize);
+  window.removeEventListener('resize', onResize);
 });
 
 // 相位线数据
@@ -186,7 +171,7 @@ const aspectLines = computed(() => {
   const map = props.data.reduce((r, p) => {
     r[p.name] = aspectPosition.getPosition(p.longitude, svgPosition.value.r);
     return r;
-  }, {} as Record<PlanetItem["name"], { x: number; y: number }>);
+  }, {} as Record<PlanetItem['name'], { x: number; y: number }>);
 
   const res = aspectData.map((i) => {
     const [n1, n2] = i.between;
@@ -197,7 +182,7 @@ const aspectLines = computed(() => {
       p1: map[n1],
       p2: map[n2],
       color: aspectPosition.map[i.type].color,
-      isStrong: i.strength === "strong",
+      isStrong: i.strength === 'strong',
     };
   });
 
@@ -208,7 +193,7 @@ const aspectLines = computed(() => {
 const showPopup = ref(false);
 const activeAspect = ref<{
   plant: PlanetItem | null;
-  aspects: (AspectItem & { other: PlanetItem["name"] })[];
+  aspects: (AspectItem & { other: PlanetItem['name'] })[];
 }>({
   plant: null,
   aspects: [],
@@ -234,7 +219,7 @@ const onClickSign = () => {
   const { name, sign } = activeAspect.value.plant;
 
   router.push({
-    path: "/astrology/interpret",
+    path: '/astrology/interpret',
     query: { name, sign },
   });
 };
@@ -289,8 +274,7 @@ const onClickSign = () => {
     color: #fff;
     font-size: clamp(14px, 2.5vw, 32px);
     // font-weight: bold;
-    transform: rotate(var(--angle)) translateX(-95%)
-      rotate(calc(-1 * var(--angle)));
+    transform: rotate(var(--angle)) translateX(-95%) rotate(calc(-1 * var(--angle)));
     pointer-events: none;
     > span {
       display: inline-block;
@@ -321,8 +305,7 @@ const onClickSign = () => {
     display: flex;
     align-items: center;
     text-align: left;
-    transform: rotate(var(--angle)) translateX(-80%)
-      rotate(calc(-1 * var(--angle)));
+    transform: rotate(var(--angle)) translateX(-80%) rotate(calc(-1 * var(--angle)));
     transition: transform var(--anim-time) var(--anim-fn);
 
     &.no-transition {
@@ -341,14 +324,11 @@ const onClickSign = () => {
 
       position: absolute;
       left: calc(var(--fs) / -2);
-      transform: rotate(var(--rot)) translateX(2.5vw)
-        rotate(calc(-1 * var(--rot)));
+      transform: rotate(var(--rot)) translateX(2.5vw) rotate(calc(-1 * var(--rot)));
       transform-origin: left center;
       color: #fffb;
       font-size: var(--fs);
-      line-height: var(
-        --fs
-      ); // 行高也要设置和字体大小一致，否则会有空白影响背景
+      line-height: var(--fs); // 行高也要设置和字体大小一致，否则会有空白影响背景
       // font-weight: bold;
       background-color: #0008; // 给文字带个背景，让文字在相位线上时更显眼
       cursor: pointer;

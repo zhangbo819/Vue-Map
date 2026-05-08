@@ -5,27 +5,27 @@
 </template>
 
 <script setup lang="ts">
-import { generateInterpretation, Star, title12 } from "@/utils/astro/astroUI";
-import { BODIES, BodyInUse } from "@/utils/astro/constant";
-import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { generateInterpretation, Star, title12 } from '@/utils/astro/astroUI';
+import { BODIES, BodyInUse } from '@/utils/astro/constant';
 
 const route = useRoute();
 
 const text = computed(() => {
   const { name, sign } = route.query;
 
-  let res = "";
+  let res = '';
 
   if (
-    typeof name === "string" &&
+    typeof name === 'string' &&
     BODIES.includes(name as BodyInUse) &&
-    typeof sign === "string" &&
+    typeof sign === 'string' &&
     title12.includes(sign as Star)
   ) {
     res = generateInterpretation(name as BodyInUse, sign as Star);
   } else {
-    res = "参数错误";
+    res = '参数错误';
   }
   return res;
 });
