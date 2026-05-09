@@ -82,6 +82,7 @@
       </van-collapse-item>
 
       <!-- 八字 临时放这里 -->
+      <bazi-modal />
       <van-collapse-item name="3">
         <template #title>
           <h2>八字</h2>
@@ -90,7 +91,7 @@
         <!-- 标题 -->
         <van-row>
           <van-col span="4" />
-          <van-col v-for="(item, index) in pillarShowData" :key="item.title" span="5">
+          <van-col v-for="item in pillarShowData" :key="item.title" span="5">
             <p>{{ item.title }}</p>
           </van-col>
         </van-row>
@@ -104,7 +105,9 @@
             :key="'zhuxing' + item.tg + index"
             span="5"
           >
-            <p class="tenText">{{ item.zhuxing }}</p>
+            <TouchModal :text="item.zhuxing">
+              <p class="tenText">{{ item.zhuxing }}</p>
+            </TouchModal>
           </van-col>
         </van-row>
         <!-- 天干 -->
@@ -113,10 +116,7 @@
             <p class="subheading">天干</p>
           </van-col>
           <van-col v-for="(item, index) in pillarShowData" :key="'tg' + item.tg + index" span="5">
-            <!-- <WuxingText text={item.tg} /> -->
-            <p :style="{ color: WuXing.getColorByWuxing(item.tg), fontSize: '20px' }">
-              {{ item.tg }}
-            </p>
+            <wuxing-text :text="item.tg" />
           </van-col>
         </van-row>
         <!-- 地支 -->
@@ -125,10 +125,7 @@
             <p class="subheading">地支</p>
           </van-col>
           <van-col v-for="(item, index) in pillarShowData" :key="'dz' + item.tg + index" span="5">
-            <!-- <WuxingText text={item.dz} /> -->
-            <p :style="{ color: WuXing.getColorByWuxing(item.dz), fontSize: '20px' }">
-              {{ item.dz }}
-            </p>
+            <WuxingText :text="item.dz" />
           </van-col>
         </van-row>
         <!-- 藏干 -->
@@ -141,10 +138,11 @@
             :key="'dzcg' + item.dzcg + index + y"
             span="5"
           >
-            <!-- <WuxingText text={item.dzcg[index]} /> -->
-            <p :style="{ color: WuXing.getColorByWuxing(item.dzcg[index]?.[0]) }">
-              {{ item.dzcg[index] }}
-            </p>
+            <WuxingText
+              :text="item.dzcg[index]"
+              :touch-modal-text="item.dzcg[index]?.[0]"
+              size="mini"
+            />
           </van-col>
         </van-row>
         <!-- 副星 -->
@@ -157,9 +155,11 @@
             :key="'fx' + item.fx[index] + index + y"
             span="5"
           >
-            <p class="tenText">
-              {{ item.fx_text[index] }}
-            </p>
+            <TouchModal :text="paipanInfo.tenMap[item.fx[index]]">
+              <p class="tenText">
+                {{ item.fx_text[index] }}
+              </p>
+            </TouchModal>
           </van-col>
         </van-row>
         <!-- 12长生 星运 -->
@@ -172,9 +172,11 @@
             :key="'xingyun' + item.xingyun + index"
             span="5"
           >
-            <p class="tenText">
-              {{ item.xingyun }}
-            </p>
+            <TouchModal :text="item.xingyun">
+              <p class="tenText">
+                {{ item.xingyun }}
+              </p>
+            </TouchModal>
           </van-col>
         </van-row>
         <!-- 12长生 自坐 -->
@@ -187,9 +189,11 @@
             :key="'zizuo' + item.zizuo + index"
             span="5"
           >
-            <p class="tenText">
-              {{ item.zizuo }}
-            </p>
+            <TouchModal :text="item.zizuo">
+              <p class="tenText">
+                {{ item.zizuo }}
+              </p>
+            </TouchModal>
           </van-col>
         </van-row>
         <!-- 纳音 -->
@@ -202,9 +206,11 @@
             :key="'nayin' + item.nayin + index"
             span="5"
           >
-            <p :style="{ color: WuXing.getColorByWuxing(item.nayin[2]) }">
-              {{ item.nayin }}
-            </p>
+            <TouchModal :text="item.nayin">
+              <p :style="{ color: WuXing.getColorByWuxing(item.nayin[2]) }">
+                {{ item.nayin }}
+              </p>
+            </TouchModal>
           </van-col>
         </van-row>
         <!-- 神煞 -->
@@ -217,9 +223,11 @@
             :key="'ss' + item.ss[index] + index + y"
             span="5"
           >
-            <p class="shensha">
-              {{ item.ss[index] }}
-            </p>
+            <TouchModal :title="item.ss[index]" :text="Shensha.getDetails(item.ss[index])">
+              <p class="shensha">
+                {{ item.ss[index] }}
+              </p>
+            </TouchModal>
           </van-col>
         </van-row>
       </van-collapse-item>
@@ -244,6 +252,9 @@ import {
   ZhangSheng,
   ShenshaItem,
 } from 'astro-bazi-utils';
+import WuxingText from '../Bazi/components/WuxingText.vue';
+import BaziModal from '../Bazi/components/BaziModal.vue';
+import TouchModal from '../Bazi/components/TouchModal.vue';
 
 const time = ref(new Date());
 
@@ -265,28 +276,35 @@ const aspectData = computed(() => {
 
 // 八字
 // 暂时放这 等着移走
+const paipanInfo = computed(() => {
+  const res = paipan.GetInfo(0, time.value.getTime());
+  // console.log(res);
+  return res;
+});
 const pillarShowData = computed(() => {
-  const paipanInfo = paipan.GetInfo(0, time.value.getTime());
-  console.log(paipanInfo);
-
   return Sizhu.map<PillarItem>((title, i) => {
-    let zhuxing = paipanInfo.tenMap[paipanInfo.tg[i]];
+    let zhuxing = paipanInfo.value.tenMap[paipanInfo.value.tg[i]];
     if (title === PillarTitle.日柱) {
-      zhuxing = paipanInfo.gender === 0 ? Ten.元男 : Ten.元女;
+      zhuxing = paipanInfo.value.gender === 0 ? Ten.元男 : Ten.元女;
     }
     return {
       title,
       isShow: true,
       zhuxing: zhuxing,
-      tg: paipanInfo.bazi[i][0] as TG,
-      dz: paipanInfo.bazi[i][1] as DZ,
-      dzcg: paipanInfo.dzcg_text[i],
-      fx: paipanInfo.dzcg[i],
-      fx_text: paipanInfo.dzcg[i].map((f) => paipanInfo.tenMap[f]),
-      xingyun: NaYin.getXingYun(paipanInfo.bazi[i], paipanInfo.bazi[2][0] as TG),
-      zizuo: NaYin.getXingYun(paipanInfo.bazi[i], paipanInfo.bazi[i][0] as TG),
-      nayin: NaYin.getNayin(paipanInfo.bazi[i]),
-      ss: Shensha.getData(paipanInfo.bazi, paipanInfo.bazi[i], paipanInfo.yinli, paipanInfo.gender),
+      tg: paipanInfo.value.bazi[i][0] as TG,
+      dz: paipanInfo.value.bazi[i][1] as DZ,
+      dzcg: paipanInfo.value.dzcg_text[i],
+      fx: paipanInfo.value.dzcg[i],
+      fx_text: paipanInfo.value.dzcg[i].map((f) => paipanInfo.value.tenMap[f]),
+      xingyun: NaYin.getXingYun(paipanInfo.value.bazi[i], paipanInfo.value.bazi[2][0] as TG),
+      zizuo: NaYin.getXingYun(paipanInfo.value.bazi[i], paipanInfo.value.bazi[i][0] as TG),
+      nayin: NaYin.getNayin(paipanInfo.value.bazi[i]),
+      ss: Shensha.getData(
+        paipanInfo.value.bazi,
+        paipanInfo.value.bazi[i],
+        paipanInfo.value.yinli,
+        paipanInfo.value.gender
+      ),
     };
   });
 });
