@@ -14,7 +14,7 @@
     "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {
-    "astro-bazi-utils": "^1.0.0",
+    "astro-bazi-utils": "^1.0.1",
     "astronomy-engine": "^2.1.19",
     "axios": "^1.4.0",
     "echarts": "^5.4.3",

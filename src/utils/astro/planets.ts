@@ -1,7 +1,7 @@
 // Astronomy Engine 轻量计算 各行星实时位置无上升无宫位 可用于客户端
-import { Body, Ecliptic, GeoVector, PairLongitude } from "astronomy-engine";
-import { BODIES, BodyInUse } from "./constant";
-import { Star } from "./astroUI";
+import { Body, Ecliptic, GeoVector, PairLongitude } from 'astronomy-engine';
+import { BODIES, BodyInUse } from './constant';
+import { Star } from './astroUI';
 
 const SIGNS = [
   Star.Aries,
@@ -68,42 +68,38 @@ export function isRetrograde(name: BodyInUse, date: Date) {
 }
 
 enum Aspect {
-  Conjunction = "Conjunction",
-  Sextile = "Sextile",
-  Square = "Square",
-  Trine = "Trine",
-  Opposition = "Opposition",
+  Conjunction = 'Conjunction',
+  Sextile = 'Sextile',
+  Square = 'Square',
+  Trine = 'Trine',
+  Opposition = 'Opposition',
 }
 
 // 相位
 export interface AspectItem {
-  between: [PlanetItem["name"], PlanetItem["name"]];
+  between: [PlanetItem['name'], PlanetItem['name']];
   type: Aspect;
   angle: string;
   orb: number;
-  strength: "strong" | "normal";
+  strength: 'strong' | 'normal';
 }
 class AspectPosition {
   ASPECTS = [
-    { name: Aspect["Conjunction"], title: "合相", angle: 0, orb: 6 },
-    { name: Aspect["Sextile"], title: "六合", angle: 60, orb: 3 },
-    { name: Aspect["Square"], title: "刑", angle: 90, orb: 5 },
-    { name: Aspect["Trine"], title: "三合", angle: 120, orb: 7 },
-    { name: Aspect["Opposition"], title: "冲", angle: 180, orb: 5 },
+    { name: Aspect['Conjunction'], title: '合相', angle: 0, orb: 6 },
+    { name: Aspect['Sextile'], title: '六合', angle: 60, orb: 3 },
+    { name: Aspect['Square'], title: '刑', angle: 90, orb: 5 },
+    { name: Aspect['Trine'], title: '三合', angle: 120, orb: 7 },
+    { name: Aspect['Opposition'], title: '冲', angle: 180, orb: 5 },
   ];
   map = {
-    [Aspect.Conjunction]: { name: "合相", color: "#ff8549" }, // 靛蓝（中性、融合）
-    [Aspect.Sextile]: { name: "六合", color: "#40c977" }, // 绿色（和谐、机会）
-    [Aspect.Square]: { name: "刑", color: "#f00" }, // 红色（冲突、张力）
-    [Aspect.Trine]: { name: "三合", color: "#00a240" }, // 蓝色（顺畅、流动）
-    [Aspect.Opposition]: { name: "冲", color: "#8046d9" }, // 橙色（对立但有连接）
+    [Aspect.Conjunction]: { name: '合相', color: '#ff8549' }, // 靛蓝（中性、融合）
+    [Aspect.Sextile]: { name: '六合', color: '#40c977' }, // 绿色（和谐、机会）
+    [Aspect.Square]: { name: '刑', color: '#f00' }, // 红色（冲突、张力）
+    [Aspect.Trine]: { name: '三合', color: '#00a240' }, // 蓝色（顺畅、流动）
+    [Aspect.Opposition]: { name: '冲', color: '#8046d9' }, // 橙色（对立但有连接）
   };
   // 针对行星使用单独的容许度
-  private getDynamicOrb(
-    n1: PlanetItem["name"],
-    n2: PlanetItem["name"],
-    baseOrb: number
-  ) {
+  private getDynamicOrb(n1: PlanetItem['name'], n2: PlanetItem['name'], baseOrb: number) {
     if (n1 === Body.Sun || n2 === Body.Sun) return baseOrb + 2;
     if (n1 === Body.Moon || n2 === Body.Moon) return baseOrb + 2;
     return baseOrb;
@@ -112,11 +108,7 @@ class AspectPosition {
     const diff = Math.abs(a - b);
     return diff > 180 ? 360 - diff : diff;
   }
-  private getAspect(
-    n1: PlanetItem["name"],
-    n2: PlanetItem["name"],
-    diff: number
-  ) {
+  private getAspect(n1: PlanetItem['name'], n2: PlanetItem['name'], diff: number) {
     for (const asp of this.ASPECTS) {
       const orb = this.getDynamicOrb(n1, n2, asp.orb);
       if (Math.abs(diff - asp.angle) <= orb) {
@@ -148,7 +140,7 @@ class AspectPosition {
             type: aspect.type,
             angle: diff.toFixed(2),
             orb: aspect.orb,
-            strength: aspect.orb < 1 ? "strong" : "normal",
+            strength: aspect.orb < 1 ? 'strong' : 'normal',
           });
         }
       }
@@ -180,11 +172,7 @@ class AspectPosition {
   }
 
   // 算每 deg/hour
-  private getRelativeSpeed(
-    date: Date,
-    b1: PlanetItem["name"],
-    b2: PlanetItem["name"]
-  ): number {
+  private getRelativeSpeed(date: Date, b1: PlanetItem['name'], b2: PlanetItem['name']): number {
     const dt = 60 * 60 * 1000;
 
     const d1 = PairLongitude(b1, b2, date);
@@ -196,8 +184,8 @@ class AspectPosition {
   // 根据行星获取动态的步长，快行星走的快，慢行星走的慢，优化计算速度
   private getDynamicStepMs(
     date: Date,
-    b1: PlanetItem["name"],
-    b2: PlanetItem["name"],
+    b1: PlanetItem['name'],
+    b2: PlanetItem['name'],
     target: number,
     orb: number
   ) {
@@ -232,8 +220,8 @@ class AspectPosition {
   // 找边界（开始 / 结束）
   private findBoundary(
     date: Date,
-    b1: PlanetItem["name"],
-    b2: PlanetItem["name"],
+    b1: PlanetItem['name'],
+    b2: PlanetItem['name'],
     get: (d: Date) => number,
     target: number,
     orb: number,
@@ -296,8 +284,8 @@ class AspectPosition {
   // 找某一个相位的 开始/结束时间
   public findAspectWindow(
     date: Date,
-    b1: PlanetItem["name"],
-    b2: PlanetItem["name"],
+    b1: PlanetItem['name'],
+    b2: PlanetItem['name'],
     aspect: Aspect
   ) {
     const _now = new Date(); // debug 计算用时
