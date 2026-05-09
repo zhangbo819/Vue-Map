@@ -24,7 +24,7 @@ const store = useBaziModalStore();
   padding: 0 2em 1em;
   min-width: 50%;
   max-width: 90%;
-  max-height: 90%;
+  max-height: 80%;
   text-align: left;
 }
 .title {
@@ -33,5 +33,6 @@ const store = useBaziModalStore();
 .text {
   margin-top: 0;
   white-space: pre-line;
+  line-height: 1.6;
 }
 </style>
