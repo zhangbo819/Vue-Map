@@ -1,0 +1,5 @@
+/**
+* @vue/shared v3.5.33
+* (c) 2018-present Yuxi (Evan) You and Vue contributors
+* @license MIT
+**/const s=Array.isArray,o=t=>typeof t=="string",f=t=>t!==null&&typeof t=="object",l=t=>{const r=Object.create(null);return n=>r[n]||(r[n]=t(n))},m=/\B([A-Z])/g,p=l(t=>t.replace(m,"-$1").toLowerCase());function a(t){if(s(t)){const r={};for(let n=0;n<t.length;n++){const e=t[n],i=o(e)?u(e):a(e);if(i)for(const c in i)r[c]=i[c]}return r}else if(o(t)||f(t))return t}const h=/;(?![^(]*\))/g,y=/:([^]+)/,g=/\/\*[^]*?\*\//g;function u(t){const r={};return t.replace(g,"").split(h).forEach(n=>{if(n){const e=n.split(y);e.length>1&&(r[e[0].trim()]=e[1].trim())}}),r}function z(t){if(!t)return"";if(o(t))return t;let r="";for(const n in t){const e=t[n];if(o(e)||typeof e=="number"){const i=n.startsWith("--")?n:p(n);r+=`${i}:${e};`}}return r}function S(t){let r="";if(o(t))r=t;else if(s(t))for(let n=0;n<t.length;n++){const e=S(t[n]);e&&(r+=e+" ")}else if(f(t))for(const n in t)t[n]&&(r+=n+" ");return r.trim()}export{a,S as n,z as s};
