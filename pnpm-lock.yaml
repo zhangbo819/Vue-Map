@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   astro-bazi-utils:
-    specifier: ^1.0.1
-    version: 1.0.1
+    specifier: ^1.0.3
+    version: 1.0.3
   astronomy-engine:
     specifier: ^2.1.19
     version: 2.1.19
@@ -819,8 +819,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /astro-bazi-utils@1.0.1:
-    resolution: {integrity: sha512-ze5g55SPa6PY2HmikVgur/0dNk9Lqw2NZL4iV+gD8itWRQKKPJhwaeXr7GWixNWYCdRnYTXRkmPTBIYUWkDdCA==}
+  /astro-bazi-utils@1.0.3:
+    resolution: {integrity: sha512-ASejmTsU6HHLCR3WR8qypneECXgBkOBNNQyoAQY/jKMcRn0Wb8ST61Mu+uiMuWuFI3+d5B4eVghuFkM4070jug==}
     engines: {node: '>=18'}
     dev: false
 

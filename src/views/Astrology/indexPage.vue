@@ -86,24 +86,16 @@
         <template #title>
           <h2>八字</h2>
         </template>
-        <!-- <van-row>
-          <van-col v-for="item in bazi" :key="item" span="6">
-            <p>{{ item[0] }}</p>
-            <p>{{ item[1] }}</p>
-          </van-col>
-        </van-row> -->
 
         <!-- 标题 -->
         <van-row>
-          <van-col span="4">
-            <p class="subheading">日期</p>
-          </van-col>
+          <van-col span="4" />
           <van-col v-for="(item, index) in pillarShowData" :key="item.title" span="5">
             <p>{{ item.title }}</p>
           </van-col>
         </van-row>
         <!-- 十神 -->
-        <van-row>
+        <van-row style="margin-top: 5px">
           <van-col span="4">
             <p class="subheading">主星</p>
           </van-col>
@@ -112,11 +104,11 @@
             :key="'zhuxing' + item.tg + index"
             span="5"
           >
-            <p>{{ item.zhuxing }}</p>
+            <p class="tenText">{{ item.zhuxing }}</p>
           </van-col>
         </van-row>
         <!-- 天干 -->
-        <van-row>
+        <van-row style="margin-top: 5px">
           <van-col span="4">
             <p class="subheading">天干</p>
           </van-col>
@@ -140,7 +132,7 @@
           </van-col>
         </van-row>
         <!-- 藏干 -->
-        <van-row v-for="(_, index) in cgMaxLength" :key="'cg_row_' + index">
+        <van-row v-for="(_, index) in cgMaxLength" :key="'cg_row_' + index" style="margin-top: 5px">
           <van-col span="4">
             <p v-if="index === 0" class="subheading">藏干</p>
           </van-col>
@@ -156,7 +148,7 @@
           </van-col>
         </van-row>
         <!-- 副星 -->
-        <van-row v-for="(_, index) in cgMaxLength" :key="'fx_row_' + index">
+        <van-row v-for="(_, index) in cgMaxLength" :key="'fx_row_' + index" style="margin-top: 5px">
           <van-col span="4">
             <p v-if="index === 0" class="subheading">副星</p>
           </van-col>
@@ -165,8 +157,68 @@
             :key="'fx' + item.fx[index] + index + y"
             span="5"
           >
-            <p>
+            <p class="tenText">
               {{ item.fx_text[index] }}
+            </p>
+          </van-col>
+        </van-row>
+        <!-- 12长生 星运 -->
+        <van-row style="margin-top: 5px">
+          <van-col span="4">
+            <p class="subheading">星运</p>
+          </van-col>
+          <van-col
+            v-for="(item, index) in pillarShowData"
+            :key="'xingyun' + item.xingyun + index"
+            span="5"
+          >
+            <p class="tenText">
+              {{ item.xingyun }}
+            </p>
+          </van-col>
+        </van-row>
+        <!-- 12长生 自坐 -->
+        <van-row style="margin-top: 5px">
+          <van-col span="4">
+            <p class="subheading">自坐</p>
+          </van-col>
+          <van-col
+            v-for="(item, index) in pillarShowData"
+            :key="'zizuo' + item.zizuo + index"
+            span="5"
+          >
+            <p class="tenText">
+              {{ item.zizuo }}
+            </p>
+          </van-col>
+        </van-row>
+        <!-- 纳音 -->
+        <van-row style="margin: 5px 0 3px">
+          <van-col span="4">
+            <p class="subheading">纳音</p>
+          </van-col>
+          <van-col
+            v-for="(item, index) in pillarShowData"
+            :key="'nayin' + item.nayin + index"
+            span="5"
+          >
+            <p :style="{ color: WuXing.getColorByWuxing(item.nayin[2]) }">
+              {{ item.nayin }}
+            </p>
+          </van-col>
+        </van-row>
+        <!-- 神煞 -->
+        <van-row v-for="(_, index) in ssMaxLength" :key="'ss_row_' + index" style="margin-top: 2px">
+          <van-col span="4">
+            <p v-if="index === 0" class="subheading">神煞</p>
+          </van-col>
+          <van-col
+            v-for="(item, y) in pillarShowData"
+            :key="'ss' + item.ss[index] + index + y"
+            span="5"
+          >
+            <p class="shensha">
+              {{ item.ss[index] }}
             </p>
           </van-col>
         </van-row>
@@ -181,7 +233,17 @@ import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
 import { map12, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
-import { paipan, TG, DZ, Ten, WuXing } from 'astro-bazi-utils';
+import {
+  paipan,
+  TG,
+  DZ,
+  Ten,
+  WuXing,
+  NaYin,
+  Shensha,
+  ZhangSheng,
+  ShenshaItem,
+} from 'astro-bazi-utils';
 
 const time = ref(new Date());
 
@@ -221,21 +283,10 @@ const pillarShowData = computed(() => {
       dzcg: paipanInfo.dzcg_text[i],
       fx: paipanInfo.dzcg[i],
       fx_text: paipanInfo.dzcg[i].map((f) => paipanInfo.tenMap[f]),
-      // xingyun: NaYin.getXingYun(
-      //   paipanInfo.bazi[i],
-      //   paipanInfo.bazi[2][0] as TG,
-      // ),
-      // zizuo: NaYin.getXingYun(
-      //   paipanInfo.bazi[i],
-      //   paipanInfo.bazi[i][0] as TG,
-      // ),
-      // nayin: NaYin.getNayin(paipanInfo.bazi[i]),
-      // ss: Shensha.getData(
-      //   paipanInfo.bazi,
-      //   paipanInfo.bazi[i],
-      //   paipanInfo.yinli,
-      //   paipanInfo.gender,
-      // ),
+      xingyun: NaYin.getXingYun(paipanInfo.bazi[i], paipanInfo.bazi[2][0] as TG),
+      zizuo: NaYin.getXingYun(paipanInfo.bazi[i], paipanInfo.bazi[i][0] as TG),
+      nayin: NaYin.getNayin(paipanInfo.bazi[i]),
+      ss: Shensha.getData(paipanInfo.bazi, paipanInfo.bazi[i], paipanInfo.yinli, paipanInfo.gender),
     };
   });
 });
@@ -245,6 +296,14 @@ const cgMaxLength = computed(() =>
   pillarShowData.value.reduce((r, i) => {
     if (i.dzcg.length > r) {
       r = i.dzcg.length;
+    }
+    return r;
+  }, 0)
+);
+const ssMaxLength = computed(() =>
+  pillarShowData.value.reduce((r, i) => {
+    if (i.ss.length > r) {
+      r = i.ss.length;
     }
     return r;
   }, 0)
@@ -270,10 +329,10 @@ type PillarItem = {
   dzcg: string[];
   fx: number[];
   fx_text: string[]; // 新增 UI 渲染
-  // xingyun: ZhangSheng | null;
-  // zizuo: ZhangSheng | null;
-  // nayin: string;
-  // ss: ShenshaItem[];
+  xingyun: ZhangSheng | null;
+  zizuo: ZhangSheng | null;
+  nayin: string;
+  ss: ShenshaItem[];
 };
 
 const Sizhu = [PillarTitle.年柱, PillarTitle.月柱, PillarTitle.日柱, PillarTitle.时柱];
@@ -297,5 +356,11 @@ h1 {
   font-size: 16;
   color: #9f9f9f;
   text-align: center;
+}
+.tenText {
+  color: #4b4b4b;
+}
+.shensha {
+  color: #b2955e;
 }
 </style>
