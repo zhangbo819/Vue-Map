@@ -7,8 +7,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { generateInterpretation, Star, title12 } from '@/utils/astro/astroUI';
+import { generateInterpretation, title12 } from '@/utils/astro/astroUI';
 import { BODIES, BodyInUse } from '@/utils/astro/constant';
+import { Star } from '@/utils/astro/planets';
 
 const route = useRoute();
 

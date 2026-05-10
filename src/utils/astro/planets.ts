@@ -1,7 +1,21 @@
 // Astronomy Engine 轻量计算 各行星实时位置无上升无宫位 可用于客户端
 import { Body, Ecliptic, GeoVector, PairLongitude } from 'astronomy-engine';
 import { BODIES, BodyInUse } from './constant';
-import { Star } from './astroUI';
+
+export enum Star {
+  'Aries' = 'Aries',
+  'Taurus' = 'Taurus',
+  'Gemini' = 'Gemini',
+  'Cancer' = 'Cancer',
+  'Leo' = 'Leo',
+  'Virgo' = 'Virgo',
+  'Libra' = 'Libra',
+  'Scorpio' = 'Scorpio',
+  'Sagittarius' = 'Sagittarius',
+  'Capricorn' = 'Capricorn',
+  'Aquarius' = 'Aquarius',
+  'Pisces' = 'Pisces',
+}
 
 const SIGNS = [
   Star.Aries,
@@ -340,32 +354,39 @@ export const aspectPosition = new AspectPosition();
 // console.log(result.exact.toLocaleDateString());
 
 // 格局 依托于相位 暂时放这
+export enum PatternType {
+  'GrandTrine' = 'GrandTrine',
+  'Kite' = 'Kite',
+  'TSquare' = 'TSquare',
+  'GrandCross' = 'GrandCross',
+  'Yod' = 'Yod',
+}
 type Pattern =
   | {
-      type: 'T-Square';
-      planets: PlanetItem['name'][];
-      apex: PlanetItem['name'];
-      base: [PlanetItem['name'], PlanetItem['name']];
-    }
-  | {
-      type: 'Grand Trine';
+      type: PatternType.GrandTrine;
       planets: PlanetItem['name'][];
     }
   | {
-      type: 'Grand Cross';
-      planets: PlanetItem['name'][];
-    }
-  | {
-      type: 'Yod';
-      apex: PlanetItem['name'];
-      base: [PlanetItem['name'], PlanetItem['name']];
-      planets: PlanetItem['name'][];
-    }
-  | {
-      type: 'Kite';
+      type: PatternType.Kite;
       apex: PlanetItem['name'];
       grandTrine: PlanetItem['name'][];
       opposition: [PlanetItem['name'], PlanetItem['name']];
+      planets: PlanetItem['name'][];
+    }
+  | {
+      type: PatternType.TSquare;
+      planets: PlanetItem['name'][];
+      apex: PlanetItem['name'];
+      base: [PlanetItem['name'], PlanetItem['name']];
+    }
+  | {
+      type: PatternType.GrandCross;
+      planets: PlanetItem['name'][];
+    }
+  | {
+      type: PatternType.Yod;
+      apex: PlanetItem['name'];
+      base: [PlanetItem['name'], PlanetItem['name']];
       planets: PlanetItem['name'][];
     };
 export class AspectPatternEngine {
@@ -397,15 +418,15 @@ export class AspectPatternEngine {
 
       let key = `${item.type}:${planets}`;
 
-      if (item.type === 'T-Square') {
+      if (item.type === PatternType.TSquare) {
         key += `:${item.apex}`;
       }
 
-      if (item.type === 'Yod') {
+      if (item.type === PatternType.Yod) {
         key += `:${item.apex}`;
       }
 
-      if (item.type === 'Kite') {
+      if (item.type === PatternType.Kite) {
         key += `:${item.apex}`;
       }
 
@@ -465,7 +486,7 @@ export class AspectPatternEngine {
         if (!hasSextile1 || !hasSextile2) continue;
 
         results.push({
-          type: 'Kite',
+          type: PatternType.Kite,
           apex,
           grandTrine: [a, b, c],
           opposition: [apex, tail],
@@ -508,7 +529,7 @@ export class AspectPatternEngine {
             const planets = [a, b, c].sort();
 
             results.push({
-              type: 'Grand Trine',
+              type: PatternType.GrandTrine,
               planets,
             });
           }
@@ -553,7 +574,7 @@ export class AspectPatternEngine {
         if (!hasAC || !hasBC) continue;
 
         results.push({
-          type: 'T-Square',
+          type: PatternType.TSquare,
           planets: [a, b, c],
           apex: c,
           base: [a, b],
@@ -601,7 +622,7 @@ export class AspectPatternEngine {
         if (!valid) continue;
 
         results.push({
-          type: 'Grand Cross',
+          type: PatternType.GrandCross,
           planets: unique,
         });
       }
@@ -648,7 +669,7 @@ export class AspectPatternEngine {
         if (!hasA || !hasB) continue;
 
         results.push({
-          type: 'Yod',
+          type: PatternType.Yod,
           apex,
           base: [a, b],
           planets: [a, b, apex],

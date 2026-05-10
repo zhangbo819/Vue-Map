@@ -1,4 +1,5 @@
 import { BodyInUse } from './constant';
+import { PatternType, Star } from './planets';
 
 // Element
 enum EL {
@@ -14,21 +15,6 @@ const eColors = {
   [EL.Air]: '#7BAFD4', // 风：清蓝（思维/交流）
   [EL.Water]: '#4A6CF7', // 水：靛紫（情绪/直觉）
 };
-
-export enum Star {
-  'Aries' = 'Aries',
-  'Taurus' = 'Taurus',
-  'Gemini' = 'Gemini',
-  'Cancer' = 'Cancer',
-  'Leo' = 'Leo',
-  'Virgo' = 'Virgo',
-  'Libra' = 'Libra',
-  'Scorpio' = 'Scorpio',
-  'Sagittarius' = 'Sagittarius',
-  'Capricorn' = 'Capricorn',
-  'Aquarius' = 'Aquarius',
-  'Pisces' = 'Pisces',
-}
 
 export const planentsMap: Record<BodyInUse, { name: string; n?: string; color: string }> = {
   Sun: { name: '太阳', n: '日', color: eColors[EL.Fire] }, // 红色（太阳）
@@ -185,6 +171,39 @@ const signTexts: Record<Star, { short: string; style: string }> = {
   [Star.Capricorn]: { short: '现实、责任', style: '以目标与成就为导向' },
   [Star.Aquarius]: { short: '独立、创新', style: '强调个体与群体的突破' },
   [Star.Pisces]: { short: '感性、融合', style: '倾向于共情与想象' },
+};
+
+export const patternMap = {
+  [PatternType.GrandTrine]: {
+    text: '大三角',
+    color: '#4CAF50', // 和谐的绿色
+    desc: '天赋异禀，能量循环顺畅，但需防惰性。',
+  },
+  [PatternType.Kite]: {
+    text: '风筝',
+    color: '#00BCD4', // 稀有且和谐的青蓝色
+    desc: '在大三角基础上增加驱动力，易将天赋转化为成就。',
+  },
+  [PatternType.TSquare]: {
+    text: 'T三角',
+    color: '#FF5722', // 不和谐/高张力的橙红色
+    desc: '充满挑战与磨难，是磨练意志、爆发成功的强力引擎。',
+  },
+  [PatternType.GrandCross]: {
+    text: '大十字',
+    color: '#D32F2F', // 极端不和谐的深红色
+    desc: '极为罕见且压力巨大，人生波折多，但成就亦非凡。',
+  },
+  [PatternType.Yod]: {
+    text: '上帝之指',
+    color: '#9C27B0', // 神秘且稀有的紫色
+    desc: '宿命般的指引，需不断调整自我以达成特殊使命。',
+  },
+  // [PatternType.MysticRectangle]: {
+  //   text: '神秘矩形',
+  //   color: '#FFD700', // 代表才华与平衡的金色
+  //   desc: '极佳的整合能力，擅长将矛盾转化为平衡的才华。',
+  // },
 };
 
 export function generateInterpretation(p: BodyInUse, s: Star): string {

@@ -8,8 +8,40 @@
     <astro-operation v-model:time="time" />
 
     <van-collapse v-model="activeTab">
+      <!-- 格局 -->
+      <van-collapse-item v-if="patternData.length" name="1">
+        <template #title> <h2 style="color: #f00">格局</h2></template>
+        <van-cell-group inset>
+          <van-cell v-for="item in patternData" :key="item.type + item.planets" :label="item.type">
+            <template #title>
+              <p>
+                <span :style="{ color: patternMap[item.type].color }"
+                  >{{ patternMap[item.type].text }}格局</span
+                >
+              </p>
+            </template>
+            <p :style="{ color: patternMap[item.type].color }">{{ patternMap[item.type].desc }}</p>
+            <p class="value">
+              参与行星
+              <span
+                v-for="(p, index) in item.planets"
+                :key="p"
+                :style="{
+                  color: planentsMap[p].color,
+                  display: 'inline-block',
+                  marginLeft: '2px',
+                }"
+              >
+                <template v-if="index !== 0">|</template>
+                {{ planentsMap[p].name }}
+              </span>
+            </p>
+          </van-cell>
+        </van-cell-group>
+      </van-collapse-item>
+
       <!-- 参数详情列表 -->
-      <van-collapse-item name="1">
+      <van-collapse-item name="2">
         <template #title>
           <h2>参数详情列表</h2>
         </template>
@@ -31,7 +63,7 @@
       </van-collapse-item>
 
       <!-- 相位 -->
-      <van-collapse-item name="2">
+      <van-collapse-item name="3">
         <template #title> <h2>主要相位</h2></template>
         <van-cell-group inset>
           <van-cell
@@ -79,7 +111,7 @@
       </van-collapse-item>
 
       <!-- 八字 临时放这里 -->
-      <van-collapse-item name="3">
+      <van-collapse-item name="4">
         <template #title>
           <h2>八字</h2>
         </template>
@@ -92,7 +124,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { getAllPlanets, aspectPosition, AspectPatternEngine } from '@/utils/astro/planets';
-import { map12, planentsMap } from '@/utils/astro/astroUI';
+import { map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
 import BaziPan from '../Bazi/components/BaziPan.vue';
@@ -105,24 +137,28 @@ const data = computed(() => {
   return getAllPlanets(time.value);
 });
 
-const activeTab = ref(['1', '2', '3']);
+const activeTab = ref(['1', '2', '3', '4']);
 
+// 相位
 const aspectData = computed(() => {
-  const res = aspectPosition.getData(data.value).map((i) => {
+  return aspectPosition.getData(data.value).map((i) => {
     const r = aspectPosition.findAspectWindow(time.value, i.between[0], i.between[1], i.type);
     return {
       ...i,
       window: r,
     };
   });
-  const engine = new AspectPatternEngine(res);
+});
+
+// 格局
+const patternData = computed(() => {
+  const engine = new AspectPatternEngine(aspectData.value);
   const patterns = engine.detectAll();
 
   if (patterns.length) {
     console.log(patterns);
   }
-
-  return res;
+  return patterns;
 });
 </script>
 
