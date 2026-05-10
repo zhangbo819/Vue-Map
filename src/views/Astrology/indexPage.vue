@@ -54,21 +54,18 @@
               {{ item.type }} {{ aspectPosition.map[item.type].name }}
             </p>
             <p class="value">
-              开始时间 {{ item.start.toLocaleDateString() }} {{ item.start.getHours() }}:{{
-                item.start.getMinutes()
-              }}
+              开始时间 {{ item.window.start.toLocaleDateString() }}
+              {{ item.window.start.getHours() }}:{{ item.window.start.getMinutes() }}
             </p>
             <p class="value">
-              力量最强 {{ item.exact.toLocaleDateString() }} {{ item.exact.getHours() }}:{{
-                item.exact.getMinutes()
-              }}
+              力量最强 {{ item.window.exact.toLocaleDateString() }}
+              {{ item.window.exact.getHours() }}:{{ item.window.exact.getMinutes() }}
             </p>
             <p class="value">
-              结束时间 {{ item.end.toLocaleDateString() }} {{ item.end.getHours() }}:{{
-                item.end.getMinutes()
-              }}
+              结束时间 {{ item.window.end.toLocaleDateString() }}
+              {{ item.window.end.getHours() }}:{{ item.window.end.getMinutes() }}
             </p>
-            <p class="value">计算耗时 {{ item.t }} ms</p>
+            <p class="value">计算耗时 {{ item.window._t }} ms</p>
             <!-- <p
           class="value"
           :style="{
@@ -94,13 +91,15 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
+import { getAllPlanets, aspectPosition, AspectPatternEngine } from '@/utils/astro/planets';
 import { map12, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
 import BaziPan from '../Bazi/components/BaziPan.vue';
 
 const time = ref(new Date());
+// const time = ref(new Date(2025, 7, 17)); // 俩风筝 俩三角 神秘矩形
+// const time = ref(new Date(2014, 3, 23)); // 大十字
 
 const data = computed(() => {
   return getAllPlanets(time.value);
@@ -109,13 +108,21 @@ const data = computed(() => {
 const activeTab = ref(['1', '2', '3']);
 
 const aspectData = computed(() => {
-  return aspectPosition.getData(data.value).map((i) => {
+  const res = aspectPosition.getData(data.value).map((i) => {
     const r = aspectPosition.findAspectWindow(time.value, i.between[0], i.between[1], i.type);
     return {
       ...i,
-      ...r,
+      window: r,
     };
   });
+  const engine = new AspectPatternEngine(res);
+  const patterns = engine.detectAll();
+
+  if (patterns.length) {
+    console.log(patterns);
+  }
+
+  return res;
 });
 </script>
 
