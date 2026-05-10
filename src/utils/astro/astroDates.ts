@@ -24,9 +24,24 @@ export const astrologyEvents: AstrologyEventGroup[] = [
     type: AstrologyEventType.Discovery,
     data: [
       {
+        name: '天王星发现',
+        time: '1781-03-13T00:00:00Z',
+        description: '现代革命、科技与觉醒主题进入占星体系',
+      },
+      {
+        name: '谷神星发现',
+        time: '1801-01-01T00:00:00Z',
+        description: '现代小行星占星的重要起点',
+      },
+      {
         name: '海王星发现',
         time: '1846-09-23T00:00:00Z',
         description: '现代意识与潜意识占星的重要起点',
+      },
+      {
+        name: '凯龙星发现',
+        time: '1977-11-01T00:00:00Z',
+        description: '现代疗愈与创伤主题的重要节点',
       },
       {
         name: '冥王星发现',
@@ -128,9 +143,29 @@ export const astrologyEvents: AstrologyEventGroup[] = [
     type: AstrologyEventType.Historical,
     data: [
       {
+        name: '阿波罗11号登月',
+        time: '1969-07-20T20:17:00Z',
+        description: '人类首次登陆月球的重要历史节点',
+      },
+      {
+        name: '柏林墙倒塌',
+        time: '1989-11-09T18:53:00Z',
+        description: '冷战结构瓦解的重要象征时刻',
+      },
+      {
         name: '911事件',
         time: '2001-09-11T12:46:00Z',
         description: '全球结构与安全叙事的重要转折点',
+      },
+      {
+        name: '比特币创世区块',
+        time: '2009-01-03T18:15:05Z',
+        description: '去中心化数字货币时代的重要起点',
+      },
+      {
+        name: 'WHO宣布全球疫情',
+        time: '2020-03-11T00:00:00Z',
+        description: '全球疫情时代正式开启',
       },
       {
         name: 'ChatGPT发布',
@@ -144,9 +179,24 @@ export const astrologyEvents: AstrologyEventGroup[] = [
     type: AstrologyEventType.Eclipse,
     data: [
       {
+        name: '狮子座美国大日食',
+        time: '2017-08-21T18:26:00Z',
+        description: '横贯美国的重要狮子座日食',
+      },
+      {
         name: '北美白羊日食',
         time: '2024-04-08T18:18:00Z',
         description: '白羊轴线的重要日食事件',
+      },
+      {
+        name: '巨蟹月偏食',
+        time: '2020-01-10T19:10:00Z',
+        description: '土冥合前后的关键月食节点',
+      },
+      {
+        name: '双子-射手食相轴开启',
+        time: '2020-06-05T19:12:00Z',
+        description: '信息、传播与认知主题的重要食相周期',
       },
     ],
   },
@@ -155,9 +205,24 @@ export const astrologyEvents: AstrologyEventGroup[] = [
     type: AstrologyEventType.Symbolic,
     data: [
       {
-        name: '2012冬至节点',
+        name: '冬至节点',
         time: '2012-12-21T11:11:00Z',
         description: '集体意识转向的象征性时间节点',
+      },
+      {
+        name: '千禧年时刻',
+        time: '2000-01-01T00:00:00Z',
+        description: '20世纪进入21世纪的重要象征节点',
+      },
+      {
+        name: '互联网公众化时代开启',
+        time: '1995-08-09T00:00:00Z',
+        description: '互联网正式进入大众社会的重要象征时间',
+      },
+      {
+        name: 'AI生成时代象征节点',
+        time: '2022-11-30T18:00:00Z',
+        description: '生成式AI开始进入公众日常生活',
       },
     ],
   },

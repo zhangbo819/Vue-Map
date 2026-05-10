@@ -135,45 +135,20 @@ const onPickerGroupConfirm = () => {
   showPickerGroup.value = false;
 };
 
-// const timeListShow = ref(false);
-
 // const time = ref(new Date(2025, 7, 17)); // 1755356400000 俩风筝 俩三角 神秘矩形
 // { name: 'Yod 上帝之指', time: '2017-06-05T04:00:00Z' },
-// const actions = [
-//   { name: '大三角', time: 1775314800000 },
-//   { name: 'T三角', time: '2021-06-14T10:00:00Z' },
-//   // { name: '双大三角 T三角', time: '2013-07-22T12:00:00Z' },
-//   { name: '2风筝 3大三角 2T三角', time: 1375101000000 },
-//   { name: '2014 著名红色大十字', time: '2014-04-23T18:00:00Z' },
-//   { name: '双大十字', time: 1281139200000 },
-//   { name: '1930 冥王发现日', time: '1930-02-18T00:00:00Z' },
-//   { name: '1962 七行星聚集（水瓶时代讨论经典）', time: '1962-02-05T14:00:00Z' },
-//   { name: '1846 海王发现日（现代意识占星的重要原点）', time: '1846-09-23T00:00:00Z' },
-//   { name: '1989 土天海三重结构（柏林墙时期）', time: '1989-11-09T18:53:00Z' },
-//   { name: '2001-09-11(911事件)', time: '2001-09-11T12:46:00Z' },
-//   { name: '2012 冬至（玛雅历法讨论节点）', time: '2012-12-21T11:11:00Z' },
-//   { name: '2020 木土大合 (水瓶0°)', time: '2020-12-21T18:20:00Z' },
-//   { name: '2023 冥王进入水瓶（第一次）', time: '2023-03-23T09:13:00Z' },
-//   { name: '2024 白羊日食（北美大日食）', time: '2024-04-08T18:18:00Z' },
-//   { name: '2022 ChatGPT发布 (AI语言模型爆发)', time: '2022-11-30T18:00:00Z' },
-// ];
-
-// const onSelect = (item: { name: string; time: number }) => {
-//   // 默认情况下点击选项时不会自动收起
-//   // 可以通过 close-on-click-action 属性开启自动收起
-//   console.log('item', item);
-//   const newDate = new Date(item.time);
-//   emit('update:time', newDate);
-//   timeListShow.value = false;
-// };
 
 const items = astrologyEvents.map((i) => ({
   text: i.type,
-  children: i.data.map(({ name, description, time }) => ({
-    text: name,
-    id: time,
-    description,
-  })),
+  children: i.data.map(({ name, description, time }) => {
+    const date = new Date(time);
+    const text = date.getFullYear() + '_' + name;
+    return {
+      text,
+      id: time,
+      description,
+    };
+  }),
 }));
 const activeId = ref();
 const activeIndex = ref();

@@ -22,6 +22,14 @@
   color: #2c3e50;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+}
+
 nav {
   padding: 8px;
 
