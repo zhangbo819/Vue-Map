@@ -1,13 +1,16 @@
 <template>
   <div style="width: 100%">
-    <h1 style="margin-bottom: 8px; font-size: 1.6em">Astrology</h1>
-    <!-- 星座盘 -->
-    <astro-round-plate :data="data" />
-
-    <!-- 操作栏 -->
-    <astro-operation v-model:time="time" />
-
     <van-collapse v-model="activeTab">
+      <!-- 星座盘 -->
+      <van-collapse-item name="6">
+        <template #title> <h1 style="font-size: 1.6em">Astrology</h1></template>
+        <astro-round-plate :data="data" />
+      </van-collapse-item>
+      <!-- 操作栏 -->
+      <van-collapse-item name="5">
+        <template #title> <h2>操作栏</h2></template>
+        <astro-operation v-model:time="time" />
+      </van-collapse-item>
       <!-- 格局 -->
       <van-collapse-item v-if="patternData.length" name="1">
         <template #title> <h2 style="color: #f00">格局</h2></template>
@@ -130,14 +133,12 @@ import AstroRoundPlate from './components/AstroRoundPlate.vue';
 import BaziPan from '../Bazi/components/BaziPan.vue';
 
 const time = ref(new Date());
-// const time = ref(new Date(2025, 7, 17)); // 俩风筝 俩三角 神秘矩形
-// const time = ref(new Date(2014, 3, 23)); // 大十字
 
 const data = computed(() => {
   return getAllPlanets(time.value);
 });
 
-const activeTab = ref(['1', '2', '3', '4']);
+const activeTab = ref(new Array(6).fill(0).map((_, i) => String(i + 1)));
 
 // 相位
 const aspectData = computed(() => {

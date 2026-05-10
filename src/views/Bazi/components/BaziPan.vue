@@ -225,6 +225,10 @@ const Sizhu = [PillarTitle.年柱, PillarTitle.月柱, PillarTitle.日柱, Pilla
 </script>
 
 <style lang="scss" scoped>
+p,
+h1 {
+  margin: 0;
+}
 .subheading {
   font-size: 16;
   color: #9f9f9f;

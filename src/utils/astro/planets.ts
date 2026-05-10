@@ -321,23 +321,6 @@ class AspectPosition {
 
     return { start, exact, end, _t };
   }
-
-  // // 构建“关系图”
-  // private buildGraph(aspects: AspectItem[]) {
-  //   const graph = new Map<BodyInUse, Set<BodyInUse>>();
-
-  //   for (const a of aspects) {
-  //     const [p1, p2] = a.between;
-
-  //     if (!graph.has(p1)) graph.set(p1, new Set());
-  //     if (!graph.has(p2)) graph.set(p2, new Set());
-
-  //     graph.get(p1)!.add(p2);
-  //     graph.get(p2)!.add(p1);
-  //   }
-
-  //   return graph;
-  // }
 }
 
 export const aspectPosition = new AspectPosition();
@@ -631,7 +614,7 @@ export class AspectPatternEngine {
     return this.deduplicate(results);
   }
 
-  // TODO
+  // TODO 新增
   // Mystic Rectangle  神秘矩形
   // Conjunction Cluster（合相群）
   // Stellium（星群）
