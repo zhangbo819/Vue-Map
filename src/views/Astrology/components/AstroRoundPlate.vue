@@ -373,6 +373,11 @@ const onClickSign = () => {
   padding: 0 2em 1em;
   max-width: 90%;
   text-align: left;
+  h2,
+  h3 {
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+  }
 }
 
 .navText {

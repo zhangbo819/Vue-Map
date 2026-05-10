@@ -26,13 +26,22 @@ const store = useBaziModalStore();
   max-width: 90%;
   max-height: 80%;
   text-align: left;
-}
-.title {
-  margin-bottom: 0;
-}
-.text {
-  margin-top: 0;
-  white-space: pre-line;
-  line-height: 1.6;
+
+  h2 {
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+  }
+  .title {
+    margin-bottom: 0;
+    color: #000;
+    font-weight: bold;
+  }
+  .text {
+    margin-top: 0;
+    white-space: pre-line;
+    line-height: 1.6;
+    color: #666;
+    font-size: 16px;
+  }
 }
 </style>
