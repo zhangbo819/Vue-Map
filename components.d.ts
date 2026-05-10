@@ -11,7 +11,6 @@ declare module 'vue' {
     MyTable: typeof import('./src/components/MyTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    VanActionSheet: typeof import('vant/es')['ActionSheet']
     VanCalendar: typeof import('vant/es')['Calendar']
     VanCell: typeof import('vant/es')['Cell']
     VanCellGroup: typeof import('vant/es')['CellGroup']
@@ -30,6 +29,7 @@ declare module 'vue' {
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
     VanTimePicker: typeof import('vant/es')['TimePicker']
+    VanTreeSelect: typeof import('vant/es')['TreeSelect']
     YearHeader: typeof import('./src/components/YearHeader.vue')['default']
   }
 }
