@@ -152,7 +152,7 @@ const items = astrologyEvents.map((i) => ({
 }));
 const activeId = ref();
 const activeIndex = ref();
-const activeCollapse = ref(['1']);
+const activeCollapse = ref([]);
 const activeDescription = ref('');
 const clickItem = (item: Record<string, string>) => {
   console.log(item);
