@@ -1,4 +1,4 @@
-import { Ref, ref, watch } from 'vue';
+import { nextTick, onMounted, reactive, Ref, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { PlanetItem } from '@/utils/astro/planets';
@@ -210,4 +210,83 @@ export function useQuerySync(key: string, defaultValue = '') {
   );
 
   return state;
+}
+
+// 暂未使用
+// 动态改变 星盘中行星的 text 位置避免遮挡
+function useStarText() {
+  const labelRefs = ref<(HTMLDivElement | null)[]>([]);
+  const labelOffsets = reactive<Record<number, { x: number; y: number }>>({});
+
+  const setLabelRef = (el: HTMLDivElement | null, index: number) => {
+    if (el) labelRefs.value[index] = el;
+  };
+
+  function isOverlapping(a: DOMRect, b: DOMRect) {
+    return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+  }
+
+  function resolveCollisions() {
+    const boxes = labelRefs.value.map((el) => ({
+      el,
+      rect: el!.getBoundingClientRect(),
+      x: 0,
+      y: 0,
+    }));
+
+    const offsetStep = 6; // 每次推开 6px
+    let changed = true;
+
+    let iteration = 0;
+    const maxIteration = 20;
+
+    while (changed && iteration < maxIteration) {
+      changed = false;
+      iteration++;
+
+      for (let i = 0; i < boxes.length; i++) {
+        for (let j = i + 1; j < boxes.length; j++) {
+          const a = boxes[i];
+          const b = boxes[j];
+
+          if (isOverlapping(a.rect, b.rect)) {
+            changed = true;
+
+            const dx = b.rect.left - a.rect.left;
+            const dy = b.rect.top - a.rect.top;
+
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+
+            const offsetX = (dx / dist) * offsetStep;
+            const offsetY = (dy / dist) * offsetStep;
+
+            a.x -= offsetX;
+            a.y -= offsetY;
+
+            b.x += offsetX;
+            b.y += offsetY;
+
+            // 更新 rect（模拟新位置）
+            a.rect = new DOMRect(a.rect.x + a.x, a.rect.y + a.y, a.rect.width, a.rect.height);
+
+            b.rect = new DOMRect(b.rect.x + b.x, b.rect.y + b.y, b.rect.width, b.rect.height);
+          }
+        }
+      }
+    }
+
+    // apply transform
+    boxes.forEach((b, index) => {
+      if (b.el) {
+        b.el.style.transform = `translate(${b.x}px, ${b.y}px)`;
+        // labelOffsets[index].x = b.x;
+        // labelOffsets[index].y = b.y;
+      }
+    });
+  }
+
+  onMounted(async () => {
+    await nextTick();
+    resolveCollisions();
+  });
 }

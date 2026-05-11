@@ -51,12 +51,18 @@
         :style="{ '--angle': -1 * css_longitude[item.name] + 'deg' }"
       >
         <div class="dot" />
+        <!-- :ref="(el) => setLabelRef(el as HTMLDivElement, index)" -->
         <p
           class="planent-name"
-          :style="{
-            color: planentsMap[item.name].color,
-            '--rot': -planentRota[item.name] + 'deg',
-          }"
+          :style="[
+            // labelOffsets[index]
+            //   ? { transform: `translate(${labelOffsets[index].x}px, ${labelOffsets[index].y}px)` }
+            //   : {},
+            {
+              color: planentsMap[item.name].color,
+              '--rot': -planentRota[item.name] + 'deg',
+            },
+          ]"
           @click="onClickPlanent(item)"
         >
           {{ planentsMap[item.name].n ?? planentsMap[item.name].name.slice(0, 1) }}
@@ -135,6 +141,8 @@ const { css_longitude, disableTransition } = useResetLongitude(toRef(props, 'dat
 
 // 计算行星偏移量，避免行星重叠
 const planentRota = useAvoidPlanetOverlap(toRef(props, 'data'));
+
+// const refDot = ref<HTMLDivElement[]>([]);
 
 const svgRef = ref<SVGSVGElement | null>(null);
 
@@ -320,6 +328,7 @@ const onClickSign = () => {
       border-radius: 50%;
     }
     .planent-name {
+      // margin-left: 8px;
       --fs: clamp(14px, 2.5vw, 32px);
 
       position: absolute;

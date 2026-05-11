@@ -132,7 +132,7 @@ import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
 import BaziPan from '../Bazi/components/BaziPan.vue';
 
-const time = ref(new Date());
+const time = ref(new Date(2026, 3, 18));
 
 const data = computed(() => {
   return getAllPlanets(time.value);
