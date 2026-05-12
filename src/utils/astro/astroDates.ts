@@ -1,4 +1,4 @@
-export enum AstrologyEventType {
+enum AstroEventType {
   Pattern = 'pattern', // 几何格局
   Cycle = 'cycle', // 周期事件
   Ingress = 'ingress', // 行星换座
@@ -8,51 +8,20 @@ export enum AstrologyEventType {
   Symbolic = 'symbolic', // 象征性节点
 }
 
-export interface AstrologyEvent {
+interface AstrologyEvent {
   name: string;
   time: string;
   description: string;
 }
 
-export interface AstrologyEventGroup {
-  type: AstrologyEventType;
+interface AstrologyEventGroup {
+  type: AstroEventType;
   data: AstrologyEvent[];
 }
 
-export const astrologyEvents: AstrologyEventGroup[] = [
+const astrologyEvents: AstrologyEventGroup[] = [
   {
-    type: AstrologyEventType.Discovery,
-    data: [
-      {
-        name: '天王星发现',
-        time: '1781-03-13T00:00:00Z',
-        description: '现代革命、科技与觉醒主题进入占星体系',
-      },
-      {
-        name: '谷神星发现',
-        time: '1801-01-01T00:00:00Z',
-        description: '现代小行星占星的重要起点',
-      },
-      {
-        name: '海王星发现',
-        time: '1846-09-23T00:00:00Z',
-        description: '现代意识与潜意识占星的重要起点',
-      },
-      {
-        name: '凯龙星发现',
-        time: '1977-11-01T00:00:00Z',
-        description: '现代疗愈与创伤主题的重要节点',
-      },
-      {
-        name: '冥王星发现',
-        time: '1930-02-18T00:00:00Z',
-        description: '现代冥王主题进入集体视野',
-      },
-    ],
-  },
-
-  {
-    type: AstrologyEventType.Pattern,
+    type: AstroEventType.Pattern,
     data: [
       {
         name: '七行星聚集',
@@ -88,7 +57,7 @@ export const astrologyEvents: AstrologyEventGroup[] = [
   },
 
   {
-    type: AstrologyEventType.Cycle,
+    type: AstroEventType.Cycle,
     data: [
       {
         name: '土天海三重结构',
@@ -101,7 +70,7 @@ export const astrologyEvents: AstrologyEventGroup[] = [
         description: '全球结构重组的重要周期节点',
       },
       {
-        name: '木土大合（水瓶0°）',
+        name: '木土大合 (水瓶0°)',
         time: '2020-12-21T18:20:00Z',
         description: '风元素时代的重要周期节点',
       },
@@ -109,7 +78,59 @@ export const astrologyEvents: AstrologyEventGroup[] = [
   },
 
   {
-    type: AstrologyEventType.Ingress,
+    type: AstroEventType.Eclipse,
+    data: [
+      {
+        name: '狮子座美国大日食',
+        time: '2017-08-21T18:26:00Z',
+        description: '横贯美国的重要狮子座日食',
+      },
+      {
+        name: '北美白羊日食',
+        time: '2024-04-08T18:18:00Z',
+        description: '白羊轴线的重要日食事件',
+      },
+      {
+        name: '巨蟹月偏食',
+        time: '2020-01-10T19:10:00Z',
+        description: '土冥合前后的关键月食节点',
+      },
+      {
+        name: '双子-射手食相轴开启',
+        time: '2020-06-05T19:12:00Z',
+        description: '信息、传播与认知主题的重要食相周期',
+      },
+    ],
+  },
+
+  {
+    type: AstroEventType.Symbolic,
+    data: [
+      {
+        name: '冬至（玛雅历法讨论节点）',
+        time: '2012-12-21T11:11:00Z',
+        description: '集体意识转向的象征性时间节点',
+      },
+      {
+        name: '千禧年时刻',
+        time: '2000-01-01T00:00:00Z',
+        description: '20世纪进入21世纪的重要象征节点',
+      },
+      {
+        name: '互联网公众化时代开启',
+        time: '1995-08-09T00:00:00Z',
+        description: '互联网正式进入大众社会的重要象征时间',
+      },
+      {
+        name: 'ChatGPT 发布',
+        time: '2022-11-30T18:00:00Z',
+        description: 'AI生成时代象征节点',
+      },
+    ],
+  },
+
+  {
+    type: AstroEventType.Ingress,
     data: [
       {
         name: '冥王星进入摩羯',
@@ -140,7 +161,38 @@ export const astrologyEvents: AstrologyEventGroup[] = [
   },
 
   {
-    type: AstrologyEventType.Historical,
+    type: AstroEventType.Discovery,
+    data: [
+      {
+        name: '天王星发现',
+        time: '1781-03-13T00:00:00Z',
+        description: '现代革命、科技与觉醒主题进入占星体系',
+      },
+      {
+        name: '谷神星发现',
+        time: '1801-01-01T00:00:00Z',
+        description: '现代小行星占星的重要起点',
+      },
+      {
+        name: '海王星发现',
+        time: '1846-09-23T00:00:00Z',
+        description: '现代意识与潜意识占星的重要起点',
+      },
+      {
+        name: '凯龙星发现',
+        time: '1977-11-01T00:00:00Z',
+        description: '现代疗愈与创伤主题的重要节点',
+      },
+      {
+        name: '冥王星发现',
+        time: '1930-02-18T00:00:00Z',
+        description: '现代冥王主题进入集体视野',
+      },
+    ],
+  },
+
+  {
+    type: AstroEventType.Historical,
     data: [
       {
         name: '阿波罗11号登月',
@@ -167,63 +219,29 @@ export const astrologyEvents: AstrologyEventGroup[] = [
         time: '2020-03-11T00:00:00Z',
         description: '全球疫情时代正式开启',
       },
-      {
-        name: 'ChatGPT发布',
-        time: '2022-11-30T18:00:00Z',
-        description: 'AI语言模型时代的重要象征节点',
-      },
-    ],
-  },
-
-  {
-    type: AstrologyEventType.Eclipse,
-    data: [
-      {
-        name: '狮子座美国大日食',
-        time: '2017-08-21T18:26:00Z',
-        description: '横贯美国的重要狮子座日食',
-      },
-      {
-        name: '北美白羊日食',
-        time: '2024-04-08T18:18:00Z',
-        description: '白羊轴线的重要日食事件',
-      },
-      {
-        name: '巨蟹月偏食',
-        time: '2020-01-10T19:10:00Z',
-        description: '土冥合前后的关键月食节点',
-      },
-      {
-        name: '双子-射手食相轴开启',
-        time: '2020-06-05T19:12:00Z',
-        description: '信息、传播与认知主题的重要食相周期',
-      },
-    ],
-  },
-
-  {
-    type: AstrologyEventType.Symbolic,
-    data: [
-      {
-        name: '冬至节点',
-        time: '2012-12-21T11:11:00Z',
-        description: '集体意识转向的象征性时间节点',
-      },
-      {
-        name: '千禧年时刻',
-        time: '2000-01-01T00:00:00Z',
-        description: '20世纪进入21世纪的重要象征节点',
-      },
-      {
-        name: '互联网公众化时代开启',
-        time: '1995-08-09T00:00:00Z',
-        description: '互联网正式进入大众社会的重要象征时间',
-      },
-      {
-        name: 'AI生成时代象征节点',
-        time: '2022-11-30T18:00:00Z',
-        description: '生成式AI开始进入公众日常生活',
-      },
     ],
   },
 ];
+
+const astroEventMap = {
+  [AstroEventType.Pattern]: { text: '几何格局' },
+  [AstroEventType.Cycle]: { text: '周期事件' },
+  [AstroEventType.Ingress]: { text: '行星换座' },
+  [AstroEventType.Discovery]: { text: '行星发现' },
+  [AstroEventType.Historical]: { text: '历史事件' },
+  [AstroEventType.Eclipse]: { text: '食相' },
+  [AstroEventType.Symbolic]: { text: '象征性节点' },
+};
+
+export const astrologyEventsUI = astrologyEvents.map((i) => ({
+  text: astroEventMap[i.type].text,
+  children: i.data.map(({ name, description, time }) => {
+    const date = new Date(time);
+    const text = date.getFullYear() + '_' + name;
+    return {
+      text,
+      id: time,
+      description,
+    };
+  }),
+}));

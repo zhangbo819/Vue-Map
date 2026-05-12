@@ -39,24 +39,20 @@
     @confirm="onCalendarConfirm"
   />
   <van-cell title="此时此刻" :value="time.toLocaleString()" class="cursor" @click="onClickTime" />
-  <!-- <van-cell title="示例数据" value="--\>" @click="timeListShow = true" />
-  <van-action-sheet v-model:show="timeListShow" :actions="actions" @select="onSelect" /> -->
-
-  <van-collapse v-model="activeCollapse">
-    <van-collapse-item name="1" title="示例数据" :label="activeDescription">
-      <van-tree-select
-        v-model:active-id="activeId"
-        v-model:main-active-index="activeIndex"
-        :items="items"
-        @click-item="clickItem"
-      />
-    </van-collapse-item>
-  </van-collapse>
+  <van-cell title="示例数据" is-link :value="''" @click="timeListShow = true" />
+  <van-action-sheet v-model:show="timeListShow" :title="activeDescription || '请选择'">
+    <van-tree-select
+      v-model:active-id="activeId"
+      v-model:main-active-index="activeIndex"
+      :items="astrologyEventsUI"
+      @click-item="clickItem"
+    />
+  </van-action-sheet>
 </template>
 
 <script setup lang="ts">
-import { astrologyEvents } from '@/utils/astro/astroDates';
 import { ref, watch } from 'vue';
+import { astrologyEventsUI } from '@/utils/astro/astroDates';
 
 const props = defineProps({
   time: {
@@ -138,27 +134,16 @@ const onPickerGroupConfirm = () => {
 // const time = ref(new Date(2025, 7, 17)); // 1755356400000 俩风筝 俩三角 神秘矩形
 // { name: 'Yod 上帝之指', time: '2017-06-05T04:00:00Z' },
 
-const items = astrologyEvents.map((i) => ({
-  text: i.type,
-  children: i.data.map(({ name, description, time }) => {
-    const date = new Date(time);
-    const text = date.getFullYear() + '_' + name;
-    return {
-      text,
-      id: time,
-      description,
-    };
-  }),
-}));
+const timeListShow = ref(false);
 const activeId = ref();
 const activeIndex = ref();
-const activeCollapse = ref([]);
 const activeDescription = ref('');
 const clickItem = (item: Record<string, string>) => {
   console.log(item);
   activeDescription.value = item.description;
   const newDate = new Date(item.id);
   emit('update:time', newDate);
+  timeListShow.value = false;
 };
 </script>
 
