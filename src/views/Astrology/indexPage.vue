@@ -132,6 +132,8 @@ import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
 import BaziPan from '../Bazi/components/BaziPan.vue';
 
+// const time = ref(new Date('2013-07-29T04:30:00Z'));
+// const time = ref(new Date('2010-08-07T00:00:00Z'));
 const time = ref(new Date());
 
 const data = computed(() => {
@@ -154,11 +156,11 @@ const aspectData = computed(() => {
 // 格局
 const patternData = computed(() => {
   const engine = new AspectPatternEngine(aspectData.value);
-  const patterns = engine.detectAll();
+  const patterns = engine.detectTop();
 
-  if (patterns.length) {
-    console.log(patterns);
-  }
+  // if (patterns.length) {
+  //   console.log(patterns);
+  // }
   return patterns;
 });
 </script>

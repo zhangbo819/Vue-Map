@@ -372,11 +372,86 @@ type Pattern =
       base: [PlanetItem['name'], PlanetItem['name']];
       planets: PlanetItem['name'][];
     };
+
+type ConjunctionGroup = {
+  planets: PlanetItem['name'][];
+};
+
 export class AspectPatternEngine {
   private aspects: AspectItem[];
+  // private conjunctions: ConjunctionGroup[];
 
   constructor(aspects: AspectItem[]) {
     this.aspects = aspects;
+    // this.conjunctions = this.buildConjunctionGroups();
+    // console.log('conjunctions', this.conjunctions);
+  }
+
+  /**
+   * 构建合相群
+   *
+   * 例如：
+   * A-B 合
+   * B-C 合
+   *
+   * => [A,B,C]
+   */
+  private buildConjunctionGroups(): ConjunctionGroup[] {
+    // adjacency graph
+    const graph = new Map<PlanetItem['name'], Set<PlanetItem['name']>>();
+
+    // 建图
+    for (const asp of this.aspects) {
+      if (asp.type !== Aspect.Conjunction) continue;
+
+      const [a, b] = asp.between;
+
+      if (!graph.has(a)) {
+        graph.set(a, new Set());
+      }
+
+      if (!graph.has(b)) {
+        graph.set(b, new Set());
+      }
+
+      graph.get(a)!.add(b);
+      graph.get(b)!.add(a);
+    }
+
+    const visited = new Set<PlanetItem['name']>();
+
+    const result: ConjunctionGroup[] = [];
+
+    // DFS 找连通块
+    const dfs = (node: PlanetItem['name'], group: Set<PlanetItem['name']>) => {
+      visited.add(node);
+
+      group.add(node);
+
+      const neighbors = graph.get(node);
+
+      if (!neighbors) return;
+
+      for (const next of neighbors) {
+        if (visited.has(next)) continue;
+
+        dfs(next, group);
+      }
+    };
+
+    for (const node of graph.keys()) {
+      if (visited.has(node)) continue;
+
+      const group = new Set<PlanetItem['name']>();
+
+      dfs(node, group);
+
+      result.push({
+        planets: [...group],
+      });
+    }
+
+    return result;
   }
 
   // 根据相位关系获取所有格局
@@ -390,7 +465,21 @@ export class AspectPatternEngine {
     ];
   }
 
-  // TODO 优化 1. 大十字一定伴随着t三角 2.风筝一定伴随着大三角
+  // 获取所有顶级格局
+  public detectTop(): Pattern[] {
+    let res: Pattern[] = [];
+
+    const GrandTrine = this.detectGrandTrine();
+    const Kite = this.detectKiteBy(GrandTrine);
+    res = res.concat(Kite.length ? Kite : GrandTrine);
+
+    const TSquare = this.detectTSquare();
+    const GrandCross = this.detectGrandCrossBy(TSquare);
+    console.log('GrandCross', GrandCross);
+    res = res.concat(GrandCross.length ? GrandCross : TSquare);
+
+    return res;
+  }
 
   // 去重
   private deduplicate<T extends Pattern>(list: T[]): T[] {
@@ -421,6 +510,48 @@ export class AspectPatternEngine {
 
       return true;
     });
+  }
+
+  // 大三角（Grand Trine）
+  // 条件：3个120°（trine）构成闭环三角
+  private detectGrandTrine(): Pattern[] {
+    const trines = this.aspects.filter((a) => a.type === Aspect.Trine);
+
+    const results: Pattern[] = [];
+
+    const map = new Map<PlanetItem['name'], Set<PlanetItem['name']>>();
+
+    for (const t of trines) {
+      const [a, b] = t.between;
+
+      if (!map.has(a)) map.set(a, new Set());
+      if (!map.has(b)) map.set(b, new Set());
+
+      map.get(a)!.add(b);
+      map.get(b)!.add(a);
+    }
+
+    for (const [a, setA] of map) {
+      for (const b of setA) {
+        const setB = map.get(b);
+        if (!setB) continue;
+
+        for (const c of setB) {
+          if (c === a) continue;
+
+          if (map.get(c)?.has(a)) {
+            const planets = [a, b, c].sort();
+
+            results.push({
+              type: PatternType.GrandTrine,
+              planets,
+            });
+          }
+        }
+      }
+    }
+
+    return this.deduplicate(results);
   }
 
   // Kite（风筝）🪁
@@ -480,47 +611,67 @@ export class AspectPatternEngine {
 
     return this.deduplicate(results);
   }
+  // 检测根据大三角检测风筝。大十字一定伴随着t三角
+  private detectKiteBy(patterns: Pattern[]) {
+    const result: {
+      type: PatternType.Kite;
+      apex: PlanetItem['name'];
+      planets: PlanetItem['name'][];
+      grandTrine: PlanetItem['name'][];
+      opposition: [PlanetItem['name'], PlanetItem['name']];
+    }[] = [];
 
-  // 大三角（Grand Trine）
-  // 条件：3个120°（trine）构成闭环三角
-  private detectGrandTrine(): Pattern[] {
-    const trines = this.aspects.filter((a) => a.type === Aspect.Trine);
+    // aspect 查询工具
+    const hasAspect = (a: PlanetItem['name'], b: PlanetItem['name'], type: Aspect) => {
+      return this.aspects.some(
+        (asp) =>
+          asp.type === type &&
+          ((asp.between[0] === a && asp.between[1] === b) ||
+            (asp.between[0] === b && asp.between[1] === a))
+      );
+    };
 
-    const results: Pattern[] = [];
+    const grandTrines = patterns.filter((i) => i.type === PatternType.GrandTrine);
 
-    const map = new Map<PlanetItem['name'], Set<PlanetItem['name']>>();
+    // 所有出现过的行星
+    const allPlanets = [...new Set(this.aspects.flatMap((a) => a.between))] as PlanetItem['name'][];
 
-    for (const t of trines) {
-      const [a, b] = t.between;
+    for (const gt of grandTrines) {
+      const trinePlanets = gt.planets;
 
-      if (!map.has(a)) map.set(a, new Set());
-      if (!map.has(b)) map.set(b, new Set());
+      // 大三角中的每一个点都可能成为风筝轴点
+      for (const apex of trinePlanets) {
+        const others = trinePlanets.filter((p) => p !== apex) as [
+          PlanetItem['name'],
+          PlanetItem['name']
+        ];
 
-      map.get(a)!.add(b);
-      map.get(b)!.add(a);
-    }
+        for (const x of allPlanets) {
+          // 外部点
+          if (trinePlanets.includes(x)) continue;
 
-    for (const [a, setA] of map) {
-      for (const b of setA) {
-        const setB = map.get(b);
-        if (!setB) continue;
+          // 必须：
+          // x opposition apex
+          // x sextile 另外两个点
 
-        for (const c of setB) {
-          if (c === a) continue;
-
-          if (map.get(c)?.has(a)) {
-            const planets = [a, b, c].sort();
-
-            results.push({
-              type: PatternType.GrandTrine,
-              planets,
+          if (
+            hasAspect(x, apex, Aspect.Opposition) &&
+            hasAspect(x, others[0], Aspect.Sextile) &&
+            hasAspect(x, others[1], Aspect.Sextile)
+          ) {
+            result.push({
+              type: PatternType.Kite,
+              apex,
+              planets: [...trinePlanets, x],
+              grandTrine: [...trinePlanets],
+              opposition: [apex, x],
             });
           }
         }
       }
     }
 
-    return this.deduplicate(results);
+    return this.deduplicate(result);
   }
 
   // T 三角（T-Square）
@@ -613,9 +764,84 @@ export class AspectPatternEngine {
 
     return this.deduplicate(results);
   }
+  // 检测根据 T 三角检测大十字。大十字一定伴随着t三角
+  private detectGrandCrossBy(patterns: Pattern[]) {
+    const result: {
+      type: PatternType.GrandCross;
+      planets: PlanetItem['name'][];
+      tSquares: PlanetItem['name'][][];
+    }[] = [];
+
+    const hasAspect = (a: PlanetItem['name'], b: PlanetItem['name'], type: Aspect) =>
+      this.aspects.some(
+        (asp) =>
+          asp.type === type &&
+          ((asp.between[0] === a && asp.between[1] === b) ||
+            (asp.between[0] === b && asp.between[1] === a))
+      );
+
+    const tSquares = patterns.filter((i) => i.type === PatternType.TSquare);
+
+    for (let i = 0; i < tSquares.length; i++) {
+      for (let j = i + 1; j < tSquares.length; j++) {
+        const t1 = tSquares[i];
+        const t2 = tSquares[j];
+
+        // 必须：
+        // 1. apex opposition
+        // 2. 共用同一个 base opposition
+
+        const sameBase = t1.base.includes(t2.base[0]) && t1.base.includes(t2.base[1]);
+
+        if (!sameBase) continue;
+
+        const apexOpposition = hasAspect(t1.apex, t2.apex, Aspect.Opposition);
+
+        if (!apexOpposition) continue;
+
+        // Grand Cross 四颗星
+        const planets = [t1.apex, t2.apex, ...t1.base] as PlanetItem['name'][];
+
+        // 再严格校验：
+        // 必须存在：
+        // 2 opposition
+        // 4 square
+
+        let oppositionCount = 0;
+        let squareCount = 0;
+
+        for (let a = 0; a < planets.length; a++) {
+          for (let b = a + 1; b < planets.length; b++) {
+            const p1 = planets[a];
+            const p2 = planets[b];
+
+            if (hasAspect(p1, p2, Aspect.Opposition)) {
+              oppositionCount++;
+            }
+
+            if (hasAspect(p1, p2, Aspect.Square)) {
+              squareCount++;
+            }
+          }
+        }
+
+        if (oppositionCount !== 2 || squareCount !== 4) {
+          continue;
+        }
+
+        result.push({
+          type: PatternType.GrandCross,
+          planets,
+          tSquares: [t1.planets, t2.planets],
+        });
+      }
+    }
+
+    return this.deduplicate(result);
+  }
 
   // TODO 新增
-  // Mystic Rectangle  神秘矩形
+  // Mystic Rectangle 神秘矩形
   // Conjunction Cluster（合相群）
   // Stellium（星群）
 
