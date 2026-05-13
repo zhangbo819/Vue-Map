@@ -78,6 +78,27 @@ const astrologyEvents: AstrologyEventGroup[] = [
   },
 
   {
+    type: AstroEventType.Ingress,
+    data: [
+      {
+        name: '冥王星进入摩羯',
+        time: '2008-01-26T19:32:00Z',
+        description: '全球资本结构与平台权力体系重构',
+      },
+      {
+        name: '天王星进入金牛',
+        time: '2018-05-15T15:16:00Z',
+        description: '数字资产、金融系统与现实资源结构重组',
+      },
+      {
+        name: '冥王星进入水瓶',
+        time: '2023-03-23T09:13:00Z',
+        description: 'AI、网络与群体结构的重写(核心转折点)',
+      },
+    ],
+  },
+
+  {
     type: AstroEventType.Eclipse,
     data: [
       {
@@ -99,63 +120,6 @@ const astrologyEvents: AstrologyEventGroup[] = [
         name: '双子-射手食相轴开启',
         time: '2020-06-05T19:12:00Z',
         description: '信息、传播与认知主题的重要食相周期',
-      },
-    ],
-  },
-
-  {
-    type: AstroEventType.Symbolic,
-    data: [
-      {
-        name: '冬至（玛雅历法讨论节点）',
-        time: '2012-12-21T11:11:00Z',
-        description: '集体意识转向的象征性时间节点',
-      },
-      {
-        name: '千禧年时刻',
-        time: '2000-01-01T00:00:00Z',
-        description: '20世纪进入21世纪的重要象征节点',
-      },
-      {
-        name: '互联网公众化时代开启',
-        time: '1995-08-09T00:00:00Z',
-        description: '互联网正式进入大众社会的重要象征时间',
-      },
-      {
-        name: 'ChatGPT 发布',
-        time: '2022-11-30T18:00:00Z',
-        description: 'AI生成时代象征节点',
-      },
-    ],
-  },
-
-  {
-    type: AstroEventType.Ingress,
-    data: [
-      {
-        name: '冥王星进入摩羯',
-        time: '2008-01-26T19:32:00Z',
-        description: '平台资本与结构化权力时代开启',
-      },
-      {
-        name: '海王星进入双鱼',
-        time: '2012-02-03T13:04:00Z',
-        description: '虚拟化、沉浸化与集体意识周期强化',
-      },
-      {
-        name: '天王星进入金牛',
-        time: '2018-05-15T15:16:00Z',
-        description: '数字资产、能源与现实结构重组',
-      },
-      {
-        name: '冥王星首次进入水瓶',
-        time: '2023-03-23T09:13:00Z',
-        description: 'AI、网络与群体结构时代强化',
-      },
-      {
-        name: '海王星进入白羊',
-        time: '2025-03-30T11:00:00Z',
-        description: '新时代意识周期的重要开端',
       },
     ],
   },
@@ -187,6 +151,32 @@ const astrologyEvents: AstrologyEventGroup[] = [
         name: '冥王星发现',
         time: '1930-02-18T00:00:00Z',
         description: '现代冥王主题进入集体视野',
+      },
+    ],
+  },
+
+  {
+    type: AstroEventType.Symbolic,
+    data: [
+      {
+        name: '冬至（玛雅历法讨论节点）',
+        time: '2012-12-21T11:11:00Z',
+        description: '集体意识转向的象征性时间节点',
+      },
+      {
+        name: '千禧年时刻',
+        time: '2000-01-01T00:00:00Z',
+        description: '20世纪进入21世纪的重要象征节点',
+      },
+      {
+        name: '互联网公众化时代开启',
+        time: '1995-08-09T00:00:00Z',
+        description: '互联网正式进入大众社会的重要象征时间',
+      },
+      {
+        name: 'ChatGPT 发布',
+        time: '2022-11-30T18:00:00Z',
+        description: 'AI生成时代象征节点',
       },
     ],
   },
@@ -224,7 +214,7 @@ const astrologyEvents: AstrologyEventGroup[] = [
 ];
 
 const astroEventMap = {
-  [AstroEventType.Pattern]: { text: '几何格局' },
+  [AstroEventType.Pattern]: { text: '经典格局' },
   [AstroEventType.Cycle]: { text: '周期事件' },
   [AstroEventType.Ingress]: { text: '行星换座' },
   [AstroEventType.Discovery]: { text: '行星发现' },
