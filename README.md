@@ -56,3 +56,30 @@ Vue3 的地图类项目
 - [ ] 原功能扩展：保留指定的时间列表，或 URL 方式便于分享
 - [ ] 原功能增强：星盘交互增强，hover 行星高亮所有相位，拖动时间
 - [ ] 新功能：宫位上升点等更专业的数据，需要服务器
+
+### 完整的星盘分析
+
+① Distribution（分布）
+
+    元素
+    模式
+    半球
+    Jones Pattern
+
+② Concentration（集中）
+
+    Stellium
+    合相群
+    主导星
+
+③ Dynamics（动力）
+
+    相位
+    格局
+
+④ Meaning（意义）
+
+    宫位
+    宫主
+    dispositor
+    dignity
