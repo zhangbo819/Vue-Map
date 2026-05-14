@@ -126,8 +126,9 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { getAllPlanets, aspectPosition, AspectPatternEngine } from '@/utils/astro/planets';
+import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
 import { map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
+import { AspectPatternEngine } from '@/utils/astro/aspectPattern';
 import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from './components/AstroRoundPlate.vue';
 import BaziPan from '../Bazi/components/BaziPan.vue';
@@ -156,7 +157,7 @@ const aspectData = computed(() => {
 // 格局
 const patternData = computed(() => {
   const engine = new AspectPatternEngine(aspectData.value);
-  const patterns = engine.detectTop();
+  const { patterns } = engine.detectAll();
 
   // if (patterns.length) {
   //   console.log(patterns);

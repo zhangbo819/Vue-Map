@@ -81,7 +81,7 @@ export function isRetrograde(name: BodyInUse, date: Date) {
   return diff < 0;
 }
 
-enum Aspect {
+export enum Aspect {
   Conjunction = 'Conjunction',
   Sextile = 'Sextile',
   Square = 'Square',
@@ -379,12 +379,12 @@ type ConjunctionGroup = {
 
 export class AspectPatternEngine {
   private aspects: AspectItem[];
-  // private conjunctions: ConjunctionGroup[];
+  private conjunctions: ConjunctionGroup[];
 
   constructor(aspects: AspectItem[]) {
     this.aspects = aspects;
-    // this.conjunctions = this.buildConjunctionGroups();
-    // console.log('conjunctions', this.conjunctions);
+    this.conjunctions = this.buildConjunctionGroups();
+    console.log('conjunctions', this.conjunctions);
   }
 
   /**
