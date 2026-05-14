@@ -207,7 +207,7 @@ const activeAspect = ref<{
   aspects: [],
 });
 const onClickPlanent = (item: PlanetItem) => {
-  console.log(item);
+  // console.log(item);
   showPopup.value = true;
   const aspectData = aspectPosition.getData(props.data);
 

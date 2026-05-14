@@ -1,5 +1,6 @@
+import { PatternType } from './aspectPattern';
 import { BodyInUse } from './constant';
-import { PatternType, Star } from './planets';
+import { Star } from './planets';
 
 // Element
 enum EL {
@@ -194,15 +195,15 @@ export const patternMap = {
     color: '#D32F2F', // 极端不和谐的深红色
     desc: '极为罕见且压力巨大，人生波折多，但成就亦非凡。',
   },
-  [PatternType.Yod]: {
-    text: '上帝之指',
-    color: '#9C27B0', // 神秘且稀有的紫色
-    desc: '宿命般的指引，需不断调整自我以达成特殊使命。',
+  [PatternType.MysticRectangle]: {
+    text: '神秘矩形',
+    color: '#FFD700', // 代表才华与平衡的金色
+    desc: '极佳的整合能力，擅长将矛盾转化为平衡的才华。',
   },
-  // [PatternType.MysticRectangle]: {
-  //   text: '神秘矩形',
-  //   color: '#FFD700', // 代表才华与平衡的金色
-  //   desc: '极佳的整合能力，擅长将矛盾转化为平衡的才华。',
+  // [PatternType.Yod]: {
+  //   text: '上帝之指',
+  //   color: '#9C27B0', // 神秘且稀有的紫色
+  //   desc: '宿命般的指引，需不断调整自我以达成特殊使命。',
   // },
 };
 

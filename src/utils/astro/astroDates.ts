@@ -29,7 +29,7 @@ const astrologyEvents: AstrologyEventGroup[] = [
         description: '经典水瓶群星结构',
       },
       {
-        name: '双大十字',
+        name: '顶点合相大十字',
         time: '2010-08-07T00:00:00Z',
         description: '高张力多轴结构',
       },

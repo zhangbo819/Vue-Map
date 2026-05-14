@@ -19,7 +19,7 @@
             <template #title>
               <p>
                 <span :style="{ color: patternMap[item.type].color }"
-                  >{{ patternMap[item.type].text }}格局</span
+                  >{{ patternMap[item.type].text }}{{ patternData.length <= 1 ? '格局' : '' }}</span
                 >
               </p>
             </template>
@@ -156,7 +156,7 @@ const aspectData = computed(() => {
 
 // 格局
 const patternData = computed(() => {
-  const engine = new AspectPatternEngine(aspectData.value);
+  const engine = new AspectPatternEngine(aspectData.value, data.value);
   const { patterns } = engine.detectAll();
 
   // if (patterns.length) {

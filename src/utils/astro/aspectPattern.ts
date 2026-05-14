@@ -5,7 +5,8 @@ export enum PatternType {
   'Kite' = 'Kite',
   'TSquare' = 'TSquare',
   'GrandCross' = 'GrandCross',
-  'Yod' = 'Yod',
+  'MysticRectangle' = 'MysticRectangle',
+  // 'Yod' = 'Yod',
 }
 
 type ConjunctionGroup = {
@@ -44,15 +45,19 @@ type Pattern = {
   // house?: number;
 };
 
+// 占星格局 v2 版本
 export class AspectPatternEngine {
   private aspects: AspectItem[];
+  private planetData: PlanetItem[];
   private conjunctionGroups: ConjunctionGroup[];
   private slotMap = new Map<PlanetItem['name'], PlanetItem['name'][]>();
 
-  constructor(aspects: AspectItem[]) {
+  constructor(aspects: AspectItem[], planetData: PlanetItem[]) {
     this.aspects = aspects;
+    this.planetData = planetData;
     const conjunctionGroups = this.buildConjunctionGroups();
     this.conjunctionGroups = conjunctionGroups;
+    // console.log('conjunctionGroups', conjunctionGroups);
 
     this.buildSlots();
   }
@@ -152,17 +157,19 @@ export class AspectPatternEngine {
     patterns = patterns.concat(GrandTrine, Kite);
 
     const TSquare = this.detectTSquare();
-    console.log('TSquare', TSquare);
+    // console.log('TSquare', TSquare);
     const GrandCross = this.detectGrandCross(TSquare);
     // console.log('GrandCross', GrandCross);
     patterns = patterns.concat(GrandCross.length ? GrandCross : TSquare);
 
-    const conjunctionGroups = this.conjunctionGroups;
-    // console.log('conjunctionGroups', conjunctionGroups);
+    patterns.push(...this.detectMysticRectangle());
+
+    // console.log('patterns', patterns);
 
     return {
       patterns,
-      conjunctionGroups,
+      // conjunctionGroups: this.conjunctionGroups,
+      // stellium: this.detectStellium(),
     };
   }
 
@@ -433,7 +440,115 @@ export class AspectPatternEngine {
     return this.deduplicate(results);
   }
 
-  // TODO 新增
-  // Mystic Rectangle 神秘矩形
+  /**
+   * Mystic Rectangle（神秘矩形）
+   *
+   * 条件：
+   * - 2组 Opposition
+   * - 2组 Trine
+   * - 2组 Sextile
+   *
+   * 结构：
+   *
+   * A ----- trine ----- B
+   * |                   |
+   * sextile          sextile
+   * |                   |
+   * D ----- trine ----- C
+   */
+  private detectMysticRectangle(): Pattern[] {
+    const oppositions = this.aspects.filter((a) => a.type === Aspect.Opposition);
+
+    const results: Pattern[] = [];
+
+    for (let i = 0; i < oppositions.length; i++) {
+      for (let j = i + 1; j < oppositions.length; j++) {
+        const opp1 = oppositions[i];
+        const opp2 = oppositions[j];
+
+        const slotA = this.getSlot(opp1.between[0]);
+
+        const slotB = this.getSlot(opp1.between[1]);
+
+        const slotC = this.getSlot(opp2.between[0]);
+
+        const slotD = this.getSlot(opp2.between[1]);
+
+        // 去除重复 slot
+        const unique = new Set([
+          [...slotA].sort().join('&'),
+          [...slotB].sort().join('&'),
+          [...slotC].sort().join('&'),
+          [...slotD].sort().join('&'),
+        ]);
+
+        // 必须是四个独立结构点
+        if (unique.size !== 4) continue;
+
+        /**
+         * 需要满足：
+         *
+         * A trine C
+         * B trine D
+         *
+         * A sextile D
+         * B sextile C
+         *
+         * （或镜像）
+         */
+
+        const layout1 =
+          this.slotHasAspect(slotA, slotC, Aspect.Trine) &&
+          this.slotHasAspect(slotB, slotD, Aspect.Trine) &&
+          this.slotHasAspect(slotA, slotD, Aspect.Sextile) &&
+          this.slotHasAspect(slotB, slotC, Aspect.Sextile);
+
+        const layout2 =
+          this.slotHasAspect(slotA, slotD, Aspect.Trine) &&
+          this.slotHasAspect(slotB, slotC, Aspect.Trine) &&
+          this.slotHasAspect(slotA, slotC, Aspect.Sextile) &&
+          this.slotHasAspect(slotB, slotD, Aspect.Sextile);
+
+        if (!(layout1 || layout2)) {
+          continue;
+        }
+
+        const slots = [slotA, slotB, slotC, slotD];
+
+        results.push({
+          type: PatternType.MysticRectangle,
+
+          slots,
+
+          planets: [...new Set(slots.flat())],
+        });
+      }
+    }
+
+    return this.deduplicate(results);
+  }
   // Stellium（星群）
+  private detectStellium() {
+    const res: { name: PlanetItem['sign']; data: PlanetItem[] }[] = [];
+    const map = this.planetData.reduce((r, p) => {
+      if (!r[p.sign]) {
+        r[p.sign] = [p];
+      } else {
+        r[p.sign].push(p);
+      }
+      return r;
+    }, {} as Record<PlanetItem['sign'], PlanetItem[]>);
+
+    Object.keys(map).forEach((key) => {
+      const k = key as PlanetItem['sign'];
+      if (map[k].length > 3) {
+        res.push({
+          name: k,
+          data: map[k],
+        });
+      }
+    });
+
+    return res;
+  }
 }

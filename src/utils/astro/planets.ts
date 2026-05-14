@@ -336,8 +336,8 @@ export const aspectPosition = new AspectPosition();
 // console.log(result.end.toLocaleDateString());
 // console.log(result.exact.toLocaleDateString());
 
-// 格局 依托于相位 暂时放这
-export enum PatternType {
+// 格局 依托于相位 v1 版本 暂时放这
+enum PatternType {
   'GrandTrine' = 'GrandTrine',
   'Kite' = 'Kite',
   'TSquare' = 'TSquare',

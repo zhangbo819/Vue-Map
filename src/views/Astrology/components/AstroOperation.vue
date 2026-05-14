@@ -139,7 +139,7 @@ const activeId = ref();
 const activeIndex = ref();
 const activeDescription = ref('');
 const clickItem = (item: Record<string, string>) => {
-  console.log(item);
+  // console.log(item);
   activeDescription.value = item.description;
   const newDate = new Date(item.id);
   emit('update:time', newDate);
