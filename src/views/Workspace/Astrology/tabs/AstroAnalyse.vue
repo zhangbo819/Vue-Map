@@ -1,12 +1,13 @@
 <template>
   <div>
     <!-- Analyse -->
-    <div ref="refMap" style="min-height: 300px; width: 100%; margin: auto" />
+    <div ref="refMap" style="min-height: 350px; width: 100%; margin: auto" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useAstroStore } from '@/store/astro';
+import { AstroElementMap, AstroModalityMap, planentsMap } from '@/utils/astro/astroUI';
 import { ASTRO_ELEMENTS, ASTRO_MODALITIES } from '@/utils/astro/constant';
 import { AstroDistribution, buildDistribution } from '@/utils/astro/planets';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -25,8 +26,10 @@ const refMap = ref();
 let myChart: any;
 const init = () => {
   const distribution = buildDistribution(store.planetList);
-  const max_4 = 5;
-  const max_3 = 6;
+  const elementValue = toElementRadarData(distribution);
+  const modalityValue = toModalityRadarData(distribution);
+  const max_4 = Math.max(...elementValue);
+  const max_3 = Math.max(...modalityValue);
   const option = {
     backgroundColor: 'transparent',
     tooltip: {
@@ -178,9 +181,43 @@ const init = () => {
           {
             name: '四元素',
 
-            value: toElementRadarData(distribution),
+            value: elementValue,
           },
         ],
+
+        tooltip: {
+          trigger: 'item',
+
+          formatter(params: any) {
+            // console.log(params);
+
+            const values = params.value;
+
+            return ASTRO_ELEMENTS.map((key, index) => {
+              const planets = distribution.element[key].map(
+                (p) => `<span style="color: ${planentsMap[p].color}">${planentsMap[p].name}</span>`
+              );
+
+              return `
+          <div style="
+            margin-bottom:0px;
+          ">
+            <div>
+              <b style="color: ${AstroElementMap[key].color}">${AstroElementMap[key].name}</b>
+              (${values[index]})
+            </div>
+
+            <div style="
+              opacity:0.8;
+              font-size:12px;
+            ">
+              ${planets.join(' · ')}
+            </div>
+          </div>
+        `;
+            }).join('');
+          },
+        },
       },
 
       // 三模式
@@ -234,9 +271,43 @@ const init = () => {
           {
             name: '三模式',
 
-            value: toModalityRadarData(distribution),
+            value: modalityValue,
           },
         ],
+
+        tooltip: {
+          trigger: 'item',
+
+          formatter(params: any) {
+            // console.log(params);
+
+            const values = params.value;
+
+            return ASTRO_MODALITIES.map((key, index) => {
+              const planets = distribution.modality[key].map(
+                (p) => `<span style="color: ${planentsMap[p].color}">${planentsMap[p].name}</span>`
+              );
+
+              return `
+          <div style="
+            margin-bottom:0px;
+          ">
+            <div>
+              <b>${AstroModalityMap[key].name}</b>
+              (${values[index]})
+            </div>
+
+            <div style="
+              opacity:0.8;
+              font-size:12px;
+            ">
+              ${planets.join(' · ')}
+            </div>
+          </div>
+        `;
+            }).join('');
+          },
+        },
       },
     ],
   };

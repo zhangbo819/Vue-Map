@@ -1,5 +1,5 @@
 <template>
-  <van-nav-bar title="标题" left-text="返回" left-arrow @click-left="onClickLeft" />
+  <van-nav-bar title="详情" left-text="返回" left-arrow @click-left="onClickLeft" />
 
   <template v-if="activeBottom === 0">
     <Astrology />
