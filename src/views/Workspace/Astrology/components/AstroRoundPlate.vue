@@ -72,60 +72,62 @@
   </div>
 
   <!-- 圆角弹窗（居中） -->
-  <van-popup
-    v-model:show="showPopup"
-    round
-    class="aspect-popup"
-    :overlay-style="{
-      '--van-overlay-background': 'rgba(0, 0, 0, .2)',
-    }"
-  >
-    <template v-if="activeAspect.plant">
-      <h2>
-        <span :style="{ color: planentsMap[activeAspect.plant.name].color }"
-          >{{ activeAspect.plant.name }} {{ planentsMap[activeAspect.plant.name].name }}</span
-        >&nbsp;
-        <span> {{ `[${activeAspect.plant.retrograde ? '逆行' : '顺行'}]` }}</span>
-      </h2>
-      <strong>{{ planetTexts[activeAspect.plant.name].short }}</strong>
-      <h3>
-        落在
-        <span
-          class="navText"
-          :style="{ color: map12[activeAspect.plant.sign].color }"
-          @click="onClickSign"
-          >{{ activeAspect.plant.sign }}
-          {{ map12[activeAspect.plant.sign].name }}
-        </span>
-        {{ map12[activeAspect.plant.sign].icon }}
-        {{ activeAspect.plant.degree }}°
-      </h3>
-    </template>
-    <div v-for="(item, index) in activeAspect.aspects" :key="item.between.join('-')">
-      <p>
-        &nbsp;&nbsp;
-        <strong>{{ index + 1 }}. </strong>
-        <span
-          :style="{
-            fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
-          }"
-        >
-          与
-          <span :style="{ color: planentsMap[item.other].color }"
-            >{{ item.other }} {{ planentsMap[item.other].name }}</span
-          >
-          成
-          <span :style="{ color: aspectPosition.map[item.type].color }">
-            {{ item.type }}
-            {{ aspectPosition.map[item.type].name }}
-            {{ item.angle }}
+  <Teleport to="body">
+    <van-popup
+      v-model:show="showPopup"
+      round
+      class="aspect-popup"
+      :overlay-style="{
+        '--van-overlay-background': 'rgba(0, 0, 0, .2)',
+      }"
+    >
+      <template v-if="activeAspect.plant">
+        <h2>
+          <span :style="{ color: planentsMap[activeAspect.plant.name].color }"
+            >{{ activeAspect.plant.name }} {{ planentsMap[activeAspect.plant.name].name }}</span
+          >&nbsp;
+          <span> {{ `[${activeAspect.plant.retrograde ? '逆行' : '顺行'}]` }}</span>
+        </h2>
+        <strong>{{ planetTexts[activeAspect.plant.name].short }}</strong>
+        <h3>
+          落在
+          <span
+            class="navText"
+            :style="{ color: map12[activeAspect.plant.sign].color }"
+            @click="onClickSign"
+            >{{ activeAspect.plant.sign }}
+            {{ map12[activeAspect.plant.sign].name }}
           </span>
-          &nbsp;
-          <span> {{ item.strength }} ({{ item.orb }}°) </span>
-        </span>
-      </p>
-    </div>
-  </van-popup>
+          {{ map12[activeAspect.plant.sign].icon }}
+          {{ activeAspect.plant.degree }}°
+        </h3>
+      </template>
+      <div v-for="(item, index) in activeAspect.aspects" :key="item.between.join('-')">
+        <p>
+          &nbsp;&nbsp;
+          <strong>{{ index + 1 }}. </strong>
+          <span
+            :style="{
+              fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
+            }"
+          >
+            与
+            <span :style="{ color: planentsMap[item.other].color }"
+              >{{ item.other }} {{ planentsMap[item.other].name }}</span
+            >
+            成
+            <span :style="{ color: aspectPosition.map[item.type].color }">
+              {{ item.type }}
+              {{ aspectPosition.map[item.type].name }}
+              {{ item.angle }}
+            </span>
+            &nbsp;
+            <span> {{ item.strength }} ({{ item.orb }}°) </span>
+          </span>
+        </p>
+      </div>
+    </van-popup>
+  </Teleport>
 </template>
 <script setup lang="tsx">
 import { computed, onMounted, onUnmounted, ref, toRef } from 'vue';
