@@ -6,4 +6,4 @@ var b=Object.defineProperty;var C=(i,t,s)=>t in i?b(i,t,{enumerable:!0,configura
 
 进一步来说，${s.long}
 在这个位置上，你往往会在该领域中，以这种方式不断发展与体验。
-  `.trim()}export{W as A,j as B,B as a,N as b,K as c,R as d,v as g,E as m,P as p,$ as t};
+  `.trim()}export{W as A,j as B,R as a,K as b,N as c,B as d,v as g,E as m,P as p,$ as t};
