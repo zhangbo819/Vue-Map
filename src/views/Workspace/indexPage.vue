@@ -2,10 +2,10 @@
   <van-nav-bar title="标题" left-text="返回" left-arrow @click-left="onClickLeft" />
 
   <template v-if="activeBottom === 0">
-    <Astrology :time="time" />
+    <Astrology />
   </template>
   <template v-else-if="activeBottom === 1">
-    <bazi-pan :time="time" />
+    <bazi-pan :time="store.time" />
   </template>
 
   <van-tabbar
@@ -23,19 +23,21 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { useAstroStore } from '@/store/astro';
 import Astrology from './Astrology/indexPage.vue';
 import BaziPan from './Bazi/components/BaziPan.vue';
 
+const store = useAstroStore();
+
 const activeBottom = ref(0);
 
-const time = ref(new Date());
 const route = useRoute();
 
 watch(
   () => route.query.time,
   (val) => {
-    if (Number(val) !== time.value.getTime()) {
-      time.value = new Date(Number(val));
+    if (Number(val) !== store.time.getTime()) {
+      store.setTime(Number(val));
     }
   },
   {

@@ -1,6 +1,5 @@
 import { PatternType } from './aspectPattern';
-import { BodyInUse } from './constant';
-import { Star } from './planets';
+import { BodyInUse, Star } from './constant';
 
 // Element
 enum EL {

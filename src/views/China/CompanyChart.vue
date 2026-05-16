@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, watch, ref } from "vue";
+import { onMounted, onBeforeUnmount, watch, ref } from 'vue';
 
 const props = defineProps<{ data: ChinaData[] }>();
 
@@ -15,17 +15,17 @@ watch(
 );
 
 onMounted(() => {
-  window.addEventListener("resize", resize);
+  window.addEventListener('resize', resize);
   init();
 });
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", resize);
+  window.removeEventListener('resize', resize);
 });
 
 const refMap = ref();
 let myChart: any;
 const init = () => {
-  console.log("data", props.data);
+  console.log('data', props.data);
   const companyList = props.data
     .reduce((r, i) => {
       i.children.forEach((j) => {
@@ -41,7 +41,7 @@ const init = () => {
   //   console.log("companyList", companyList);
 
   const option = {
-    title: { text: "前20公司" },
+    title: { text: '前20公司' },
     // xAxis: {
     //   type: "category",
     //   data: companyList.map(item => item.name),
@@ -56,9 +56,9 @@ const init = () => {
 
     dataset: [
       {
-        dimensions: ["name", "revenue", "profession", "index"],
+        dimensions: ['name', 'revenue', 'profession', 'index'],
         source: companyList.map((i) => [
-          i.name.replace(/(股份)?有限公司/, ""),
+          i.name.replace(/(股份)?有限公司/, ''),
           i.revenue,
           i.address,
           i.index,
@@ -66,21 +66,21 @@ const init = () => {
       },
       {
         transform: {
-          type: "sort",
-          config: { dimension: "index", order: "asc" },
+          type: 'sort',
+          config: { dimension: 'index', order: 'asc' },
         },
       },
     ],
     xAxis: {
-      type: "category",
+      type: 'category',
       axisLabel: { interval: 0, rotate: 30 },
     },
     yAxis: {
-      name: "营收(万元)",
+      name: '营收(万元)',
     },
     series: {
-      type: "bar",
-      encode: { x: "name", y: "score" },
+      type: 'bar',
+      encode: { x: 'name', y: 'score' },
       datasetIndex: 1,
     },
 
@@ -96,9 +96,9 @@ const init = () => {
     // ],
 
     tooltip: {
-      trigger: "axis",
+      trigger: 'axis',
       axisPointer: {
-        type: "shadow",
+        type: 'shadow',
       },
     },
   };

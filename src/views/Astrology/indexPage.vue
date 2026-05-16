@@ -1,21 +1,25 @@
 <template>
   <div style="width: 100%">
     <van-collapse v-model="activeTab">
-      <van-nav-bar right-text="查看详情" @click-right="onClickRight">
+      <van-nav-bar right-text="星盘详情" @click-right="onClickRight">
         <template #title>
-          <h1 style="font-size: 1.6em">Astrology</h1>
+          <h1 style="font-size: 1.6em; line-height: 1.6em">Astrology</h1>
         </template>
       </van-nav-bar>
+
       <!-- 星座盘 -->
       <astro-round-plate :data="data" />
+
       <!-- 操作栏 -->
-      <van-collapse-item name="5">
-        <template #title> <h2>操作栏</h2></template>
-        <astro-operation v-model:time="time" />
-      </van-collapse-item>
+      <h2>操作栏</h2>
+      <astro-operation v-model:time="time" />
+
+      <!-- <van-collapse-item name="5">
+        <template #title></template>
+      </van-collapse-item> -->
 
       <!-- 参数详情列表 -->
-      <van-collapse-item name="2">
+      <!-- <van-collapse-item name="2">
         <template #title>
           <h2>参数详情列表</h2>
         </template>
@@ -34,7 +38,7 @@
             <p class="value">{{ item.degree }}°</p>
           </van-cell>
         </van-cell-group>
-      </van-collapse-item>
+      </van-collapse-item> -->
     </van-collapse>
   </div>
 </template>
@@ -43,7 +47,7 @@
 import { computed, ref } from 'vue';
 import router from '@/router';
 import { getAllPlanets } from '@/utils/astro/planets';
-import { map12, planentsMap } from '@/utils/astro/astroUI';
+// import { map12, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from '@/views/Workspace/Astrology/components/AstroOperation.vue';
 import AstroRoundPlate from '@/views/Workspace/Astrology/components/AstroRoundPlate.vue';
 

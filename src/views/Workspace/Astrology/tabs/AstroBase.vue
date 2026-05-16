@@ -1,6 +1,6 @@
 <template>
   <!-- 星座盘 -->
-  <astro-round-plate :data="data" />
+  <astro-round-plate :data="store.planetList" />
 
   <van-collapse v-model="activeTab">
     <!-- 操作栏 -->
@@ -48,7 +48,7 @@
       </template>
       <van-cell-group inset>
         <van-cell
-          v-for="item in data"
+          v-for="item in store.planetList"
           :key="item.name"
           :title="`${item.name} ${planentsMap[item.name].name}`"
           :label="item.longitude"
@@ -112,28 +112,21 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
+import { useAstroStore } from '@/store/astro';
+import { aspectPosition } from '@/utils/astro/planets';
 import { map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
 import { AspectPatternEngine } from '@/utils/astro/aspectPattern';
 // import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from '../components/AstroRoundPlate.vue';
 
-const props = defineProps({
-  time: {
-    type: Date,
-    required: true,
-  },
-});
+const store = useAstroStore();
 
-const data = computed(() => {
-  return getAllPlanets(props.time);
-});
 const activeTab = ref(new Array(6).fill(0).map((_, i) => String(i + 1)));
 
 // 相位
 const aspectData = computed(() => {
-  return aspectPosition.getData(data.value).map((i) => {
-    const r = aspectPosition.findAspectWindow(props.time, i.between[0], i.between[1], i.type);
+  return aspectPosition.getData(store.planetList).map((i) => {
+    const r = aspectPosition.findAspectWindow(store.time, i.between[0], i.between[1], i.type);
     return {
       ...i,
       window: r,
@@ -143,7 +136,7 @@ const aspectData = computed(() => {
 
 // 格局
 const patternData = computed(() => {
-  const engine = new AspectPatternEngine(aspectData.value, data.value);
+  const engine = new AspectPatternEngine(aspectData.value, store.planetList);
   const { patterns } = engine.detectAll();
 
   // if (patterns.length) {
