@@ -1,8 +1,9 @@
 <template>
   <div style="width: 100%">
+    <!-- 星座盘 -->
+    <astro-round-plate :data="data" />
+
     <van-collapse v-model="activeTab">
-      <!-- 星座盘 -->
-      <astro-round-plate :data="data" />
       <!-- 操作栏 -->
       <!-- <van-collapse-item name="5">
         <template #title> <h2>操作栏</h2></template>
