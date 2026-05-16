@@ -1,11 +1,13 @@
 <template>
   <div style="width: 100%">
     <van-collapse v-model="activeTab">
+      <van-nav-bar right-text="查看详情" @click-right="onClickRight">
+        <template #title>
+          <h1 style="font-size: 1.6em">Astrology</h1>
+        </template>
+      </van-nav-bar>
       <!-- 星座盘 -->
-      <van-collapse-item name="6">
-        <template #title> <h1 style="font-size: 1.6em">Astrology</h1></template>
-        <astro-round-plate :data="data" />
-      </van-collapse-item>
+      <astro-round-plate :data="data" />
       <!-- 操作栏 -->
       <van-collapse-item name="5">
         <template #title> <h2>操作栏</h2></template>
@@ -126,6 +128,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import router from '@/router';
 import { getAllPlanets, aspectPosition } from '@/utils/astro/planets';
 import { map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
 import { AspectPatternEngine } from '@/utils/astro/aspectPattern';
@@ -142,6 +145,12 @@ const data = computed(() => {
 });
 
 const activeTab = ref(new Array(6).fill(0).map((_, i) => String(i + 1)));
+const onClickRight = () => {
+  router.push({
+    path: '/workspace',
+    query: { time: time.value.getTime() },
+  });
+};
 
 // 相位
 const aspectData = computed(() => {
