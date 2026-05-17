@@ -10,14 +10,19 @@
       </van-collapse-item> -->
 
     <!-- 格局 -->
-    <van-collapse-item v-if="patternData.length" name="1">
+    <van-collapse-item v-if="store.patternData.length" name="1">
       <template #title> <h2 style="color: #f00">格局</h2></template>
       <van-cell-group inset>
-        <van-cell v-for="item in patternData" :key="item.type + item.planets" :label="item.type">
+        <van-cell
+          v-for="item in store.patternData"
+          :key="item.type + item.planets"
+          :label="item.type"
+        >
           <template #title>
             <p>
               <span :style="{ color: patternMap[item.type].color }"
-                >{{ patternMap[item.type].text }}{{ patternData.length <= 1 ? '格局' : '' }}</span
+                >{{ patternMap[item.type].text
+                }}{{ store.patternData.length <= 1 ? '格局' : '' }}</span
               >
             </p>
           </template>
@@ -67,7 +72,11 @@
     <van-collapse-item name="3">
       <template #title> <h2>主要相位</h2></template>
       <van-cell-group inset>
-        <van-cell v-for="item in aspectData" :key="item.between" :label="item.between.join(' - ')">
+        <van-cell
+          v-for="item in store.aspectData"
+          :key="item.between"
+          :label="item.between.join(' - ')"
+        >
           <template #title>
             <p>
               <span :style="{ color: planentsMap[item.between[0]].color }">{{
@@ -111,39 +120,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useAstroStore } from '@/store/astro';
 import { aspectPosition } from '@/utils/astro/planets';
 import { map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
-import { AspectPatternEngine } from '@/utils/astro/aspectPattern';
-// import AstroOperation from './components/AstroOperation.vue';
 import AstroRoundPlate from '../components/AstroRoundPlate.vue';
 
 const store = useAstroStore();
 
 const activeTab = ref(new Array(6).fill(0).map((_, i) => String(i + 1)));
-
-// 相位
-const aspectData = computed(() => {
-  return aspectPosition.getData(store.planetList).map((i) => {
-    const r = aspectPosition.findAspectWindow(store.time, i.between[0], i.between[1], i.type);
-    return {
-      ...i,
-      window: r,
-    };
-  });
-});
-
-// 格局
-const patternData = computed(() => {
-  const engine = new AspectPatternEngine(aspectData.value, store.planetList);
-  const { patterns } = engine.detectAll();
-
-  // if (patterns.length) {
-  //   console.log(patterns);
-  // }
-  return patterns;
-});
 </script>
 
 <style lang="scss" scoped>

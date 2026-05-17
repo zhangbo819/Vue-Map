@@ -3,6 +3,19 @@
     <!-- Analyse -->
     <div ref="refMap" style="min-height: 350px; width: 100%; margin: auto" />
   </div>
+
+  <div>
+    <h2>合相群</h2>
+    <p v-for="(item, index) in store.conjunctionGroups" :key="index">
+      合相群{{ index + 1 }}:
+      <span
+        v-for="p in item.planets"
+        :key="p"
+        :style="{ color: planentsMap[p].color, marginRight: '8px' }"
+        >{{ planentsMap[p].name }}</span
+      >
+    </p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -22,14 +35,20 @@ function toModalityRadarData(distribution: AstroDistribution) {
   return ASTRO_MODALITIES.map((m) => distribution.modality[m].length);
 }
 
+function getRadarMax(values: number[]) {
+  const max = Math.max(...values);
+
+  return Math.ceil((max + 1) / 2) * 2;
+}
+
 const refMap = ref();
 let myChart: any;
 const init = () => {
   const distribution = buildDistribution(store.planetList);
   const elementValue = toElementRadarData(distribution);
   const modalityValue = toModalityRadarData(distribution);
-  const max_4 = Math.max(...elementValue);
-  const max_3 = Math.max(...modalityValue);
+  const max_4 = getRadarMax(elementValue);
+  const max_3 = getRadarMax(modalityValue);
   const option = {
     backgroundColor: 'transparent',
     tooltip: {

@@ -9,13 +9,13 @@ export enum PatternType {
   // 'Yod' = 'Yod',
 }
 
-type ConjunctionGroup = {
+export type ConjunctionGroup = {
   planets: PlanetItem['name'][];
 };
 
 type PatternSlot = PlanetItem['name'][];
 
-type Pattern = {
+export type Pattern = {
   /**
    * 格局类型
    */
@@ -168,8 +168,8 @@ export class AspectPatternEngine {
 
     return {
       patterns,
-      // conjunctionGroups: this.conjunctionGroups,
-      // stellium: this.detectStellium(),
+      conjunctionGroups: this.conjunctionGroups,
+      stellium: this.detectStellium(),
     };
   }
 
