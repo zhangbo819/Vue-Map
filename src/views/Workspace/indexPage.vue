@@ -5,7 +5,7 @@
     <Astrology />
   </template>
   <template v-else-if="activeBottom === 1">
-    <bazi-pan :time="store.time" />
+    <Bazi />
   </template>
 
   <van-tabbar
@@ -25,7 +25,7 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAstroStore } from '@/store/astro';
 import Astrology from './Astrology/indexPage.vue';
-import BaziPan from './Bazi/components/BaziPan.vue';
+import Bazi from './Bazi/indexPage.vue';
 
 const store = useAstroStore();
 
