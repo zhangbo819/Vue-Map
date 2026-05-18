@@ -2,11 +2,19 @@
   <!-- 弹窗 临时放这 -->
   <bazi-modal />
 
+  <van-cell is-link title="修改性别" :value="sex === 0 ? '男' : '女'" @click="showSex = true" />
+  <van-action-sheet
+    v-model:show="showSex"
+    :actions="sexActions"
+    close-on-click-action
+    @select="onSelect"
+  />
+
   <!-- 标题 -->
-  <van-row>
+  <van-row style="margin-top: 10px">
     <van-col span="4" />
     <van-col v-for="item in pillarShowData" :key="item.title" span="5">
-      <p>{{ item.title }}</p>
+      <p class="title">{{ item.title }}</p>
     </van-col>
   </van-row>
   <!-- 十神 -->
@@ -97,7 +105,7 @@
     </van-col>
     <van-col v-for="(item, index) in pillarShowData" :key="'nayin' + item.nayin + index" span="5">
       <TouchModal :text="item.nayin">
-        <p :style="{ color: WuXing.getColorByWuxing(item.nayin[2]) }">
+        <p class="nayin" :style="{ color: WuXing.getColorByWuxing(item.nayin[2]) }">
           {{ item.nayin }}
         </p>
       </TouchModal>
@@ -119,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import {
   paipan,
   TG,
@@ -142,9 +150,21 @@ const props = withDefaults(
   {}
 );
 
+// 修改性别 暂时放这
+const sex = ref<0 | 1>(0);
+const showSex = ref(false);
+const sexActions = [
+  { name: '男', id: 0 },
+  { name: '女', id: 1 },
+];
+const onSelect = (item: { name: string; id: 0 | 1 }) => {
+  console.log(item);
+  sex.value = item.id;
+};
+
 const paipanInfo = computed(() => {
-  const res = paipan.GetInfo(0, props.time.getTime());
-  // console.log(res);
+  const res = paipan.GetInfo(sex.value, props.time.getTime());
+  console.log(res);
   return res;
 });
 const pillarShowData = computed(() => {
@@ -225,9 +245,12 @@ const Sizhu = [PillarTitle.年柱, PillarTitle.月柱, PillarTitle.日柱, Pilla
 </script>
 
 <style lang="scss" scoped>
-p,
-h1 {
+p {
   margin: 0;
+}
+
+.title {
+  text-align: center;
 }
 .subheading {
   font-size: 16;
@@ -236,8 +259,13 @@ h1 {
 }
 .tenText {
   color: #4b4b4b;
+  text-align: center;
+}
+.nayin {
+  text-align: center;
 }
 .shensha {
   color: #b2955e;
+  text-align: center;
 }
 </style>

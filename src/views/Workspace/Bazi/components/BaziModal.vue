@@ -1,16 +1,18 @@
 <template>
-  <van-popup v-model:show="store.visible" round closeable class="bazi-popup">
-    <header>
-      <h2 class="title">{{ store.title }}</h2>
-    </header>
-    <section>
-      <p class="text">{{ store.text }}</p>
-      <!-- 这里放你的八字内容 -->
-      <!-- <slot :payload="store.payload">
+  <Teleport to="body">
+    <van-popup v-model:show="store.visible" round closeable class="bazi-popup">
+      <header>
+        <h2 class="title">{{ store.title }}</h2>
+      </header>
+      <section>
+        <p class="text">{{ store.text }}</p>
+        <!-- 这里放你的八字内容 -->
+        <!-- <slot :payload="store.payload">
             <pre>{{ store.payload }}</pre>
           </slot> -->
-    </section>
-  </van-popup>
+      </section>
+    </van-popup>
+  </Teleport>
 </template>
 
 <script setup lang="ts">

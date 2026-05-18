@@ -74,6 +74,10 @@ h1 {
   margin: 0;
 }
 
+h2 {
+  text-align: center;
+}
+
 .value {
   margin: 0;
   // font-weight: bold;

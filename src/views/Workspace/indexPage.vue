@@ -47,3 +47,9 @@ watch(
 
 const onClickLeft = () => history.back();
 </script>
+
+<!-- <style lang="scss">
+.van-cell__title {
+  text-align: left;
+}
+</style> -->

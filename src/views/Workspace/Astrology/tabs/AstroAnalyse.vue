@@ -19,11 +19,11 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useAstroStore } from '@/store/astro';
 import { AstroElementMap, AstroModalityMap, planentsMap } from '@/utils/astro/astroUI';
 import { ASTRO_ELEMENTS, ASTRO_MODALITIES } from '@/utils/astro/constant';
 import { AstroDistribution, buildDistribution } from '@/utils/astro/planets';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const store = useAstroStore();
 

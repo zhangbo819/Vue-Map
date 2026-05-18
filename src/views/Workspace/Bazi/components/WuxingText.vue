@@ -45,6 +45,7 @@ const color_text = computed(() => {
   margin: 0;
   font-size: 20px;
   font-weight: bold;
+  text-align: center;
 }
 .wuxing_mid {
   font-size: 18px;

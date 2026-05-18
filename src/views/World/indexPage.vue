@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="world">
     <nav>
       <router-link to="/china">中国</router-link> | <router-link to="/world">世界</router-link>
     </nav>
@@ -293,6 +293,15 @@ watch(
 );
 </script>
 
+<style lang="scss">
+.world {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+</style>
 <style lang="scss" scoped>
 .radios {
   display: flex;

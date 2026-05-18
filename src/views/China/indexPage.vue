@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="china">
     <nav>
       <router-link to="/china">中国</router-link> | <router-link to="/world">世界</router-link>
     </nav>
@@ -213,6 +213,15 @@ const nav = () => {
 };
 </script>
 
+<style lang="scss">
+.china {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+</style>
 <style lang="scss" scoped>
 .yearList {
   display: flex;
