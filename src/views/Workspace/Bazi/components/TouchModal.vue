@@ -5,9 +5,9 @@
 </template>
 
 <script setup lang="ts">
-import { useBaziModalStore } from '@/store/baziModal';
+import { useBaziStore } from '@/store/bazi';
 
-const modal = useBaziModalStore();
+const modal = useBaziStore();
 
 const props = withDefaults(
   defineProps<{
@@ -22,7 +22,7 @@ const props = withDefaults(
 );
 
 const handleOpen = () => {
-  modal.open({
+  modal.openDialog({
     title: props.title,
     text: props.text === null ? '' : props.text,
   });

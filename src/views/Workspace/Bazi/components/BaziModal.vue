@@ -1,11 +1,11 @@
 <template>
   <Teleport to="body">
-    <van-popup v-model:show="store.visible" round closeable class="bazi-popup">
+    <van-popup v-model:show="store.dialogVisible" round closeable class="bazi-popup">
       <header>
-        <h2 class="title">{{ store.title }}</h2>
+        <h2 class="title">{{ store.dialogTitle }}</h2>
       </header>
       <section>
-        <p class="text">{{ store.text }}</p>
+        <p class="text">{{ store.dialogText }}</p>
         <!-- 这里放你的八字内容 -->
         <!-- <slot :payload="store.payload">
             <pre>{{ store.payload }}</pre>
@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { useBaziModalStore } from '@/store/baziModal';
+import { useBaziStore } from '@/store/bazi';
 
-const store = useBaziModalStore();
+const store = useBaziStore();
 </script>
 
 <style scoped>

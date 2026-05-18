@@ -1,6 +1,11 @@
 <template>
   <!-- 修改性别 暂时放这 -->
-  <van-cell is-link title="修改性别" :value="sex === 0 ? '男' : '女'" @click="showSex = true" />
+  <van-cell
+    is-link
+    title="修改性别"
+    :value="store.sex === 0 ? '男' : '女'"
+    @click="showSex = true"
+  />
   <van-action-sheet
     v-model:show="showSex"
     :actions="sexActions"
@@ -69,7 +74,7 @@
         :key="'fx' + item.fx[index] + index + y"
         span="5"
       >
-        <TouchModal :text="paipanInfo.tenMap[item.fx[index]]">
+        <TouchModal :text="store.paipanInfo.tenMap[item.fx[index]]">
           <p class="tenText">
             {{ item.fx_text[index] }}
           </p>
@@ -140,70 +145,52 @@
 
   <!-- 天干地支关系 -->
   <!-- 大运流年 -->
+  <DaYunTable />
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import {
-  paipan,
-  TG,
-  DZ,
-  Ten,
-  NaYin,
-  Shensha,
-  ZhangSheng,
-  ShenshaItem,
-  WuXing,
-} from 'astro-bazi-utils';
+import { TG, DZ, Ten, NaYin, Shensha, ZhangSheng, ShenshaItem, WuXing } from 'astro-bazi-utils';
+import { useBaziStore } from '@/store/bazi';
 import WuxingText from '../components/WuxingText.vue';
 import TouchModal from '../components/TouchModal.vue';
+import DaYunTable from '../components/DaYunTable.vue';
 
-const props = withDefaults(
-  defineProps<{
-    time: Date;
-  }>(),
-  {}
-);
+const store = useBaziStore();
 
 // 修改性别 暂时放这
-const sex = ref<0 | 1>(0);
 const showSex = ref(false);
 const sexActions = [
   { name: '男', id: 0 },
   { name: '女', id: 1 },
 ];
 const onSelect = (item: { name: string; id: 0 | 1 }) => {
-  sex.value = item.id;
+  store.sex = item.id;
 };
 
-const paipanInfo = computed(() => {
-  const res = paipan.GetInfo(sex.value, props.time.getTime());
-  // console.log(res);
-  return res;
-});
 const pillarShowData = computed(() => {
   return Sizhu.map<PillarItem>((title, i) => {
-    let zhuxing = paipanInfo.value.tenMap[paipanInfo.value.tg[i]];
+    let zhuxing = store.paipanInfo.tenMap[store.paipanInfo.tg[i]];
     if (title === PillarTitle.日柱) {
-      zhuxing = paipanInfo.value.gender === 0 ? Ten.元男 : Ten.元女;
+      zhuxing = store.paipanInfo.gender === 0 ? Ten.元男 : Ten.元女;
     }
     return {
       title,
       isShow: true,
       zhuxing: zhuxing,
-      tg: paipanInfo.value.bazi[i][0] as TG,
-      dz: paipanInfo.value.bazi[i][1] as DZ,
-      dzcg: paipanInfo.value.dzcg_text[i],
-      fx: paipanInfo.value.dzcg[i],
-      fx_text: paipanInfo.value.dzcg[i].map((f) => paipanInfo.value.tenMap[f]),
-      xingyun: NaYin.getXingYun(paipanInfo.value.bazi[i], paipanInfo.value.bazi[2][0] as TG),
-      zizuo: NaYin.getXingYun(paipanInfo.value.bazi[i], paipanInfo.value.bazi[i][0] as TG),
-      nayin: NaYin.getNayin(paipanInfo.value.bazi[i]),
+      tg: store.paipanInfo.bazi[i][0] as TG,
+      dz: store.paipanInfo.bazi[i][1] as DZ,
+      dzcg: store.paipanInfo.dzcg_text[i],
+      fx: store.paipanInfo.dzcg[i],
+      fx_text: store.paipanInfo.dzcg[i].map((f) => store.paipanInfo.tenMap[f]),
+      xingyun: NaYin.getXingYun(store.paipanInfo.bazi[i], store.paipanInfo.bazi[2][0] as TG),
+      zizuo: NaYin.getXingYun(store.paipanInfo.bazi[i], store.paipanInfo.bazi[i][0] as TG),
+      nayin: NaYin.getNayin(store.paipanInfo.bazi[i]),
       ss: Shensha.getData(
-        paipanInfo.value.bazi,
-        paipanInfo.value.bazi[i],
-        paipanInfo.value.yinli,
-        paipanInfo.value.gender
+        store.paipanInfo.bazi,
+        store.paipanInfo.bazi[i],
+        store.paipanInfo.yinli,
+        store.paipanInfo.gender
       ),
     };
   });
