@@ -22,6 +22,7 @@ const props = withDefaults(
 );
 
 const handleOpen = () => {
+  if (props.disabled) return;
   modal.openDialog({
     title: props.title,
     text: props.text === null ? '' : props.text,
