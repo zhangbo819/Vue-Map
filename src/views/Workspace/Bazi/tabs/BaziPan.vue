@@ -4,6 +4,7 @@
     is-link
     title="修改性别"
     :value="store.sex === 0 ? '男' : '女'"
+    :style="{ '--van-cell-value-color': store.sex === 0 ? '#6C8EBF' : '#D5A6BD' }"
     @click="showSex = true"
   />
   <van-action-sheet
@@ -14,133 +15,164 @@
   />
 
   <!-- 八字盘 -->
-  <div>
+  <div class="baziPan">
     <!-- 标题 -->
-    <van-row style="margin-top: 10px">
-      <van-col span="4" />
-      <van-col v-for="item in pillarShowData" :key="item.title" span="5">
+    <div style="margin-top: 10px" class="pan-row">
+      <div class="pan-item-title" />
+      <div v-for="item in pillarShowData" :key="item.title" class="pan-item">
         <p class="title">{{ item.title }}</p>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 十神 -->
-    <van-row style="margin-top: 5px">
-      <van-col span="4">
+    <div style="margin-top: 5px" class="pan-row">
+      <div class="pan-item-title">
         <p class="subheading">主星</p>
-      </van-col>
-      <van-col v-for="(item, index) in pillarShowData" :key="'zhuxing' + item.tg + index" span="5">
+      </div>
+      <div
+        v-for="(item, index) in pillarShowData"
+        :key="'zhuxing' + item.tg + index"
+        class="pan-item"
+      >
         <TouchModal :text="item.zhuxing">
           <p class="tenText">{{ item.zhuxing }}</p>
         </TouchModal>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 天干 -->
-    <van-row style="margin-top: 5px">
-      <van-col span="4">
+    <div style="margin-top: 5px" class="pan-row">
+      <div class="pan-item-title">
         <p class="subheading">天干</p>
-      </van-col>
-      <van-col v-for="(item, index) in pillarShowData" :key="'tg' + item.tg + index" span="5">
+      </div>
+      <div v-for="(item, index) in pillarShowData" :key="'tg' + item.tg + index" class="pan-item">
         <wuxing-text :text="item.tg" />
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 地支 -->
-    <van-row>
-      <van-col span="4">
+    <div class="pan-row">
+      <div class="pan-item-title">
         <p class="subheading">地支</p>
-      </van-col>
-      <van-col v-for="(item, index) in pillarShowData" :key="'dz' + item.tg + index" span="5">
+      </div>
+      <div v-for="(item, index) in pillarShowData" :key="'dz' + item.tg + index" class="pan-item">
         <WuxingText :text="item.dz" />
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 藏干 -->
-    <van-row v-for="(_, index) in cgMaxLength" :key="'cg_row_' + index" style="margin-top: 5px">
-      <van-col span="4">
+    <div
+      v-for="(_, index) in cgMaxLength"
+      :key="'cg_row_' + index"
+      style="margin-top: 5px"
+      class="pan-row"
+    >
+      <div class="pan-item-title">
         <p v-if="index === 0" class="subheading">藏干</p>
-      </van-col>
-      <van-col v-for="(item, y) in pillarShowData" :key="'dzcg' + item.dzcg + index + y" span="5">
+      </div>
+      <div
+        v-for="(item, y) in pillarShowData"
+        :key="'dzcg' + item.dzcg + index + y"
+        class="pan-item"
+      >
         <WuxingText
           :text="item.dzcg[index]"
           :touch-modal-text="item.dzcg[index]?.[0]"
           size="mini"
         />
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 副星 -->
-    <van-row v-for="(_, index) in cgMaxLength" :key="'fx_row_' + index" style="margin-top: 5px">
-      <van-col span="4">
+    <div
+      v-for="(_, index) in cgMaxLength"
+      :key="'fx_row_' + index"
+      style="margin-top: 5px"
+      class="pan-row"
+    >
+      <div class="pan-item-title">
         <p v-if="index === 0" class="subheading">副星</p>
-      </van-col>
-      <van-col
+      </div>
+      <div
         v-for="(item, y) in pillarShowData"
         :key="'fx' + item.fx[index] + index + y"
-        span="5"
+        class="pan-item"
       >
         <TouchModal :text="store.paipanInfo.tenMap[item.fx[index]]">
           <p class="tenText">
             {{ item.fx_text[index] }}
           </p>
         </TouchModal>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 12长生 星运 -->
-    <van-row style="margin-top: 5px">
-      <van-col span="4">
+    <div style="margin-top: 5px" class="pan-row">
+      <div class="pan-item-title">
         <p class="subheading">星运</p>
-      </van-col>
-      <van-col
+      </div>
+      <div
         v-for="(item, index) in pillarShowData"
         :key="'xingyun' + item.xingyun + index"
-        span="5"
+        class="pan-item"
       >
         <TouchModal :text="item.xingyun">
           <p class="tenText">
             {{ item.xingyun }}
           </p>
         </TouchModal>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 12长生 自坐 -->
-    <van-row style="margin-top: 5px">
-      <van-col span="4">
+    <div style="margin-top: 5px" class="pan-row">
+      <div class="pan-item-title">
         <p class="subheading">自坐</p>
-      </van-col>
-      <van-col v-for="(item, index) in pillarShowData" :key="'zizuo' + item.zizuo + index" span="5">
+      </div>
+      <div
+        v-for="(item, index) in pillarShowData"
+        :key="'zizuo' + item.zizuo + index"
+        class="pan-item"
+      >
         <TouchModal :text="item.zizuo">
           <p class="tenText">
             {{ item.zizuo }}
           </p>
         </TouchModal>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 纳音 -->
-    <van-row style="margin: 5px 0 3px">
-      <van-col span="4">
+    <div style="margin: 5px 0 3px" class="pan-row">
+      <div class="pan-item-title">
         <p class="subheading">纳音</p>
-      </van-col>
-      <van-col v-for="(item, index) in pillarShowData" :key="'nayin' + item.nayin + index" span="5">
+      </div>
+      <div
+        v-for="(item, index) in pillarShowData"
+        :key="'nayin' + item.nayin + index"
+        class="pan-item"
+      >
         <TouchModal :text="item.nayin">
           <p class="nayin" :style="{ color: WuXing.getColorByWuxing(item.nayin[2]) }">
             {{ item.nayin }}
           </p>
         </TouchModal>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
     <!-- 神煞 -->
-    <van-row v-for="(_, index) in ssMaxLength" :key="'ss_row_' + index" style="margin-top: 2px">
-      <van-col span="4">
+    <div
+      v-for="(_, index) in ssMaxLength"
+      :key="'ss_row_' + index"
+      style="margin-top: 2px"
+      class="pan-row"
+    >
+      <div class="pan-item-title">
         <p v-if="index === 0" class="subheading">神煞</p>
-      </van-col>
-      <van-col
+      </div>
+      <div
         v-for="(item, y) in pillarShowData"
         :key="'ss' + item.ss[index] + index + y"
-        span="5"
+        class="pan-item"
       >
         <TouchModal :title="item.ss[index]" :text="Shensha.getDetails(item.ss[index])">
           <p class="shensha">
             {{ item.ss[index] }}
           </p>
         </TouchModal>
-      </van-col>
-    </van-row>
+      </div>
+    </div>
   </div>
 
   <!-- 天干地支关系 -->
@@ -150,7 +182,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { TG, DZ, Ten, NaYin, Shensha, ZhangSheng, ShenshaItem, WuXing } from 'astro-bazi-utils';
+import { Shensha, WuXing } from 'astro-bazi-utils';
 import { useBaziStore } from '@/store/bazi';
 import WuxingText from '../components/WuxingText.vue';
 import TouchModal from '../components/TouchModal.vue';
@@ -169,31 +201,7 @@ const onSelect = (item: { name: string; id: 0 | 1 }) => {
 };
 
 const pillarShowData = computed(() => {
-  return Sizhu.map<PillarItem>((title, i) => {
-    let zhuxing = store.paipanInfo.tenMap[store.paipanInfo.tg[i]];
-    if (title === PillarTitle.日柱) {
-      zhuxing = store.paipanInfo.gender === 0 ? Ten.元男 : Ten.元女;
-    }
-    return {
-      title,
-      isShow: true,
-      zhuxing: zhuxing,
-      tg: store.paipanInfo.bazi[i][0] as TG,
-      dz: store.paipanInfo.bazi[i][1] as DZ,
-      dzcg: store.paipanInfo.dzcg_text[i],
-      fx: store.paipanInfo.dzcg[i],
-      fx_text: store.paipanInfo.dzcg[i].map((f) => store.paipanInfo.tenMap[f]),
-      xingyun: NaYin.getXingYun(store.paipanInfo.bazi[i], store.paipanInfo.bazi[2][0] as TG),
-      zizuo: NaYin.getXingYun(store.paipanInfo.bazi[i], store.paipanInfo.bazi[i][0] as TG),
-      nayin: NaYin.getNayin(store.paipanInfo.bazi[i]),
-      ss: Shensha.getData(
-        store.paipanInfo.bazi,
-        store.paipanInfo.bazi[i],
-        store.paipanInfo.yinli,
-        store.paipanInfo.gender
-      ),
-    };
-  });
+  return store.pillarData.filter((i) => i.isShow);
 });
 
 // 找到藏干中最大的个数，来渲染藏干有几行
@@ -213,36 +221,6 @@ const ssMaxLength = computed(() =>
     return r;
   }, 0)
 );
-
-// 暂时放这 等着移走
-enum PillarTitle {
-  年柱 = '年柱',
-  月柱 = '月柱',
-  日柱 = '日柱',
-  时柱 = '时柱',
-  大运 = '大运',
-  流年 = '流年',
-  流月 = '流月',
-  流日 = '流日',
-  流时 = '流时',
-}
-
-type PillarItem = {
-  title: string;
-  isShow: boolean;
-  zhuxing: Ten;
-  tg: TG;
-  dz: DZ;
-  dzcg: string[];
-  fx: number[];
-  fx_text: string[]; // 新增 UI 渲染
-  xingyun: ZhangSheng | null;
-  zizuo: ZhangSheng | null;
-  nayin: string;
-  ss: ShenshaItem[];
-};
-
-const Sizhu = [PillarTitle.年柱, PillarTitle.月柱, PillarTitle.日柱, PillarTitle.时柱];
 </script>
 
 <style lang="scss" scoped>
@@ -250,6 +228,22 @@ p {
   margin: 0;
 }
 
+.baziPan {
+  width: 100%;
+
+  .pan-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    .pan-item-title {
+      flex: 4;
+    }
+    .pan-item {
+      flex: 5;
+    }
+  }
+}
 .title {
   text-align: center;
 }

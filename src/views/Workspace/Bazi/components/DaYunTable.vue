@@ -17,8 +17,8 @@
       </p>
     </van-col>
     <van-col>
-      <span @click="handleClose">关闭</span>
-      <span @click="handleNow">今</span>
+      <span style="padding: 8px" @click="handleClose">关闭</span>
+      <span style="padding: 8px" @click="handleNow">今</span>
     </van-col>
   </van-row>
 
@@ -35,7 +35,7 @@
             active: activeDyIndex === index,
           },
         ]"
-        @click="activeDyIndex = index"
+        @click="handleDyItem(index)"
       >
         <p class="itemText">
           {{ item.name === '小运' ? store.paipanInfo.yy : item.start_time[0] }}
@@ -155,10 +155,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 import { JQ_12, JZ_60, LiuYueItem, paipan } from 'astro-bazi-utils';
 import { useBaziStore } from '@/store/bazi';
 import WuxingText from './WuxingText.vue';
+import { PillarTitle } from '../constant';
 
 const store = useBaziStore();
 
@@ -171,16 +172,50 @@ const lyData = shallowRef<LiuYueItem[] | null>(null);
 const lrData = shallowRef<LiuYueItem['days'] | null>(null);
 const lsData = shallowRef<ReturnType<typeof paipan.getLiuShi> | null>(null);
 
+// TODO 重新设计这个函数
+// 显示隐藏表中的大运流年等
+const triggerPillarDataShow = (
+  isShow: boolean,
+  targets = [
+    PillarTitle.大运,
+    PillarTitle.流年,
+    PillarTitle.流月,
+    PillarTitle.流日,
+    PillarTitle.流时,
+  ]
+) => {
+  store.setPillarData((s) => {
+    s.forEach((i) => {
+      if (targets.includes(i.title as PillarTitle)) {
+        i.isShow = isShow;
+      }
+    });
+    return [...s];
+  });
+  //   handleScrollToEnd();
+};
+
+const handleDyItem = (index: number) => {
+  activeDyIndex.value = index;
+  triggerPillarDataShow(true, [PillarTitle.大运, PillarTitle.流年]);
+  triggerPillarDataShow(false, [PillarTitle.流月, PillarTitle.流日, PillarTitle.流时]);
+  lyData.value = null;
+  lrData.value = null;
+  lsData.value = null;
+};
 const handleLnItem = (item: { name: JZ_60; year: number }, index: number) => {
   const data = paipan.getLiuYueByYear(item.year, item.name);
   //   console.log('handleLnItem', data);
   lyData.value = data;
   activeLnIndex.value = index;
+  lrData.value = null;
+  lsData.value = null;
 };
 const handleLyItem = (index: number) => {
   if (!lyData.value) return;
   lrData.value = lyData.value[index].days;
   activeLyIndex.value = index;
+  lsData.value = null;
 };
 const handleLrItem = (index: number) => {
   if (!lrData.value) return;
@@ -211,6 +246,7 @@ const getLsDate = ({
 };
 
 const handleClose = () => {
+  triggerPillarDataShow(false);
   activeDyIndex.value = -1;
   activeLnIndex.value = -1;
   activeLyIndex.value = -1;
@@ -296,6 +332,7 @@ const handleNow = () => {
     newLrIndex = 0;
   }
   activeLrIndex.value = newLrIndex;
+  lrData.value = newLiuYueData[newLyIndex].days;
 
   // 流时
   const ls_date = getLsDate({ newLiuYueData, newLyIndex, newLrIndex });
@@ -305,8 +342,142 @@ const handleNow = () => {
   const newLsIndex = Math.floor((new Date().getHours() + 1) / 2);
   activeLsIndex.value = newLsIndex;
 
+  // 延迟50ms 等待列表数据先更新完再跳转到底部
+  setTimeout(() => {
+    // 全部显示大运流年
+    triggerPillarDataShow(true);
+  }, 50);
+
   // TODO scroll to active position
 };
+
+// TODO 目前有问题，重新思考是否需要这个 watch
+// 大运流年流月等切换后自动更新四柱表
+watch(
+  [
+    () => activeDyIndex.value,
+    () => activeLnIndex.value,
+    () => activeLrIndex.value,
+    () => activeLsIndex.value,
+    () => activeLyIndex.value,
+    () => store.paipanInfo,
+  ],
+  () => {
+    // // 初始化时不展示大运流年表
+    // if (isInit.current) {
+    //   isInit.current = false;
+    //   return;
+    // }
+
+    const paipanInfo = store.paipanInfo;
+
+    const dy = paipanInfo.big.data[activeDyIndex.value];
+    if (!dy) return;
+    let ln = dy.years[activeLnIndex.value];
+    if (!ln) {
+      if (activeLnIndex.value !== 0) {
+        const lnIndex = 0;
+        ln = dy.years[lnIndex];
+        activeLnIndex.value = lnIndex;
+      } else {
+        // 变成0仍然没有, 这种情况一般是点到了小运
+        if (!ln) {
+          // 这种情况一般是出生不到一年就起大运，无小运
+          //   Alert.alert('该命主无小运');
+        }
+      }
+      return;
+    }
+
+    const activeLyData = lyData.value?.[activeLyIndex.value];
+    const activeLrData = activeLyData?.days?.[activeLrIndex.value];
+    if (lyData.value) {
+      if (!activeLyData) {
+        // console.log('activeLyData', activeLyData);
+        activeLyIndex.value = 0;
+        return;
+      }
+      if (!activeLrData) {
+        // console.log('activeLrData', activeLrData);
+        activeLrIndex.value = 0;
+        return;
+      }
+    }
+    const activeLsData = lsData.value?.[activeLsIndex.value];
+    if (lsData.value && !activeLsData) {
+      // console.log('activeLsData', activeLsData);
+      activeLsIndex.value = 0;
+      return;
+    }
+
+    store.setPillarData((s) => {
+      // 大运
+      const dyIndex = s.findIndex((i) => i.title === PillarTitle.大运);
+      const dyItem = store.getListDataItem(
+        dy.name === '小运' ? dy.xiaoyuns[activeLnIndex.value] : dy.name,
+        PillarTitle.大运,
+        paipanInfo
+      );
+      if (dyIndex < 0) {
+        s.push(dyItem);
+      } else {
+        dyItem.isShow = s[dyIndex].isShow;
+        s[dyIndex] = dyItem;
+      }
+      // 流年
+      const LnIndex = s.findIndex((i) => i.title === PillarTitle.流年);
+      const LnItem = store.getListDataItem(ln.name, PillarTitle.流年, paipanInfo);
+
+      if (LnIndex < 0) {
+        s.push(LnItem);
+      } else {
+        LnItem.isShow = s[LnIndex].isShow;
+        s[LnIndex] = LnItem;
+      }
+
+      // 流月
+      if (lyData.value) {
+        // 流月
+        const ly_tgdz = activeLyData!.name;
+        const lyIndex = s.findIndex((i) => i.title === PillarTitle.流月);
+        const lyItem = store.getListDataItem(ly_tgdz, PillarTitle.流月, paipanInfo);
+        if (lyIndex < 0) {
+          s.push(lyItem);
+        } else {
+          lyItem.isShow = s[lyIndex].isShow;
+          s[lyIndex] = lyItem;
+        }
+
+        // 流日
+        const lr_tgdz = activeLrData!.name;
+        const lrIndex = s.findIndex((i) => i.title === PillarTitle.流日);
+        const lrItem = store.getListDataItem(lr_tgdz, PillarTitle.流日, paipanInfo);
+        if (lrIndex < 0) {
+          s.push(lrItem);
+        } else {
+          lrItem.isShow = s[lrIndex].isShow;
+          s[lrIndex] = lrItem;
+        }
+
+        // 流时
+        if (lsData.value) {
+          const ls_tgdz = lsData.value[activeLsIndex.value]?.name;
+          const lsIndex = s.findIndex((i) => i.title === PillarTitle.流时);
+          const lsItem = store.getListDataItem(ls_tgdz, PillarTitle.流时, paipanInfo);
+
+          if (lsIndex < 0) {
+            s.push(lsItem);
+          } else {
+            lsItem.isShow = s[lsIndex].isShow;
+            s[lsIndex] = lsItem;
+          }
+        }
+      }
+
+      return [...s];
+    });
+  }
+);
 </script>
 
 <style lang="scss" scoped>
