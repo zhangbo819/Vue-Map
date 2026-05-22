@@ -103,32 +103,40 @@
           {{ activeAspect.plant.degree }}°
         </h3>
       </template>
-      <div v-for="(item, index) in activeAspect.aspects" :key="item.between.join('-')">
-        <p>
-          &nbsp;&nbsp;
-          <strong>{{ index + 1 }}. </strong>
-          <span
-            :style="{
-              fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
-            }"
-          >
-            与
-            <span :style="{ color: planentsMap[item.other].color }"
-              >{{ item.other }} {{ planentsMap[item.other].name }}
-              {{ planentsMap[item.other].symbol }}</span
+      <template v-if="activeAspect.aspects.length">
+        <div v-for="(item, index) in activeAspect.aspects" :key="item.between.join('-')">
+          <p>
+            &nbsp;&nbsp;
+            <strong>{{ index + 1 }}. </strong>
+            <span
+              :style="{
+                fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
+              }"
             >
-            成
-            <span :style="{ color: aspectPosition.map[item.type].color }">
-              {{ item.type }}
-              {{ aspectPosition.map[item.type].name }}
-              {{ aspectPosition.map[item.type].symbol }}
-              {{ item.angle }}°
+              与
+              <span :style="{ color: planentsMap[item.other].color }"
+                >{{ item.other }} {{ planentsMap[item.other].name }}
+                {{ planentsMap[item.other].symbol }}</span
+              >
+              成
+              <span :style="{ color: aspectPosition.map[item.type].color }">
+                {{ item.type }}
+                {{ aspectPosition.map[item.type].name }}
+                {{ aspectPosition.map[item.type].symbol }}
+                {{ item.angle }}°
+              </span>
+              &nbsp;
+              <span> {{ item.strength }} ({{ item.orb }}°) </span>
             </span>
-            &nbsp;
-            <span> {{ item.strength }} ({{ item.orb }}°) </span>
-          </span>
-        </p>
-      </div>
+          </p>
+        </div>
+      </template>
+      <p
+        v-else-if="activeAspect.plant"
+        :style="{ fontWeight: 'bold', color: planentsMap[activeAspect.plant.name].color }"
+      >
+        空相
+      </p>
     </van-popup>
   </Teleport>
 </template>

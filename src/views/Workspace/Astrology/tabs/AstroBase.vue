@@ -76,8 +76,8 @@
           <template #title>
             <p>
               <span :style="{ color: planentsMap[item.between[0]].color }"
-                >{{ planentsMap[item.between[0]].name }}
-                {{ planentsMap[item.between[0]].symbol }}</span
+                >{{ planentsMap[item.between[0]].symbol }}
+                {{ planentsMap[item.between[0]].name }}</span
               >
               <span class="mid-span" :style="{ color: aspectPosition.map[item.type].color }">
                 {{ aspectPosition.map[item.type].name }} {{ aspectPosition.map[item.type].symbol }}
