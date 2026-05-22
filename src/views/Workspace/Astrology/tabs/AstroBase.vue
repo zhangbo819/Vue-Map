@@ -55,7 +55,7 @@
         <van-cell
           v-for="item in store.planetList"
           :key="item.name"
-          :title="`${item.name} ${planentsMap[item.name].name}`"
+          :title="`${item.name} ${planentsMap[item.name].name} ${planentsMap[item.name].symbol}`"
           :label="item.longitude"
           :title-style="{ color: planentsMap[item.name].color }"
         >
@@ -72,47 +72,57 @@
     <van-collapse-item name="3">
       <template #title> <h2>主要相位</h2></template>
       <van-cell-group inset>
-        <van-cell
-          v-for="item in store.aspectData"
-          :key="item.between"
-          :label="item.between.join(' - ')"
-        >
+        <van-cell v-for="item in store.aspectData" :key="item.between">
           <template #title>
             <p>
-              <span :style="{ color: planentsMap[item.between[0]].color }">{{
-                planentsMap[item.between[0]].name
-              }}</span>
-              -
-              <span :style="{ color: planentsMap[item.between[1]].color }">{{
-                planentsMap[item.between[1]].name
-              }}</span>
+              <span :style="{ color: planentsMap[item.between[0]].color }"
+                >{{ planentsMap[item.between[0]].name }}
+                {{ planentsMap[item.between[0]].symbol }}</span
+              >
+              <span class="mid-span" :style="{ color: aspectPosition.map[item.type].color }">
+                {{ aspectPosition.map[item.type].name }} {{ aspectPosition.map[item.type].symbol }}
+              </span>
+              <span :style="{ color: planentsMap[item.between[1]].color }"
+                >{{ planentsMap[item.between[1]].name }}
+                {{ planentsMap[item.between[1]].symbol }}</span
+              >
             </p>
           </template>
-          <p class="value" :style="{ color: aspectPosition.map[item.type].color }">
+          <!-- <template #label>
+            <p>
+              {{ item.between[0] }}
+              <span class="mid-span" :style="{ color: aspectPosition.map[item.type].color }">
+                {{ item.type }}
+              </span>
+              {{ item.between[1] }}
+            </p>
+          </template> -->
+          <!-- <p class="value" :style="{ color: aspectPosition.map[item.type].color }">
             {{ item.type }} {{ aspectPosition.map[item.type].name }}
+          </p> -->
+          <p
+            class="value"
+            :style="{
+              fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
+            }"
+          >
+            {{ item.strength }} ({{ item.orb }}°)
           </p>
-          <p class="value">
-            开始时间 {{ item.window.start.toLocaleDateString() }}
-            {{ item.window.start.getHours() }}:{{ item.window.start.getMinutes() }}
-          </p>
-          <p class="value">
-            力量最强 {{ item.window.exact.toLocaleDateString() }}
-            {{ item.window.exact.getHours() }}:{{ item.window.exact.getMinutes() }}
-          </p>
-          <p class="value">
-            结束时间 {{ item.window.end.toLocaleDateString() }} {{ item.window.end.getHours() }}:{{
-              item.window.end.getMinutes()
-            }}
-          </p>
-          <p class="value">计算耗时 {{ item.window._t }} ms</p>
-          <!-- <p
-          class="value"
-          :style="{
-            fontWeight: item.strength === 'strong' ? 'bold' : 'normal',
-          }"
-        >
-          {{ item.strength }} ({{ item.orb }}°)
-        </p> -->
+          <template v-if="item.window">
+            <p class="value">
+              开始时间 {{ item.window.start.toLocaleDateString() }}
+              {{ item.window.start.getHours() }}:{{ item.window.start.getMinutes() }}
+            </p>
+            <p class="value">
+              力量最强 {{ item.window.exact.toLocaleDateString() }}
+              {{ item.window.exact.getHours() }}:{{ item.window.exact.getMinutes() }}
+            </p>
+            <p class="value">
+              结束时间 {{ item.window.end.toLocaleDateString() }}
+              {{ item.window.end.getHours() }}:{{ item.window.end.getMinutes() }}
+            </p>
+            <!-- <p class="value">计算耗时 {{ item.window._t }} ms</p> -->
+          </template>
         </van-cell>
       </van-cell-group>
     </van-collapse-item>
@@ -138,5 +148,9 @@ const activeTab = ref(new Array(6).fill(0).map((_, i) => String(i + 1)));
   > span {
     color: #666;
   }
+}
+.mid-span {
+  margin: 0 8px;
+  font-size: small;
 }
 </style>

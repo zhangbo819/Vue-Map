@@ -134,13 +134,14 @@ class AspectPosition {
     { name: Aspect['Trine'], title: '三合', angle: 120, orb: 7 },
     { name: Aspect['Opposition'], title: '冲', angle: 180, orb: 5 },
   ];
+  // TODO move in ui
   map = {
-    [Aspect.Conjunction]: { name: '合相', color: '#ff8549' }, // 靛蓝（中性、融合）
-    [Aspect.Sextile]: { name: '六合', color: '#40c977' }, // 绿色（和谐、机会）
-    [Aspect.Square]: { name: '刑', color: '#f00' }, // 红色（冲突、张力）
-    [Aspect.Trine]: { name: '三合', color: '#00a240' }, // 蓝色（顺畅、流动）
-    [Aspect.Opposition]: { name: '冲', color: '#8046d9' }, // 橙色（对立但有连接）
-    [Aspect.Quincunx]: { name: '梅花相位', color: '#000' }, // TODO 颜色待补充
+    [Aspect.Conjunction]: { name: '合相', color: '#ff8549', symbol: '☌' }, // 靛蓝（中性、融合）
+    [Aspect.Sextile]: { name: '六合', color: '#40c977', symbol: '⚹' }, // 绿色（和谐、机会）
+    [Aspect.Square]: { name: '刑', color: '#f00', symbol: '□' }, // 红色（冲突、张力）
+    [Aspect.Trine]: { name: '三合', color: '#00a240', symbol: '△' }, // 蓝色（顺畅、流动）
+    [Aspect.Opposition]: { name: '冲', color: '#8046d9', symbol: '☍' }, // 橙色（对立但有连接）
+    [Aspect.Quincunx]: { name: '梅花相位', color: '#000', symbol: '' }, // TODO 颜色 symbol 待补充
   };
   // 针对行星使用单独的容许度
   private getDynamicOrb(n1: PlanetItem['name'], n2: PlanetItem['name'], baseOrb: number) {

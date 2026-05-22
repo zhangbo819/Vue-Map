@@ -84,7 +84,8 @@
       <template v-if="activeAspect.plant">
         <h2>
           <span :style="{ color: planentsMap[activeAspect.plant.name].color }"
-            >{{ activeAspect.plant.name }} {{ planentsMap[activeAspect.plant.name].name }}</span
+            >{{ activeAspect.plant.name }} {{ planentsMap[activeAspect.plant.name].name }}
+            {{ planentsMap[activeAspect.plant.name].symbol }}</span
           >&nbsp;
           <span> {{ `[${activeAspect.plant.retrograde ? '逆行' : '顺行'}]` }}</span>
         </h2>
@@ -113,13 +114,15 @@
           >
             与
             <span :style="{ color: planentsMap[item.other].color }"
-              >{{ item.other }} {{ planentsMap[item.other].name }}</span
+              >{{ item.other }} {{ planentsMap[item.other].name }}
+              {{ planentsMap[item.other].symbol }}</span
             >
             成
             <span :style="{ color: aspectPosition.map[item.type].color }">
               {{ item.type }}
               {{ aspectPosition.map[item.type].name }}
-              {{ item.angle }}
+              {{ aspectPosition.map[item.type].symbol }}
+              {{ item.angle }}°
             </span>
             &nbsp;
             <span> {{ item.strength }} ({{ item.orb }}°) </span>

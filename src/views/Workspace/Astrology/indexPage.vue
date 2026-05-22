@@ -21,12 +21,4 @@ const activeTop = ref(0);
 p {
   margin: 0;
 }
-
-.value {
-  margin: 0;
-  // font-weight: bold;
-  > span {
-    color: #666;
-  }
-}
 </style>
