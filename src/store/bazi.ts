@@ -1,4 +1,4 @@
-import { ref, shallowRef, watch } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
 import {
   TG,
@@ -65,9 +65,12 @@ export const useBaziStore = defineStore('bazi', () => {
     { immediate: true }
   );
 
-  // TODO 与上面合并复用
-  // 获取某一列数据
-  const getListDataItem = (name: JZ_60, title: PillarTitle, paipanInfo: PaipanInfo) => {
+  const pillarShowData = computed(() => {
+    return pillarData.value.filter((i) => i.isShow);
+  });
+
+  // 获取四柱外的某一列数据
+  const getListDataItem = (name: JZ_60, title: PillarTitle) => {
     const { dzcg, dzcg_text } = paipan.getDzcgText(
       [name].map((item) => {
         const i = paipan.cdz.findIndex((j) => j === item?.[1]);
@@ -79,16 +82,21 @@ export const useBaziStore = defineStore('bazi', () => {
     const dyItem = {
       title,
       isShow: false,
-      zhuxing: paipanInfo.tenMap[dyZhuxingIndex],
+      zhuxing: paipanInfo.value.tenMap[dyZhuxingIndex],
       tg: name[0] as TG,
       dz: name[1] as DZ,
       dzcg: dzcg_text[0],
       fx: dzcg[0],
-      fx_text: dzcg[0].map((f) => paipanInfo.tenMap[f]),
-      xingyun: NaYin.getXingYun(name, paipanInfo.bazi[2][0] as TG),
+      fx_text: dzcg[0].map((f) => paipanInfo.value.tenMap[f]),
+      xingyun: NaYin.getXingYun(name, paipanInfo.value.bazi[2][0] as TG),
       zizuo: NaYin.getXingYun(name, name[0] as TG),
       nayin: NaYin.getNayin(name),
-      ss: Shensha.getData(paipanInfo.bazi, name, paipanInfo.yinli, paipanInfo.gender),
+      ss: Shensha.getData(
+        paipanInfo.value.bazi,
+        name,
+        paipanInfo.value.yinli,
+        paipanInfo.value.gender
+      ),
     };
     return dyItem;
   };
@@ -114,6 +122,7 @@ export const useBaziStore = defineStore('bazi', () => {
     paipanInfo,
     pillarData,
     setPillarData,
+    pillarShowData,
     getListDataItem,
     sex,
     dialogVisible,

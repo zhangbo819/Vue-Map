@@ -24,7 +24,15 @@
 
   <!-- 大运 -->
   <div class="listCard">
-    <div class="listTilte">大<br />运</div>
+    <div
+      :class="[
+        'listTilte',
+        { active: store.pillarShowData.find((i) => i.title === PillarTitle.大运) },
+      ]"
+      @click="handleTriggerList(PillarTitle.大运)"
+    >
+      大<br />运
+    </div>
     <div class="rowList">
       <div
         v-for="(item, index) in store.paipanInfo.big.data"
@@ -56,7 +64,15 @@
 
   <!-- 流年 -->
   <div v-if="store.paipanInfo.big.data[activeDyIndex]" class="listCard">
-    <div class="listTilte">流<br />年</div>
+    <div
+      :class="[
+        'listTilte',
+        { active: store.pillarShowData.find((i) => i.title === PillarTitle.流年) },
+      ]"
+      @click="handleTriggerList(PillarTitle.流年)"
+    >
+      流<br />年
+    </div>
     <div class="rowList">
       <div
         v-for="(item, index) in store.paipanInfo.big.data[activeDyIndex].years"
@@ -80,7 +96,15 @@
 
   <!-- 流月 -->
   <div v-if="lyData !== null" class="listCard">
-    <div class="listTilte">流<br />月</div>
+    <div
+      :class="[
+        'listTilte',
+        { active: store.pillarShowData.find((i) => i.title === PillarTitle.流月) },
+      ]"
+      @click="handleTriggerList(PillarTitle.流月)"
+    >
+      流<br />月
+    </div>
     <div class="rowList">
       <div
         v-for="(item, index) in lyData"
@@ -105,7 +129,15 @@
 
   <!-- 流日 -->
   <div v-if="lrData !== null" class="listCard">
-    <div class="listTilte">流<br />日</div>
+    <div
+      :class="[
+        'listTilte',
+        { active: store.pillarShowData.find((i) => i.title === PillarTitle.流日) },
+      ]"
+      @click="handleTriggerList(PillarTitle.流日)"
+    >
+      流<br />日
+    </div>
     <div class="rowList">
       <div
         v-for="(item, index) in lrData"
@@ -132,7 +164,15 @@
 
   <!-- 流时 -->
   <div v-if="lsData !== null" class="listCard">
-    <div class="listTilte">流<br />时</div>
+    <div
+      :class="[
+        'listTilte',
+        { active: store.pillarShowData.find((i) => i.title === PillarTitle.流时) },
+      ]"
+      @click="handleTriggerList(PillarTitle.流时)"
+    >
+      流<br />时
+    </div>
     <div class="rowList">
       <div
         v-for="(item, index) in lsData"
@@ -172,7 +212,6 @@ const lyData = shallowRef<LiuYueItem[] | null>(null);
 const lrData = shallowRef<LiuYueItem['days'] | null>(null);
 const lsData = shallowRef<ReturnType<typeof paipan.getLiuShi> | null>(null);
 
-// TODO 重新设计这个函数
 // 显示隐藏表中的大运流年等
 const triggerPillarDataShow = (
   isShow: boolean,
@@ -195,10 +234,27 @@ const triggerPillarDataShow = (
   //   handleScrollToEnd();
 };
 
+const handleTriggerList = (target: PillarTitle) => {
+  const title_active = store.pillarShowData.find((i) => i.title === target);
+
+  const rest = [
+    PillarTitle.大运,
+    PillarTitle.流年,
+    PillarTitle.流月,
+    PillarTitle.流日,
+    PillarTitle.流时,
+  ];
+  const index = rest.findIndex((i) => i === target);
+  const targets = rest.splice(0, index + 1);
+
+  if (title_active) {
+    triggerPillarDataShow(false, [target].concat(rest));
+  } else {
+    triggerPillarDataShow(true, targets);
+  }
+};
 const handleDyItem = (index: number) => {
   activeDyIndex.value = index;
-  triggerPillarDataShow(true, [PillarTitle.大运, PillarTitle.流年]);
-  triggerPillarDataShow(false, [PillarTitle.流月, PillarTitle.流日, PillarTitle.流时]);
   lyData.value = null;
   lrData.value = null;
   lsData.value = null;
@@ -351,7 +407,6 @@ const handleNow = () => {
   // TODO scroll to active position
 };
 
-// TODO 目前有问题，重新思考是否需要这个 watch
 // 大运流年流月等切换后自动更新四柱表
 watch(
   [
@@ -415,8 +470,7 @@ watch(
       const dyIndex = s.findIndex((i) => i.title === PillarTitle.大运);
       const dyItem = store.getListDataItem(
         dy.name === '小运' ? dy.xiaoyuns[activeLnIndex.value] : dy.name,
-        PillarTitle.大运,
-        paipanInfo
+        PillarTitle.大运
       );
       if (dyIndex < 0) {
         s.push(dyItem);
@@ -426,7 +480,7 @@ watch(
       }
       // 流年
       const LnIndex = s.findIndex((i) => i.title === PillarTitle.流年);
-      const LnItem = store.getListDataItem(ln.name, PillarTitle.流年, paipanInfo);
+      const LnItem = store.getListDataItem(ln.name, PillarTitle.流年);
 
       if (LnIndex < 0) {
         s.push(LnItem);
@@ -440,7 +494,7 @@ watch(
         // 流月
         const ly_tgdz = activeLyData!.name;
         const lyIndex = s.findIndex((i) => i.title === PillarTitle.流月);
-        const lyItem = store.getListDataItem(ly_tgdz, PillarTitle.流月, paipanInfo);
+        const lyItem = store.getListDataItem(ly_tgdz, PillarTitle.流月);
         if (lyIndex < 0) {
           s.push(lyItem);
         } else {
@@ -451,7 +505,7 @@ watch(
         // 流日
         const lr_tgdz = activeLrData!.name;
         const lrIndex = s.findIndex((i) => i.title === PillarTitle.流日);
-        const lrItem = store.getListDataItem(lr_tgdz, PillarTitle.流日, paipanInfo);
+        const lrItem = store.getListDataItem(lr_tgdz, PillarTitle.流日);
         if (lrIndex < 0) {
           s.push(lrItem);
         } else {
@@ -463,7 +517,7 @@ watch(
         if (lsData.value) {
           const ls_tgdz = lsData.value[activeLsIndex.value]?.name;
           const lsIndex = s.findIndex((i) => i.title === PillarTitle.流时);
-          const lsItem = store.getListDataItem(ls_tgdz, PillarTitle.流时, paipanInfo);
+          const lsItem = store.getListDataItem(ls_tgdz, PillarTitle.流时);
 
           if (lsIndex < 0) {
             s.push(lsItem);
@@ -485,6 +539,9 @@ p {
   margin: 0;
 }
 .listCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin: 8px 0;
 }
 .listTilte {
@@ -492,10 +549,15 @@ p {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 8px;
+  padding: 16px 8px;
   width: 40px;
-  height: 100%;
   box-sizing: border-box;
+  cursor: pointer;
+
+  &.active {
+    background-color: red;
+    color: #fff;
+  }
 }
 .rowList {
   display: inline-flex;
@@ -503,6 +565,7 @@ p {
   overflow-x: scroll;
   width: calc(100% - 40px);
   padding-bottom: 8px;
+  cursor: pointer;
 
   .dayunItem {
     display: flex;
