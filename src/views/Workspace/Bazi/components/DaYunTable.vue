@@ -1,5 +1,5 @@
 <template>
-  <van-row align="center" justify="space-between">
+  <van-row align="center" justify="space-between" style="margin-top: 16px">
     <van-col>
       <p>
         起运：出生后{{ store.paipanInfo.big.start_desc }}
@@ -17,8 +17,8 @@
       </p>
     </van-col>
     <van-col>
-      <span style="padding: 8px" @click="handleClose">关闭</span>
-      <span style="padding: 8px" @click="handleNow">今</span>
+      <span class="theme-btn" @click="handleClose">关闭</span>
+      <span class="theme-btn" @click="handleNow">今</span>
     </van-col>
   </van-row>
 
@@ -538,6 +538,11 @@ watch(
 p {
   margin: 0;
 }
+.theme-btn {
+  padding: 8px;
+  color: var(--global-theme-color);
+  cursor: pointer;
+}
 .listCard {
   display: flex;
   flex-direction: row;
@@ -553,9 +558,10 @@ p {
   width: 40px;
   box-sizing: border-box;
   cursor: pointer;
+  color: var(--global-theme-color);
 
   &.active {
-    background-color: red;
+    background-color: var(--global-theme-color);
     color: #fff;
   }
 }
@@ -577,7 +583,7 @@ p {
     border-radius: 8px;
 
     &.active {
-      border-color: #666;
+      border-color: var(--global-theme-color);
     }
 
     .itemText {

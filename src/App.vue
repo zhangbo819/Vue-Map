@@ -11,12 +11,19 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import { applyThemeColor } from './utils/util';
 
 // console.log('app in');
 const route = useRoute();
+
+applyThemeColor();
 </script>
 
 <style lang="scss">
+:root {
+  /* 将 Vant 的主色调 (Primary) 指向动态主题变量 */
+  --van-primary-color: var(--global-theme-color) !important;
+}
 h1,
 h2,
 h3,

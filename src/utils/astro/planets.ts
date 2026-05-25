@@ -37,7 +37,8 @@ export interface PlanetItem {
   modality: AstroModality;
 }
 
-function getPlanetInfo(name: BodyInUse, date: Date) {
+// 拿单行星落座
+export function getPlanetInfo(name: BodyInUse, date: Date) {
   const vec = GeoVector(name, date, true);
   const ecl = Ecliptic(vec);
 

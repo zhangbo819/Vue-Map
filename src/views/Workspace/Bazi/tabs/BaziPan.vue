@@ -4,9 +4,10 @@
     is-link
     title="修改性别"
     :value="store.sex === 0 ? '男' : '女'"
-    :style="{ '--van-cell-value-color': store.sex === 0 ? '#6C8EBF' : '#D5A6BD' }"
+    :style="{ '--van-cell-value-color': 'var(--global-theme-color)' }"
     @click="showSex = true"
   />
+  <!-- :style="{ '--van-cell-value-color': store.sex === 0 ? '#6C8EBF' : '#D5A6BD' }" -->
   <van-action-sheet
     v-model:show="showSex"
     :actions="sexActions"
