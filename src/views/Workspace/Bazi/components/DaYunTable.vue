@@ -198,8 +198,8 @@
 import { nextTick, ref, shallowRef, watch } from 'vue';
 import { JQ_12, JZ_60, LiuYueItem, paipan } from 'astro-bazi-utils';
 import { useBaziStore } from '@/store/bazi';
-import WuxingText from './WuxingText.vue';
 import { PillarTitle } from '../constant';
+import WuxingText from './WuxingText.vue';
 
 const store = useBaziStore();
 
@@ -311,7 +311,7 @@ const handleClose = () => {
   lrData.value = null;
   lsData.value = null;
 };
-const handleNow = () => {
+const handleNow = async () => {
   const data = store.paipanInfo.big.data;
 
   // 流年、流月
@@ -397,15 +397,26 @@ const handleNow = () => {
   const newLsIndex = Math.floor((new Date().getHours() + 1) / 2);
   activeLsIndex.value = newLsIndex;
 
+  await nextTick();
+
   // 全部显示大运流年
   triggerPillarDataShow(true);
 
-  // TODO scroll to active position
-  nextTick().then(() => {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight, // 滚动到页面总高度的位置（即最底部）
-      // behavior: 'smooth', // 平滑滚动动画
+  // scroll to active position
+  document.querySelectorAll('.rowList .active').forEach((el) => {
+    el.scrollIntoView({
+      behavior: 'smooth', // 平滑滚动
+      block: 'nearest', // 垂直方向不动
+      inline: 'center', // 让被激活的元素滚动到横向正中间
     });
+  });
+
+  // 整体页面要再晚一些
+  await nextTick();
+
+  window.scrollTo({
+    top: document.documentElement.scrollHeight, // 滚动到页面总高度的位置（即最底部）
+    // behavior: 'smooth', // 平滑滚动动画
   });
 };
 
