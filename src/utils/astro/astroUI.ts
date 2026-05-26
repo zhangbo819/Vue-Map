@@ -1,5 +1,6 @@
 import { PatternType } from './aspectPattern';
 import { AstroElement, AstroModality, BodyInUse, Star } from './constant';
+import { DignityStatus } from './dignity';
 
 export const AstroElementMap: Record<AstroElement, { name: string; color: string }> = {
   Fire: { name: '火', color: '#FF5A5F' }, // 火：橙红（行动/能量）
@@ -212,6 +213,14 @@ export const patternMap = {
   //   color: '#9C27B0', // 神秘且稀有的紫色
   //   desc: '宿命般的指引，需不断调整自我以达成特殊使命。',
   // },
+};
+
+export const DignityMap: Record<DignityStatus, { color: string; text: string }> = {
+  Domicile: { text: '庙', color: '#67c23a' }, // 强能量（绿色）
+  Exaltation: { text: '旺', color: '#409eff' }, // 较强（蓝色）
+  Detriment: { text: '失势', color: '#e6a23c' }, // 弱化（橙色）
+  Fall: { text: '落陷', color: '#f56c6c' }, // 极弱（红色）
+  Peregrine: { text: '', color: '#909399' }, // 中性（灰色）
 };
 
 export function generateInterpretation(p: BodyInUse, s: Star): string {

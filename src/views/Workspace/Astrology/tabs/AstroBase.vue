@@ -56,13 +56,19 @@
           v-for="item in store.planetList"
           :key="item.name"
           :title="`${item.name} ${planentsMap[item.name].name} ${planentsMap[item.name].symbol}`"
-          :label="item.longitude"
           :title-style="{ color: planentsMap[item.name].color }"
         >
+          <template #label>
+            <span :style="{ color: DignityMap[item.dignity].color }">{{
+              DignityMap[item.dignity].text
+            }}</span>
+          </template>
+
           <p class="value" :style="{ color: map12[item.sign].color }">
             {{ item.sign }} {{ map12[item.sign].name }}
             <span v-if="item.retrograde">R</span>
           </p>
+
           <p class="value">{{ item.degree }}°</p>
         </van-cell>
       </van-cell-group>
@@ -133,7 +139,7 @@
 import { ref } from 'vue';
 import { useAstroStore } from '@/store/astro';
 import { aspectPosition } from '@/utils/astro/planets';
-import { map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
+import { DignityMap, map12, patternMap, planentsMap } from '@/utils/astro/astroUI';
 import AstroRoundPlate from '../components/AstroRoundPlate.vue';
 
 const store = useAstroStore();
