@@ -1,17 +1,6 @@
 import { computed, ref, shallowRef, watch } from 'vue';
 import { defineStore } from 'pinia';
-import {
-  TG,
-  DZ,
-  Ten,
-  NaYin,
-  Shensha,
-  paipan,
-  textJSON,
-  JZ_60,
-  PaipanInfo,
-  TG_10,
-} from 'astro-bazi-utils';
+import { TG, DZ, Ten, NaYin, Shensha, paipan, textJSON, JZ_60, TG_10 } from 'astro-bazi-utils';
 
 import { useAstroStore } from './astro';
 import { PillarItem, PillarTitle, Sizhu } from '@/views/Workspace/Bazi/constant';
@@ -31,7 +20,7 @@ export const useBaziStore = defineStore('bazi', () => {
   const pillarData = shallowRef<PillarItem[]>([]);
   const setPillarData = (cb: (s: PillarItem[]) => PillarItem[]) => {
     pillarData.value = cb(pillarData.value);
-    console.log('pillarData.value', pillarData.value);
+    // console.log('pillarData.value', pillarData.value);
   };
   watch(
     () => paipanInfo.value,

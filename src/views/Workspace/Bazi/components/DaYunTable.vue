@@ -1,5 +1,5 @@
 <template>
-  <van-row align="center" justify="space-between" style="margin-top: 16px">
+  <van-row align="center" justify="space-between" style="margin-top: 16px; padding: 8px">
     <van-col>
       <p>
         起运：出生后{{ store.paipanInfo.big.start_desc }}
@@ -195,7 +195,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, watch } from 'vue';
+import { nextTick, ref, shallowRef, watch } from 'vue';
 import { JQ_12, JZ_60, LiuYueItem, paipan } from 'astro-bazi-utils';
 import { useBaziStore } from '@/store/bazi';
 import WuxingText from './WuxingText.vue';
@@ -231,7 +231,6 @@ const triggerPillarDataShow = (
     });
     return [...s];
   });
-  //   handleScrollToEnd();
 };
 
 const handleTriggerList = (target: PillarTitle) => {
@@ -398,13 +397,16 @@ const handleNow = () => {
   const newLsIndex = Math.floor((new Date().getHours() + 1) / 2);
   activeLsIndex.value = newLsIndex;
 
-  // 延迟50ms 等待列表数据先更新完再跳转到底部
-  setTimeout(() => {
-    // 全部显示大运流年
-    triggerPillarDataShow(true);
-  }, 50);
+  // 全部显示大运流年
+  triggerPillarDataShow(true);
 
   // TODO scroll to active position
+  nextTick().then(() => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight, // 滚动到页面总高度的位置（即最底部）
+      // behavior: 'smooth', // 平滑滚动动画
+    });
+  });
 };
 
 // 大运流年流月等切换后自动更新四柱表
@@ -548,17 +550,20 @@ p {
   flex-direction: row;
   align-items: center;
   margin: 8px 0;
+  background-color: #fff;
 }
 .listTilte {
   display: inline-flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0 8px;
   padding: 16px 8px;
   width: 40px;
   box-sizing: border-box;
   cursor: pointer;
   color: var(--global-theme-color);
+  border-radius: 8px;
 
   &.active {
     background-color: var(--global-theme-color);
@@ -569,9 +574,8 @@ p {
   display: inline-flex;
   flex-direction: row;
   overflow-x: scroll;
-  width: calc(100% - 40px);
+  width: calc(100% - 40px - 16px);
   padding-bottom: 8px;
-  cursor: pointer;
 
   .dayunItem {
     display: flex;
@@ -581,6 +585,7 @@ p {
     padding: 8px;
     border: 1px solid #fff;
     border-radius: 8px;
+    cursor: pointer;
 
     &.active {
       border-color: var(--global-theme-color);
