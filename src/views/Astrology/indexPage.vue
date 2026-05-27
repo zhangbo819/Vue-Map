@@ -61,9 +61,14 @@ const data = computed(() => {
 
 const activeTab = ref(new Array(6).fill(0).map((_, i) => String(i + 1)));
 const onClickRight = () => {
+  // 将秒和毫秒清零，方便浏览器保存参数
+  const newDate = new Date(time.value);
+  newDate.setSeconds(0);
+  newDate.setMilliseconds(0);
+
   router.push({
     path: '/workspace',
-    query: { time: time.value.getTime() },
+    query: { time: newDate.getTime() },
   });
 };
 </script>
