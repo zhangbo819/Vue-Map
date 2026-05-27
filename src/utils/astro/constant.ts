@@ -30,6 +30,22 @@ export enum Star {
   'Pisces' = 'Pisces',
 }
 
+// 古典七曜
+// const ClassicalPlanent = [
+//   Body.Sun,
+//   Body.Moon,
+//   Body.Mercury,
+//   Body.Venus,
+//   Body.Mars,
+//   Body.Jupiter,
+//   Body.Saturn,
+// ] as const;
+// type ClassicalPlanentType = (typeof ClassicalPlanent)[number];
+
+// 现代三王星
+// const ModernPlanent = [Body.Uranus, Body.Neptune, Body.Pluto] as const;
+// type ModernPlanentType = (typeof ModernPlanent)[number];
+
 // 四系
 export const ASTRO_ELEMENTS = ['Fire', 'Earth', 'Air', 'Water'] as const;
 

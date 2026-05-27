@@ -3,10 +3,10 @@ import { BodyInUse, Star } from './constant';
 
 /** 行星庙旺落陷状态 */
 interface DignityData {
-  domicile: Star[]; // 入庙（可能有双主星，如火星入庙白羊和天蝎）
-  exaltation: Star; // 旺相
-  detriment: Star[]; // 失势（落陷的对面）
-  fall: Star; // 落陷
+  domicile: Star[]; // 入庙
+  exaltation?: Star; // 旺相
+  detriment?: Star[]; // 失势
+  fall?: Star; // 落陷
 }
 
 /**
@@ -28,7 +28,7 @@ const PLANET_DIGNITIES: Record<BodyInUse, DignityData> = {
   },
   [Body.Mercury]: {
     domicile: [Star.Gemini, Star.Virgo],
-    exaltation: Star.Virgo,
+    exaltation: Star.Aquarius, // 水星的旺位在古典是处女，在现代是水瓶，考虑到水瓶座更契合AI和目前冥王也在水瓶，这里使用水瓶
     detriment: [Star.Sagittarius, Star.Pisces],
     fall: Star.Pisces,
   },
@@ -56,11 +56,12 @@ const PLANET_DIGNITIES: Record<BodyInUse, DignityData> = {
     detriment: [Star.Cancer, Star.Leo],
     fall: Star.Aries,
   },
+  // 三王星在现代占星中争议比较大，这里仅保留争议最小、最稳定的版本
   [Body.Uranus]: {
     domicile: [Star.Aquarius],
-    exaltation: Star.Scorpio,
-    detriment: [Star.Leo],
-    fall: Star.Taurus,
+    // exaltation: Star.Virgo,
+    // detriment: [Star.Leo],
+    // fall: null,
   },
   [Body.Neptune]: {
     domicile: [Star.Pisces],
@@ -70,9 +71,9 @@ const PLANET_DIGNITIES: Record<BodyInUse, DignityData> = {
   },
   [Body.Pluto]: {
     domicile: [Star.Scorpio],
-    exaltation: Star.Leo, // 现代占星常用设定
+    // exaltation: Star.Leo,
     detriment: [Star.Taurus],
-    fall: Star.Aquarius,
+    // fall: Star.Aquarius,
   },
 };
 
@@ -95,7 +96,7 @@ export function getPlanetDignityStatus(planet: BodyInUse, currentSign: Star): Di
   }
 
   // 3. 检查失势
-  if (data.detriment.includes(currentSign)) {
+  if (Array.isArray(data.detriment) && data.detriment.includes(currentSign)) {
     return 'Detriment';
   }
 
