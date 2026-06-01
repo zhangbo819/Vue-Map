@@ -186,28 +186,8 @@
     </div>
 
     <!-- 天干地支关系 -->
-    <div class="tgDzRelation">
-      <div class="row">
-        <p class="tgDzRelationTitle">天干留意</p>
-        <div>
-          <template v-for="i in tgdz_relation.tg" :key="'relation_tg_row' + i.index">
-            <span v-for="j in i.relation" :key="'relation_tg' + i.index + j.index" class="tgGxItem">
-              {{ j.text }}
-            </span>
-          </template>
-        </div>
-      </div>
-      <div class="row">
-        <p class="tgDzRelationTitle">地支留意</p>
-        <div>
-          <template v-for="i in tgdz_relation.dz" :key="'relation_dz_row' + i.index">
-            <span v-for="j in i.relation" :key="'relation_dz' + i.index + j.index" class="tgGxItem">
-              {{ j.text }}
-            </span>
-          </template>
-        </div>
-      </div>
-    </div>
+    <TgDzRelation />
+
     <!-- 大运流年 -->
     <DaYunTable />
   </div>
@@ -220,6 +200,7 @@ import { useBaziStore } from '@/store/bazi';
 import WuxingText from '../components/WuxingText.vue';
 import TouchModal from '../components/TouchModal.vue';
 import DaYunTable from '../components/DaYunTable.vue';
+import TgDzRelation from '../components/TgDzRelation.vue';
 
 const store = useBaziStore();
 
@@ -250,11 +231,6 @@ const ssMaxLength = computed(() =>
     return r;
   }, 0)
 );
-
-const tgdz_relation = computed(() => ({
-  tg: WuXing.getTgRelation(store.pillarShowData.map((i) => i.tg)),
-  dz: WuXing.getDzRelation(store.pillarShowData.map((i) => i.dz)),
-}));
 </script>
 
 <style lang="scss" scoped>
