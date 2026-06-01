@@ -19,7 +19,7 @@
       </van-collapse-item> -->
 
       <!-- 参数详情列表 -->
-      <!-- <van-collapse-item name="2">
+      <van-collapse-item name="2">
         <template #title>
           <h2>参数详情列表</h2>
         </template>
@@ -28,17 +28,23 @@
             v-for="item in data"
             :key="item.name"
             :title="`${item.name} ${planentsMap[item.name].name}`"
-            :label="item.longitude"
             :title-style="{ color: planentsMap[item.name].color }"
           >
+            <template #label>
+              <span :style="{ color: DignityMap[item.dignity].color }">{{
+                DignityMap[item.dignity].text
+              }}</span>
+            </template>
+
             <p class="value" :style="{ color: map12[item.sign].color }">
               {{ item.sign }} {{ map12[item.sign].name }}
               <span v-if="item.retrograde">R</span>
             </p>
+
             <p class="value">{{ item.degree }}°</p>
           </van-cell>
         </van-cell-group>
-      </van-collapse-item> -->
+      </van-collapse-item>
     </van-collapse>
   </div>
 </template>
@@ -47,7 +53,7 @@
 import { computed, ref } from 'vue';
 import router from '@/router';
 import { getAllPlanets } from '@/utils/astro/planets';
-// import { map12, planentsMap } from '@/utils/astro/astroUI';
+import { DignityMap, map12, planentsMap } from '@/utils/astro/astroUI';
 import AstroOperation from '@/views/Workspace/Astrology/components/AstroOperation.vue';
 import AstroRoundPlate from '@/views/Workspace/Astrology/components/AstroRoundPlate.vue';
 
