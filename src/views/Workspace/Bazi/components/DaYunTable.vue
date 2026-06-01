@@ -548,9 +548,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-p {
-  margin: 0;
-}
 .theme-btn {
   padding: 8px;
   color: var(--global-theme-color);

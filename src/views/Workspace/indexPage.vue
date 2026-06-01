@@ -29,7 +29,7 @@ import Bazi from './Bazi/indexPage.vue';
 
 const store = useAstroStore();
 
-const activeBottom = ref(0);
+const activeBottom = ref(1);
 
 const route = useRoute();
 

@@ -234,9 +234,6 @@ const ssMaxLength = computed(() =>
 </script>
 
 <style lang="scss" scoped>
-p {
-  margin: 0;
-}
 .container {
   background-color: #fafafa;
 }
@@ -275,28 +272,5 @@ p {
 .shensha {
   color: #b2955e;
   text-align: center;
-}
-
-.row {
-  display: flex;
-  flex-direction: row;
-}
-.tgDzRelation {
-  margin: 12px 0;
-  padding: 8px;
-  background-color: #fff;
-  border-radius: 8px;
-
-  .tgDzRelationTitle {
-    margin-right: 8px;
-    font-weight: bold;
-    color: var(--van-primary-color);
-    font-size: 16px;
-    white-space: nowrap;
-  }
-  .tgGxItem {
-    margin: 0 4px;
-    font-size: 16px;
-  }
 }
 </style>
