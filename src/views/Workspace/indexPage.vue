@@ -23,13 +23,14 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import router from '@/router';
 import { useAstroStore } from '@/store/astro';
 import Astrology from './Astrology/indexPage.vue';
 import Bazi from './Bazi/indexPage.vue';
 
 const store = useAstroStore();
 
-const activeBottom = ref(1);
+const activeBottom = ref(0);
 
 const route = useRoute();
 
@@ -45,7 +46,12 @@ watch(
   }
 );
 
-const onClickLeft = () => history.back();
+const onClickLeft = () => {
+  // history.back();
+  router.push({
+    path: '/astrology',
+  });
+};
 </script>
 
 <!-- <style lang="scss">

@@ -1,13 +1,19 @@
 <template>
   <div class="container">
-    <!-- 修改性别 暂时放这 -->
-    <van-cell
-      is-link
-      title="修改性别"
-      :value="store.sex === 0 ? '男' : '女'"
-      :style="{ '--van-cell-value-color': 'var(--global-theme-color)' }"
-      @click="showSex = true"
-    />
+    <van-cell-group
+      style="--van-cell-vertical-padding: 2px; --van-cell-border-color: #fff"
+      :border="false"
+    >
+      <!-- 修改性别 暂时放这 -->
+      <van-cell
+        is-link
+        :title="`性别：${store.sex === 0 ? '男' : '女'}`"
+        style="--van-cell-right-icon-color: var(--global-theme-color)"
+        @click="showSex = true"
+      />
+      <van-cell :title="renderYinYangli(true)" />
+      <van-cell :title="renderYinYangli()" />
+    </van-cell-group>
     <!-- :style="{ '--van-cell-value-color': store.sex === 0 ? '#6C8EBF' : '#D5A6BD' }" -->
     <van-action-sheet
       v-model:show="showSex"
@@ -204,11 +210,22 @@ import TgDzRelation from '../components/TgDzRelation.vue';
 
 const store = useBaziStore();
 
+const renderYinYangli = (isYang = false) => {
+  const paipanInfo = store.paipanInfo;
+  if (paipanInfo === null) {
+    return null;
+  }
+  const arr = (isYang ? paipanInfo.yangli : paipanInfo.yinli) || [];
+  let res = `${isYang ? '阳历' : '阴历'}：${arr[0]}年${arr[1]}月${arr[2]}日 `;
+  res += isYang ? `${paipanInfo.hh}:${paipanInfo.mt}` : `${paipanInfo.bazi?.[3]?.[1]}时`;
+  return res;
+};
+
 // 修改性别 暂时放这
 const showSex = ref(false);
 const sexActions = [
-  { name: '男', id: 0 },
-  { name: '女', id: 1 },
+  { name: '男', id: 0, color: '#6C8EBF' },
+  { name: '女', id: 1, color: '#D5A6BD' },
 ];
 const onSelect = (item: { name: string; id: 0 | 1 }) => {
   store.sex = item.id;
