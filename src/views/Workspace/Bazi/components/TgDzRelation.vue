@@ -113,7 +113,7 @@
                   <!-- 左侧字 -->
                   <template v-for="(_, j) in item.end - relation.start">
                     <Row
-                      v-if="relation.index.findIndex((z) => z === j + relation.start) !== -1"
+                      v-if="getRelationIndex(relation, j) !== -1"
                       :key="'dz_text' + j"
                       style="flex: 1"
                     >
@@ -123,13 +123,11 @@
                         class="relationItem"
                         :style="{
                           color: WuXing.getColorByWuxing(
-                            relation.name[relation.index.findIndex((z) => z === j + relation.start)]
+                            relation.name[getRelationIndex(relation, j)]
                           ),
                         }"
                       >
-                        {{
-                          relation.name[relation.index.findIndex((z) => z === j + relation.start)]
-                        }}
+                        {{ relation.name[getRelationIndex(relation, j)] }}
                       </p>
                       <Col class="lineBg"><div class="line" /></Col>
                     </Row>
@@ -167,9 +165,9 @@
 import { computed, ref } from 'vue';
 import { WuXing } from 'astro-bazi-utils';
 import { useBaziStore } from '@/store/bazi';
-import WuxingText from './WuxingText.vue';
 import Row from '@/components/Row.vue';
 import Col from '@/components/Col.vue';
+import WuxingText from './WuxingText.vue';
 
 const store = useBaziStore();
 
@@ -179,6 +177,10 @@ const tgdz_relation = computed(() => ({
 }));
 
 const dialogVisible = ref(false);
+
+const getRelationIndex = (relation: { index: number[]; start: number }, j: number) => {
+  return relation.index.findIndex((z: number) => z === j + relation.start);
+};
 </script>
 
 <style lang="scss" scoped>
