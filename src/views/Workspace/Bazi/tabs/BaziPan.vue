@@ -19,6 +19,7 @@
       v-model:show="showSex"
       :actions="sexActions"
       close-on-click-action
+      teleport="body"
       @select="onSelect"
     />
 
@@ -213,7 +214,7 @@ const store = useBaziStore();
 const renderYinYangli = (isYang = false) => {
   const paipanInfo = store.paipanInfo;
   if (paipanInfo === null) {
-    return null;
+    return '';
   }
   const arr = (isYang ? paipanInfo.yangli : paipanInfo.yinli) || [];
   let res = `${isYang ? '阳历' : '阴历'}：${arr[0]}年${arr[1]}月${arr[2]}日 `;
