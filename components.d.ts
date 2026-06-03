@@ -9,6 +9,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     CityList: typeof import('./src/components/CityList.vue')['default']
     Col: typeof import('./src/components/Col.vue')['default']
+    Loading: typeof import('./src/components/Loading.vue')['default']
+    LoadingPopup: typeof import('./src/components/LoadingPopup.vue')['default']
     MyTable: typeof import('./src/components/MyTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -24,6 +26,7 @@ declare module 'vue' {
     VanCollapseItem: typeof import('vant/es')['CollapseItem']
     VanDatePicker: typeof import('vant/es')['DatePicker']
     VanIcon: typeof import('vant/es')['Icon']
+    VanLoading: typeof import('vant/es')['Loading']
     VanNavBar: typeof import('vant/es')['NavBar']
     VanPickerGroup: typeof import('vant/es')['PickerGroup']
     VanPopup: typeof import('vant/es')['Popup']

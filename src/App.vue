@@ -1,6 +1,9 @@
 <template>
   <div id="app">
     <router-view />
+
+    <loading-popup />
+
     <van-tabbar v-if="!route.meta.hiddenCommonTab" route placeholder>
       <van-tabbar-item to="/astrology" icon="home-o">占星</van-tabbar-item>
       <!-- <van-tabbar-item to="/world" icon="search">标签</van-tabbar-item> -->
@@ -11,7 +14,8 @@
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
-import { applyThemeColor } from './utils/util';
+import LoadingPopup from '@/components/LoadingPopup.vue';
+import { applyThemeColor } from '@/utils/util';
 
 // console.log('app in');
 const route = useRoute();
