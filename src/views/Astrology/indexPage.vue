@@ -74,7 +74,7 @@ const onClickRight = () => {
 
   router.push({
     path: '/workspace',
-    query: { time: newDate.getTime() },
+    query: { time: newDate.getTime(), tab: 0 },
   });
 };
 </script>
