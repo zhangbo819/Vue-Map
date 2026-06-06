@@ -24,7 +24,12 @@
 
     <div class="block-info">
       <h3>袁天罡称骨</h3>
-      <p class="block-title">{{ pageData.ytgcgData.weight_text }}</p>
+      <touch-modal
+        :title="'总重: ' + pageData.ytgcgData.weight_text"
+        :text="`年${pageData.ytgcgData.weight_y}两 + 月${pageData.ytgcgData.weight_m}两 + 日${pageData.ytgcgData.weight_d}两 + 时${pageData.ytgcgData.weight_h}两`"
+      >
+        <p class="block-title">{{ pageData.ytgcgData.weight_text }}</p>
+      </touch-modal>
       <p class="block-text">{{ pageData.ytgcgData.comment }}</p>
       <i>称骨法作为扩展有一定的参考作用，但具体情况还是要结合全局分析</i>
     </div>
@@ -35,7 +40,7 @@
 import { computed } from 'vue';
 import { NaYin, WuXing, Ytgcg } from 'astro-bazi-utils';
 import { useBaziStore } from '@/store/bazi';
-import { showDialog } from 'vant';
+import TouchModal from '../components/TouchModal.vue';
 
 const store = useBaziStore();
 

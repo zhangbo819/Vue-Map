@@ -409,6 +409,7 @@ const handleNow = async () => {
     //   block: 'nearest', // 垂直方向不动
     //   inline: 'center', // 让被激活的元素滚动到横向正中间
     // });
+    // 自动滚动在 tab 中存在问题，这里使用手动计算滚动距离
     scrollActiveToCenter(el as HTMLElement);
   });
 
