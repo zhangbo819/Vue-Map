@@ -9,7 +9,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     CityList: typeof import('./src/components/CityList.vue')['default']
     Col: typeof import('./src/components/Col.vue')['default']
-    Loading: typeof import('./src/components/Loading.vue')['default']
     LoadingPopup: typeof import('./src/components/LoadingPopup.vue')['default']
     MyTable: typeof import('./src/components/MyTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -33,7 +32,6 @@ declare module 'vue' {
     VanRadio: typeof import('vant/es')['Radio']
     VanRadioGroup: typeof import('vant/es')['RadioGroup']
     VanRow: typeof import('vant/es')['Row']
-    VanSwitch: typeof import('vant/es')['Switch']
     VanTab: typeof import('vant/es')['Tab']
     VanTabbar: typeof import('vant/es')['Tabbar']
     VanTabbarItem: typeof import('vant/es')['TabbarItem']
